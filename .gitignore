@@ -1,2 +1,8 @@
-lib/Tracer-UI-Sandbox.code-workspace
+.DS_Store
+.dart_tool/
+.idea/
+.packages
+.pub/
 build/
+.flutter-plugins
+constants.dart

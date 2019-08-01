@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"git.defaultCloneDirectory": "https://github.com/andrewlwest/tracer.git"
+	}
+}
