@@ -1,0 +1,17 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/CODE_OF_CONDUCT.md": true,
+        "LICENSE": true,
+        "README.md": true,
+        "AUTHORS": true,
+        "build/flutter_assets/LICENSE": true,
+        "build/frontend_server.d": true,
+        "**/ServiceDefinitions.json": true
+    },
+    "explorerExclude.backup": null
+}

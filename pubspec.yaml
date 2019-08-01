@@ -1,0 +1,34 @@
+name: Tracer
+description: MGH LCS App for JC Visits
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.15.6
+
+  cupertino_icons: ^0.1.0
+  font_awesome_flutter: ^8.5.0
+  flutter_staggered_grid_view: ^0.2.7
+  json_annotation: ^0.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  build_runner: any
+  json_serializable: any
+
+flutter:
+  # TODO: Insert Fonts (103)
+
+  fonts:
+    - family: Rubik
+      fonts:
+        - asset: fonts/Rubik-Regular.ttf
+        - asset: fonts/Rubik-Medium.ttf
+          weight: 500
+
+  uses-material-design: true
+  assets:
+    - assets/tracers-ko.png
+    - assets/tracer-logo-ko.png
