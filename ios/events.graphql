@@ -1,0 +1,7 @@
+﻿query GetEvent($id: ID!) {
+  getEvent(id: $id) {
+    name
+    when
+    where
+  }
+}

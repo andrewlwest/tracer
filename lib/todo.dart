@@ -1,4 +1,4 @@
-import 'package:Tracer/colors.dart';
+import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
 import 'dart:math' as math;

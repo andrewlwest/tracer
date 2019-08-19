@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 
 import 'home.dart';
 import 'addVisit.dart';
-import 'colors.dart';
+import 'ui/colors.dart';
 
 class TracerApp extends StatelessWidget {
   @override
@@ -30,15 +30,27 @@ class TracerApp extends StatelessWidget {
       home: VisitListPage(),
       //home: HomePage(),
       initialRoute: '/login',
+      routes: {
+      // When navigating to the "/" route, build the FirstScreen widget.
+      '/login': (context) => LoginPage(),
+      // When navigating to the "/second" route, build the SecondScreen widget.
+      '/addVisit': (context) => AddVisit(),
+      },
       onGenerateRoute: _getRoute,
       theme: _kTracersTheme, // New code
     );
   }
 
   Route<dynamic> _getRoute(RouteSettings settings) {
+    
+  
+    /*
     if (settings.name != '/login') {
       return null;
     }
+    */
+
+    /*
 
     return MaterialPageRoute<void>(
       settings: settings,
@@ -47,6 +59,9 @@ class TracerApp extends StatelessWidget {
       builder: (BuildContext context) => LoginPage(),
       fullscreenDialog: true,
     );
+
+    */
+    
   }
 }
 

@@ -5,6 +5,7 @@
 		}
 	],
 	"settings": {
-		"git.defaultCloneDirectory": "https://github.com/andrewlwest/tracer.git"
+		"git.defaultCloneDirectory": "https://github.com/andrewlwest/tracer.git",
+		"java.configuration.updateBuildConfiguration": "automatic"
 	}
 }

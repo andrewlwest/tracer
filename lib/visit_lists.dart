@@ -12,279 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:Tracer/colors.dart';
+import 'package:Tracer/model/visitListItem.dart';
+import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
 
+import 'service/tracer_service.dart';
+import 'model/visit.dart';
+
 class VisitListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final TracerService svc = new TracerService();
+
     final ThemeData theme = Theme.of(context);
-
-    final vCardOverline = new Expanded(
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'visit.site' + ' - ' + 'visit.location',
-            maxLines: 1,
-            style: theme.textTheme.caption,
-          ),
-        ],
-      ),
-    );
-    //CARD OVERLINE WITH DATE/TIME
-    final vCardDate = new Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
-          child: Text(
-            'Today',
-            maxLines: 1,
-            style: theme.textTheme.caption,
-          ),
-        )
-      ],
-    );
-
-    //CARD HEADING
-    final vCardHeading = new Column(
-      children: <Widget>[
-        Text(
-          'visit.name',
-          style: theme.textTheme.headline,
-          maxLines: 1,
-        ),
-      ],
-    );
-
-    //CARD SUMMARY
-    final vCardSummary = new Flexible(
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'Quisque viverra nunc eget dui. Etiam iaculis tincidunt sapien. Aliquam erat volutpat. Mauris sagittis mi suscipit est. Maecenas adipiscing erat vestibulum purus. In scelerisque facilisis risus. In ac erat. Etiam nulla. Donec ut arcu sit amet nisi sollicitudin gravida.',
-            style: theme.textTheme.body2,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-          ),
-        ],
-      ),
-    );
-
-    //CARD PROGRESS BAR
-    final vCardProgress = new Expanded(
-      child: new SizedBox(
-        height: 4,
-        child: new LinearProgressIndicator(
-          valueColor: new AlwaysStoppedAnimation(kTracersBlue500),
-          backgroundColor: kTracersBlue100,
-          value: .03,
-        ),
-      ),
-    );
-
-    //CARD ACTIONS
-    final vCardActions = new Expanded(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        //TO DO ICON
-        Column(
-          children: <Widget>[
-            IconButton(
-              icon: Icon(FontAwesomeIcons.solidClipboard),
-              color: Colors.black45,
-              iconSize: 16,
-              onPressed: () async {
-                final String currentTeam = await _asyncInputDialog(context);
-                print("Current team name is $currentTeam");
-              },
-            ),
-          ],
-        ),
-        //ASSIGN USERS ICON
-        Column(
-          children: <Widget>[
-            IconButton(
-              icon: Icon(FontAwesomeIcons.solidUserCircle),
-              color: Colors.black45,
-              iconSize: 16,
-              onPressed: () {
-                print('To Do Button');
-              },
-            ),
-          ],
-        ),
-        //MORE ACTIONS ICON
-        Column(
-          children: <Widget>[
-            IconButton(
-              icon: Icon(FontAwesomeIcons.ellipsisV),
-              color: Colors.black45,
-              iconSize: 16,
-              onPressed: () {
-                print('Card Actions');
-              },
-            ),
-          ],
-        ),
-      ],
-    ));
-
-    //SCORE ACTIONS
-    final vCardScore = new Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          //COMPLIANT SCORE
-          Column(
-            children: <Widget>[
-              ButtonTheme(
-                minWidth: 16.0,
-                child: FlatButton(
-                  padding: const EdgeInsets.all(1),
-                  onPressed: () => print("COMPLIANT Score Button Pressed"),
-                  child: new Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 3.0),
-                        child: Icon(
-                          FontAwesomeIcons.solidCheckCircle,
-                          size: 16.0,
-                          color: kTracersGreen500,
-                        ),
-                      ),
-                      Text(
-                        '100%',
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          color: kTracersGreen500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              //ADVISORY SCORE
-              ButtonTheme(
-                minWidth: 16.0,
-                child: FlatButton(
-                  padding: const EdgeInsets.all(1),
-                  onPressed: () => print("ADVISORY Score Button Pressed"),
-                  child: new Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 3.0),
-                        child: Icon(
-                          FontAwesomeIcons.exclamationCircle,
-                          size: 16.0,
-                          color: kTracersYellow500,
-                        ),
-                      ),
-                      Text(
-                        '40%',
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          color: kTracersYellow500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              //NON-COMPLIANT SCORE
-              ButtonTheme(
-                minWidth: 16.0,
-                child: FlatButton(
-                  padding: const EdgeInsets.all(1),
-                  onPressed: () => print("NON-COMPLIANT Score Button Pressed"),
-                  child: new Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 3.0),
-                        child: Icon(
-                          FontAwesomeIcons.solidTimesCircle,
-                          size: 16.0,
-                          color: kTracersRed500,
-                        ),
-                      ),
-                      Text(
-                        '40%',
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          color: kTracersRed500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      //ADVISORY ICON AND SCORE
-    );
-
-    //TODAY CARD
-    final vCardToday = new SizedBox(
-      height: 174,
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16.0, 12.0, 0, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  vCardOverline,
-                  vCardDate,
-                ],
-              ),
-              SizedBox(height: 10.0),
-              Row(
-                children: <Widget>[
-                  vCardHeading,
-                ],
-              ),
-              SizedBox(height: 8.0),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
-                child: Row(
-                  children: <Widget>[
-                    vCardSummary,
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    //TODAY and UPCOMING CARDS WILL HAVE THE PROGRESS BAR SHOWN INSTEAD OF THE SCORE BAR
-                    vCardProgress,
-                    //PAST CARDS WILL HAVE THE SCORE BAR SHOWN INSTEAD OF THE PROGRESS BAR
-                    //vCardScore,
-                    vCardActions,
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
 
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
@@ -334,7 +76,7 @@ class VisitListPage extends StatelessWidget {
                   semanticLabel: 'add',
                 ),
                 onPressed: () {
-                  print('Add button');
+                  Navigator.pushNamed(context, '/addVisit');
                 },
               ),
               IconButton(
@@ -360,14 +102,16 @@ class VisitListPage extends StatelessWidget {
           body: TabBarView(
             children: <Widget>[
               //TODAY TAB PANE CONTENT
-              ListView(
-                children: <Widget>[
-                  vCardToday,
-                  vCardToday,
-                  vCardToday,
-                  vCardToday,
-                  vCardToday,
-                ],
+
+              FutureBuilder<List<VisitListItem>>(
+                future: svc.getAllVisits(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) print(snapshot.error);
+
+                  return snapshot.hasData
+                      ? VisitListView(visits: snapshot.data)
+                      : Center(child: CircularProgressIndicator());
+                },
               ),
 
               //UPCOMING TAB PANE CONTENT
@@ -377,7 +121,7 @@ class VisitListPage extends StatelessWidget {
               Text('Past'),
 
               //ADMIN TAB PANE CONTENT
-              Text('Admin')
+              Text('Admin'),
             ],
           ),
           drawer: Drawer(
@@ -412,6 +156,189 @@ class VisitListPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class VisitListView extends StatelessWidget {
+  final List<VisitListItem> visits;
+
+  VisitListView({Key key, this.visits}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Container(
+        child: ListView.builder(
+            itemCount: visits.length,
+            padding: const EdgeInsets.all(15.0),
+            itemBuilder: (context, position) {
+              return new SizedBox(
+                height: 174,
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(16.0, 12.0, 0, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            new Expanded(
+                              child: new Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    '${visits[position].site}',
+                                    maxLines: 1,
+                                    style: theme.textTheme.caption,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            new Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                  child: Text(
+                                    'Today',
+                                    maxLines: 1,
+                                    style: theme.textTheme.caption,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10.0),
+                        Row(
+                          children: <Widget>[
+                            new Column(
+                              children: <Widget>[
+                                GestureDetector(
+                                  child: Text(visits[position].location),
+                                  onTap: () => _onTapItem(context, visits[position])
+                                  
+                                  /*Scaffold.of(context)
+                                      .showSnackBar(SnackBar(
+                                          content: Text(position.toString()))),
+                                  */
+
+                                )
+                                /*
+                                Text(
+                                  '${visits[position].location}',
+                                  style: theme.textTheme.headline,
+                                  maxLines: 1,
+                                ),
+                                */
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8.0),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                          child: Row(
+                            children: <Widget>[
+                              new Flexible(
+                                child: new Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      '${visits[position].summary}',
+                                      style: theme.textTheme.body2,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              //TODAY and UPCOMING CARDS WILL HAVE THE PROGRESS BAR SHOWN INSTEAD OF THE SCORE BAR
+                              new Expanded(
+                                child: new SizedBox(
+                                  height: 4,
+                                  child: new LinearProgressIndicator(
+                                    valueColor: new AlwaysStoppedAnimation(
+                                        kTracersBlue500),
+                                    backgroundColor: kTracersBlue100,
+                                    value: .03,
+                                  ),
+                                ),
+                              ),
+                              //PAST CARDS WILL HAVE THE SCORE BAR SHOWN INSTEAD OF THE PROGRESS BAR
+                              //vCardScore,
+                              new Expanded(
+                                  child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  //TO DO ICON
+                                  Column(
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(
+                                            FontAwesomeIcons.solidClipboard),
+                                        color: Colors.black45,
+                                        iconSize: 16,
+                                        onPressed: () async {
+                                          final String currentTeam =
+                                              await _asyncInputDialog(context);
+                                          print(
+                                              "Current team name is $currentTeam");
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  //ASSIGN USERS ICON
+                                  Column(
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(
+                                            FontAwesomeIcons.solidUserCircle),
+                                        color: Colors.black45,
+                                        iconSize: 16,
+                                        onPressed: () {
+                                          print('To Do Button');
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  //MORE ACTIONS ICON
+                                  Column(
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(FontAwesomeIcons.ellipsisV),
+                                        color: Colors.black45,
+                                        iconSize: 16,
+                                        onPressed: () {
+                                          print('Card Actions');
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }));
+  }
+}
+
+void _onTapItem(BuildContext context, VisitListItem visit) {
+  Scaffold.of(context).showSnackBar(new SnackBar(
+      content: new Text(visit.id.toString() + ' - ' + visit.location)));
 }
 
 Future<String> _asyncInputDialog(BuildContext context) async {

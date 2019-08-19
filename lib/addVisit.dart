@@ -1,4 +1,4 @@
-import 'package:Tracer/colors.dart';
+import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
 import 'dart:math' as math;
@@ -12,9 +12,28 @@ class _AddVisitState extends State<AddVisit> {
   final _summaryController = TextEditingController();
 
   String dropdownValue = 'MGH';
+  List users = List(); //edited line
 
   @override
   Widget build(BuildContext context) {
+
+
+    List 
+
+    Future<String> getSWData() async {
+      var res = await http
+          .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
+      var resBody = json.decode(res.body);
+
+      setState(() {
+        data = resBody;
+      });
+
+      print(resBody);
+
+      return "Sucess";
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Visit"),
@@ -174,7 +193,9 @@ class _AddVisitState extends State<AddVisit> {
                 title: Text('Branch Hines'),
                 subtitle: Text('Pharmacy'),
                 secondary: CircleAvatar(
-                  backgroundColor: Color((math.Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0),
+                  backgroundColor: Color(
+                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
+                      .withOpacity(1.0),
                   child: Text('BH'),
                 ),
                 onChanged: (bool value) {},
@@ -188,7 +209,9 @@ class _AddVisitState extends State<AddVisit> {
                 title: Text('Soto Edwards'),
                 subtitle: Text('Pharmacy'),
                 secondary: CircleAvatar(
-                  backgroundColor: Color((math.Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0),
+                  backgroundColor: Color(
+                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
+                      .withOpacity(1.0),
                   child: Text('SE'),
                 ),
                 onChanged: (bool value) {},
@@ -202,7 +225,9 @@ class _AddVisitState extends State<AddVisit> {
                 title: Text('Lindsey Mcgowan'),
                 subtitle: Text('Pharmacy'),
                 secondary: CircleAvatar(
-                  backgroundColor: Color((math.Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0),
+                  backgroundColor: Color(
+                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
+                      .withOpacity(1.0),
                   child: Text('LM'),
                 ),
                 onChanged: (bool value) {},

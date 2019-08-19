@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:Tracer/colors.dart';
+import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
@@ -134,7 +134,7 @@ class HomePage extends StatelessWidget {
                     child: Text("EXCEPTIONS"))
               ],
             ),
-            title: Text('Visit Name - Today'),
+            title: Text('Visit Name -xxx  Today'),
             actions: <Widget>[
               IconButton(
                 icon: Icon(

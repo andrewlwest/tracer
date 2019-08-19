@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:Tracer/colors.dart';
+import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
 import 'model/visits_repository.dart';
 import 'model/visit.dart';
@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              visit.site + ' - ' + visit.location,
+              visit.site + ' bbb - ' + visit.location,
               maxLines: 1,
               style: theme.textTheme.caption,
             ),

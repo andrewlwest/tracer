@@ -12,8 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:Tracer/colors.dart';
+//import 'dart:async';
+import 'dart:io';
+
+import 'package:Tracer/ui/colors.dart';
+//import 'package:aws_client/lambda.dart';
+
 import 'package:flutter/material.dart';
+
+/*
+import 'package:aws_client/aws_client.dart';
+import 'package:http_client/console.dart';
+import 'package:aws_client/src/credentials.dart';
+*/
 
 class LoginPage extends StatefulWidget {
   @override
@@ -23,6 +34,43 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  void _init() async {
+
+    /*
+     messageService.subscribeNewMessage();
+    _messages.addAll(await messageService.getAllMessages());
+    if (mounted) {
+      setState(() {
+        // refresh
+      });
+    }
+    */
+
+  /*
+      function_arn: ' 'arn:aws:lambda:us-east-1:913250585160:function:hello_whirled'
+      endpoint: 'https://lambda.us-east-1.amazonaws.com'
+      region: 'us-east-1'
+      accessKeyId: 'AKIA5JIP2BJEF3BS6CFI'
+      secretAccessKey: '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'
+      */
+
+/*
+      var httpClient = new ConsoleClient();
+      var credentials = new Credentials(accessKey: 'AKIA5JIP2BJEF3BS6CFI', secretKey: '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');
+      var aws = new Aws(credentials: credentials, httpClient: httpClient);
+      var lambda  = aws.lambda('us-east-1');
+
+      await lambda.invoke('arn:aws:lambda:us-east-1:913250585160:function:hello_whirled', '{"method": "hello_whirled"}', invocationType: LambdaInvocationType.RequestResponse);
+*/
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,4 +134,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+
 }
