@@ -9,14 +9,17 @@ part of 'userListItem.dart';
 UserListItem _$UserListItemFromJson(Map<String, dynamic> json) {
   return new UserListItem(
       name: json['name'] as String,
-      login: json['login'] as String,
+      username: json['username'] as String,
       department: json['department'] as String);
 }
 
 abstract class _$UserListItemSerializerMixin {
   String get name;
-  String get login;
+  String get username;
   String get department;
-  Map<String, dynamic> toJson() =>
-      <String, dynamic>{'name': name, 'login': login, 'department': department};
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'name': name,
+        'username': username,
+        'department': department
+      };
 }

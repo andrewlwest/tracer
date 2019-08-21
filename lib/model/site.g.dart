@@ -7,7 +7,7 @@ part of 'site.dart';
 // **************************************************************************
 
 Site _$SiteFromJson(Map<String, dynamic> json) {
-  return new Site(json['organization'] as String, json['name'] as String,
+  return new Site(json['organization'] as String, json['site_name'] as String,
       (json['locations'] as List)?.map((e) => e as String)?.toList());
 }
 
@@ -17,7 +17,7 @@ abstract class _$SiteSerializerMixin {
   List<String> get locations;
   Map<String, dynamic> toJson() => <String, dynamic>{
         'organization': organization,
-        'name': name,
+        'site_name': name,
         'locations': locations
       };
 }

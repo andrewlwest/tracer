@@ -9,13 +9,13 @@ part 'userListItem.g.dart';
 class UserListItem extends Object with _$UserListItemSerializerMixin {
   UserListItem({
     @required this.name,
-    @required this.login,
+    @required this.username,
     @required this.department,
   })  : assert(name != null),
-        assert(login != null);
+        assert(username != null);
 
   final String name;
-  final String login;
+  final String username;
   final String department;
 
    /// A necessary factory constructor for creating a new User instance

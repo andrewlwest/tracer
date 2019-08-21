@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'home.dart';
 import 'addVisit.dart';
 import 'ui/colors.dart';
+import 'visit_detail.dart';
 
 class TracerApp extends StatelessWidget {
   @override
@@ -35,6 +36,7 @@ class TracerApp extends StatelessWidget {
       '/login': (context) => LoginPage(),
       // When navigating to the "/second" route, build the SecondScreen widget.
       '/addVisit': (context) => AddVisit(),
+      '/visitDetail': (context) => VisitDetailPage(),
       },
       onGenerateRoute: _getRoute,
       theme: _kTracersTheme, // New code

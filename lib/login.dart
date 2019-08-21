@@ -26,6 +26,12 @@ import 'package:http_client/console.dart';
 import 'package:aws_client/src/credentials.dart';
 */
 
+import 'package:Tracer/model/userListItem.dart';
+import 'package:Tracer/model/user.dart';
+import 'package:Tracer/service/tracer_service.dart';
+import 'package:shared_preferences/shared_preferences.dart'; 
+
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -35,6 +41,10 @@ class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  final TracerService svc = TracerService();
+  List<UserListItem> userList = List<UserListItem>();
+
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +53,9 @@ class _LoginPageState extends State<LoginPage> {
 
   void _init() async {
 
+    userList = await svc.getAllUsers();
+
+    print("here");
     /*
      messageService.subscribeNewMessage();
     _messages.addAll(await messageService.getAllMessages());
@@ -124,7 +137,11 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text('LOG IN'),
                   textColor: kTracersWhite,
                   onPressed: () {
-                    Navigator.pop(context);
+
+                    login(context);
+                    
+
+                    //Navigator.pop(context);
                   },
                 ),
               ],
@@ -134,6 +151,41 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  Future<Null> login(BuildContext context) async {
+    
+    String login = _usernameController.value.text;
+    String pass = _passwordController.value.text;
+    
+    //bool success = await svc.login(login, pass);
+    bool success = true;
+    print("success = " + (success ? "true":"false"));
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Iterable<UserListItem> filteredUserList = userList.where((user) => (user.username == login));
+    for (UserListItem item in filteredUserList) {
+    
+    //prefs.setString(key, value)
+      
+      print('hello ' + item.name + ' dept:' + item.department);
+
+    } 
+
+    print('end');
+
+    Navigator.pop(context);
+
+  /*
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => VisitDetailPage(visitId: visit.id)),
+    );
+  */
+  
+  }
+
+
 
 
 }

@@ -12,6 +12,7 @@ dependencies:
   json_annotation: ^0.2.3
   aws_client: ^0.2.0
   http: any
+  shared_preferences: ^0.4.2
 
 dev_dependencies:
   flutter_test:

@@ -9,9 +9,6 @@ class LogToDo extends StatefulWidget {
 }
 
 
-
-
-
 class _LogToDoState extends State<LogToDo> {
   final _commentsController = TextEditingController();
 

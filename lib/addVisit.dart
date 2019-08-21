@@ -1,7 +1,11 @@
+import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
 import 'dart:math' as math;
+
+import 'package:Tracer/model/site.dart';
+import 'service/tracer_service.dart';
 
 class AddVisit extends StatefulWidget {
   @override
@@ -11,16 +15,23 @@ class AddVisit extends StatefulWidget {
 class _AddVisitState extends State<AddVisit> {
   final _summaryController = TextEditingController();
 
+
   String dropdownValue = 'MGH';
   List users = List(); //edited line
 
   @override
   Widget build(BuildContext context) {
 
+    TracerService svc = TracerService();
 
-    List 
+    List<UserListItem> users = List<UserListItem>();
+    List<Site> sites = List<Site>();
 
+/*
     Future<String> getSWData() async {
+      
+      sites = svc.getSites("MGH");
+      
       var res = await http
           .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
       var resBody = json.decode(res.body);
@@ -30,9 +41,11 @@ class _AddVisitState extends State<AddVisit> {
       });
 
       print(resBody);
-
       return "Sucess";
     }
+*/
+
+    
 
     return Scaffold(
       appBar: AppBar(
