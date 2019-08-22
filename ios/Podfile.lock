@@ -6,6 +6,8 @@ PODS:
   - AWSCore (2.9.10)
   - Flutter (1.0.0)
   - ReachabilitySwift (4.3.0)
+  - shared_preferences (0.0.1):
+    - Flutter
   - SQLite.swift (0.11.6):
     - SQLite.swift/standard (= 0.11.6)
   - SQLite.swift/standard (0.11.6)
@@ -13,6 +15,7 @@ PODS:
 DEPENDENCIES:
   - AWSAppSync (~> 2.14.0)
   - Flutter (from `.symlinks/flutter/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -24,12 +27,15 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: ".symlinks/flutter/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
 
 SPEC CHECKSUMS:
   AWSAppSync: 91f63b95f572d908f0a001d5c3016b117e49297a
   AWSCore: 22b6bbc6761ca9981d878155d11bc02edd681a64
   Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
   ReachabilitySwift: 408477d1b6ed9779dba301953171e017c31241f3
+  shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
   SQLite.swift: 46d890be8601964454bd3392527f863d1b802d45
 
 PODFILE CHECKSUM: eaf487573666b7dfaa70b0511d4984cf5a3710cd

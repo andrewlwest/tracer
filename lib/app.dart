@@ -36,7 +36,7 @@ class TracerApp extends StatelessWidget {
       '/login': (context) => LoginPage(),
       // When navigating to the "/second" route, build the SecondScreen widget.
       '/addVisit': (context) => AddVisit(),
-      '/visitDetail': (context) => VisitDetailPage(),
+      //'/visitDetail': (context) => VisitDetailPage(),
       },
       onGenerateRoute: _getRoute,
       theme: _kTracersTheme, // New code

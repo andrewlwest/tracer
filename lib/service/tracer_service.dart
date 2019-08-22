@@ -14,6 +14,7 @@ import 'package:Tracer/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TracerService {
+
   static const Map<String, dynamic> _DEFAULT_PARAMS = <String, dynamic>{
     'endpoint': TRACER_SERVICE_ENDPOINT,
     'apiKey': TRACER_SERVICE_API_KEY,
@@ -23,8 +24,7 @@ class TracerService {
 
   TracerService(); 
 
-  Future<List<Site>> getSites(String organization) async {
-    var body = json.encode({"method": "getLocations"});
+  Future<dynamic> getTracerServiceResponse(dynamic body) async {
 
     Map<String, String> headers = {
       'Content-type': 'application/json',
@@ -32,14 +32,25 @@ class TracerService {
       'x-api-key': _buildParams()['apiKey'],
     };
 
-    final response = await http.post(_buildParams()['endpoint'],
-        body: body, headers: headers);
+    final response = await http.post(_buildParams()['endpoint'], body: body, headers: headers);
     final responseJson = json.decode(response.body);
-    String success = responseJson['tracerServiceResponse']["success"];
+    String success = responseJson['tracerServiceResponse']['success'];
+
+    if ('true' == success) {
+      return responseJson;
+    } else {
+      throw("post to server falied!");
+    }
+  }
+
+  Future<List<Site>> getSites(String organization) async {
+    var body = json.encode({"method": "getLocations"});
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
       List<Site> list = new List<Site>();
-      List siteItems = responseJson['tracerServiceResponse']["result"]['organization']['site'];
+      List siteItems = responseJson['tracerServiceResponse']['result']['organization']['sites'];
 
       if (siteItems != null) {
         for (var item in siteItems) {
@@ -52,12 +63,10 @@ class TracerService {
     }
   }
 
-
   Future<bool> login(String login, String pass) async {
     
-    //var body = "PartnersUsername=" + login + "&PartnersPassword=" + pass;
-    var body = "PartnersUsername=alw4&PartnersPassword=PaddleSup00";
-    //print(body);
+    var body = "PartnersUsername=" + login + "&PartnersPassword=" + pass;
+    print("TracerService: login: body = " + body.toString());
 
     Map<String, String> headers = {
       'Content-type': 'text/plain',
@@ -65,33 +74,19 @@ class TracerService {
     };
 
     final response = await http.post(_buildParams()['oncallwebAuthEndPoint'], body: body, headers: headers);
-    //final responseJson = json.decode(response.body);
 
     print(response.body);
     return true;
-    
   }
 
   Future<List<UserListItem>> getAllUsers() async {
     var body = json.encode({"method": "getUsers"});
-
-    Map<String, String> headers = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      'x-api-key': _buildParams()['apiKey'],
-    };
-
-    final response = await http.post(_buildParams()['endpoint'],
-        body: body, headers: headers);
-    final responseJson = json.decode(response.body);
-
-    print(responseJson);
-    
-    String success = responseJson['tracerServiceResponse']["success"];
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
       List<UserListItem> list = new List<UserListItem>();
-      List userItems = responseJson['tracerServiceResponse']["result"]['users'];
+      List userItems = responseJson['tracerServiceResponse']['result']['users'];
 
       if (userItems != null) {
         for (var item in userItems) {
@@ -105,35 +100,12 @@ class TracerService {
   }
 
 
-  Future<dynamic> getTracerServiceResponse(dynamic body) async {
 
-      Map<String, String> headers = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'x-api-key': _buildParams()['apiKey'],
-      };
-
-      final response = await http.post(_buildParams()['endpoint'], body: body, headers: headers);
-      final responseJson = json.decode(response.body);
-
-      String success = responseJson['tracerServiceResponse']["success"];
-
-      if ('true' == success) {
-        return responseJson;
-      } else {
-
-        // look for error messaes or codes here
-
-        throw("post to server falied!");
-      }
-
-  }
-Future<List<VisitListItem>> getAllVisits() async {
+  Future<List<VisitListItem>> getAllVisits() async {
 
     var body = json.encode({"method": "getTracerVisitList"});
     final responseJson = await getTracerServiceResponse(body);
-
-    String success = responseJson['tracerServiceResponse']["success"];
+    String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
       List<VisitListItem> list = new List<VisitListItem>();
@@ -148,12 +120,6 @@ Future<List<VisitListItem>> getAllVisits() async {
     } else {
       return null;
     }
-
-    /* --- App Sync 
-    String jsonString = await APP_SYNC_CHANNEL.invokeMethod(QUERY_GET_ALL_MESSAGES, _buildParams());
-    List<dynamic> values = json.decode(jsonString);
-    return values.map((value) => Message.fromJson(value)).toList();
-    */
   }
 
   Map<String, dynamic> _buildParams({Map<String, dynamic> otherParams}) {
@@ -164,8 +130,9 @@ Future<List<VisitListItem>> getAllVisits() async {
     return params;
   }
 
-
-
-
-
 }
+
+
+
+
+
