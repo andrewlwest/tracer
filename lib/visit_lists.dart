@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:Tracer/addVisit.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
@@ -23,6 +24,7 @@ import 'model/visit.dart';
 import 'visit_detail.dart';
 
 class VisitListPage extends StatelessWidget {
+  static const String id = 'visit_list_page_id';
   @override
   Widget build(BuildContext context) {
     final TracerService svc = new TracerService();
@@ -77,7 +79,7 @@ class VisitListPage extends StatelessWidget {
                   semanticLabel: 'add',
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/addVisit');
+                  Navigator.pushNamed(context, AddVisit.id);
                 },
               ),
               IconButton(

@@ -33,6 +33,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'visit_lists.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String id = 'login_screen';
   @override
   _LoginPageState createState() => _LoginPageState();
 }

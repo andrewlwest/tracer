@@ -30,12 +30,12 @@ class TracerApp extends StatelessWidget {
       title: 'Tracer',
       home: VisitListPage(),
       //home: HomePage(),
-      initialRoute: '/login',
+      initialRoute: LoginPage.id,
       routes: {
       // When navigating to the "/" route, build the FirstScreen widget.
-      '/login': (context) => LoginPage(),
+      LoginPage.id: (context) => LoginPage(),
       // When navigating to the "/second" route, build the SecondScreen widget.
-      '/addVisit': (context) => AddVisit(),
+      AddVisit.id: (context) => AddVisit(),
       //'/visitDetail': (context) => VisitDetailPage(),
       },
       onGenerateRoute: _getRoute,

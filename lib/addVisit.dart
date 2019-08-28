@@ -11,6 +11,7 @@ import 'service/tracer_service.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class AddVisit extends StatefulWidget {
+  static const String id = 'add_visit_screen';
   @override
   _AddVisitState createState() => _AddVisitState();
 }
