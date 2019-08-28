@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:Tracer/model/tracerVisit.dart';
 import 'package:http/http.dart' as http;
 //import 'package:http_client/http_client.dart' as http;
 import 'dart:io';
@@ -9,6 +10,7 @@ import 'package:Tracer/constants.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/model/site.dart';
+import 'package:Tracer/visit_detail.dart';
 import 'package:Tracer/model/user.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,7 +46,7 @@ class TracerService {
   }
 
   Future<List<Site>> getSites(String organization) async {
-    var body = json.encode({"method": "getLocations"});
+    var body = json.encode({"method": "getLocations", "filter": "all"});
     final responseJson = await getTracerServiceResponse(body);
     String success = responseJson['tracerServiceResponse']['success'];
 
@@ -99,11 +101,29 @@ class TracerService {
     }
   }
 
+  Future<TracerVisit> getTracerVisit(String visitId) async {
 
+    var body = json.encode({"method": "getTracerVisit", "tracerVisit": { "id": visitId}});
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+
+    if ('true' == success) {
+       
+       Map<String, dynamic>visitJSONItems = responseJson['tracerServiceResponse']["result"];
+
+      if (visitJSONItems != null) { 
+          TracerVisit list = TracerVisit.fromJson(visitJSONItems);
+          return list;
+      }
+      return null;
+    } else {
+      return null;
+    }
+  }
 
   Future<List<VisitListItem>> getAllVisits() async {
 
-    var body = json.encode({"method": "getTracerVisitList"});
+    var body = json.encode({"method": "getTracerVisitList", "filter":"all"});
     final responseJson = await getTracerServiceResponse(body);
     String success = responseJson['tracerServiceResponse']['success'];
 

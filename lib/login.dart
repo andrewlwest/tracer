@@ -30,7 +30,7 @@ import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/model/user.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:shared_preferences/shared_preferences.dart'; 
-
+import 'visit_lists.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
 
     print('end');
 
-    Navigator.pop(context);
+    //Navigator.pop(context);
 
   /*
     Navigator.push(
@@ -182,6 +182,10 @@ class _LoginPageState extends State<LoginPage> {
       MaterialPageRoute(builder: (context) => VisitDetailPage(visitId: visit.id)),
     );
   */
+    Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VisitListPage()),
+            );
   
   }
 
