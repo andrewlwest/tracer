@@ -54,6 +54,16 @@ class VisitDetailView extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: kTracersBlue500,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                semanticLabel: 'back',
+              ),
+              onPressed: () {
+                print('Back');
+                Navigator.pop(context);
+              },
+            ),
             bottom: TabBar(
               isScrollable: true,
               tabs: [
