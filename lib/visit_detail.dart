@@ -54,15 +54,6 @@ class VisitDetailView extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: kTracersBlue500,
-            leading: IconButton(
-              icon: Icon(
-                Icons.menu,
-                semanticLabel: 'menu',
-              ),
-              onPressed: () {
-                print('Menu button');
-              },
-            ),
             bottom: TabBar(
               isScrollable: true,
               tabs: [
