@@ -213,32 +213,6 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
                   .map((exception) {
                 return ExceptionView(title: exception.text);
               }).toList(),
-
-              // STYLE LIST USING CheckboxListTile
-              CheckboxListTile(
-                value: false,
-                dense: true,
-                title: Text('No Exceptions Found'),
-                onChanged: (bool value) {},
-              ),
-              Divider(
-                height: 1,
-              ),
-              CheckboxListTile(
-                value: false,
-                dense: true,
-                title: Text('Documentation of PRN pain med decision making   '),
-                onChanged: (bool value) {},
-              ),
-              Divider(
-                height: 1,
-              ),
-              CheckboxListTile(
-                value: false,
-                dense: true,
-                title: Text('Duplicate med orders'),
-                onChanged: (bool value) {},
-              ),
             ]),
       ),
     );

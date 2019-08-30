@@ -22,7 +22,13 @@ TracerVisit _$TracerVisitFromJson(Map<String, dynamic> json) {
           ?.map((e) => e == null
               ? null
               : new ObservationGroup.fromJson(e as Map<String, dynamic>))
-          ?.toList());
+          ?.toList(),
+      (json['observations'] as Map<String, dynamic>)?.map((k, e) =>
+          new MapEntry(
+              k,
+              e == null
+                  ? null
+                  : new Observation.fromJson(e as Map<String, dynamic>))));
 }
 
 abstract class _$TracerVisitSerializerMixin {
@@ -34,6 +40,7 @@ abstract class _$TracerVisitSerializerMixin {
   String get completionStatus;
   List<ObservationGroup> get observationGroups;
   SummaryStatus get summaryStatus;
+  Map<String, Observation> get observations;
   Map<String, dynamic> toJson() => <String, dynamic>{
         'summary': summary,
         'location': location,
@@ -42,6 +49,7 @@ abstract class _$TracerVisitSerializerMixin {
         'site': site,
         'completionStatus': completionStatus,
         'observationGroups': observationGroups,
-        'summaryStatus': summaryStatus
+        'summaryStatus': summaryStatus,
+        'observations': observations
       };
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:Tracer/model/tracerVisit/observation.dart';
 import 'package:Tracer/model/tracerVisit/observationGroup.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
@@ -117,8 +118,8 @@ class VisitDetailView extends StatelessWidget {
                 children: <Widget>[
                   ...tracervisit.observationGroups.map((observationGroup) {
                     return VisitDetailItemView(
-                      observationGroup: observationGroup,
-                    );
+                        observationGroup: observationGroup,
+                        observations: tracervisit.observations);
                   }).toList(),
                 ],
               ),
@@ -165,8 +166,8 @@ class VisitDetailView extends StatelessWidget {
 
 class VisitDetailItemView extends StatelessWidget {
   final ObservationGroup observationGroup;
-
-  const VisitDetailItemView({this.observationGroup});
+  final Map<String, Observation> observations;
+  const VisitDetailItemView({this.observationGroup, this.observations});
 
   @override
   Widget build(BuildContext context) {
@@ -182,10 +183,10 @@ class VisitDetailItemView extends StatelessWidget {
             textAlign: TextAlign.left,
           ),
           SizedBox(height: 8.0),
-          ...observationGroup.observations.map((observation) {
+          ...observationGroup.observationIds.map((observationId) {
             return ObsCatListTileView(
-              displayName: observation.displayName,
-              observationId: observation.observationId,
+              displayName: observations[observationId].displayName,
+              observationId: observationId,
             );
           }).toList(),
         ],

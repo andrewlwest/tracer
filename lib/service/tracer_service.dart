@@ -127,8 +127,6 @@ class TracerService {
           responseJson['tracerServiceResponse']["result"];
 
       if (visitJSONItems != null) {
-        Map<String, dynamic> observationDefinations =
-            visitJSONItems['observationDefinitions'];
         ObservationTemplates list =
             ObservationTemplates.fromJson(visitJSONItems);
         return list;
