@@ -1,13 +1,12 @@
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
-import 'font_awesome_flutter.dart';
-import 'dart:math' as math;
+//import 'font_awesome_flutter.dart';
+//import 'dart:math' as math;
 
 class LogToDo extends StatefulWidget {
   @override
   _LogToDoState createState() => _LogToDoState();
 }
-
 
 class _LogToDoState extends State<LogToDo> {
   final _commentsController = TextEditingController();
@@ -25,8 +24,6 @@ class _LogToDoState extends State<LogToDo> {
         child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             children: <Widget>[
-             
-
               SizedBox(height: 16.0),
 
               //COMMENTS BOX
@@ -41,8 +38,6 @@ class _LogToDoState extends State<LogToDo> {
                 ),
               ),
               SizedBox(height: 16.0),
-
-             
             ]),
       ),
     );

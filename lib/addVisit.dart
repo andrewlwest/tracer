@@ -1,9 +1,8 @@
-import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
-import 'font_awesome_flutter.dart';
+
 import 'package:intl/intl.dart';
-import 'dart:math' as math;
+//import 'dart:math' as math;
 
 import 'package:Tracer/model/site.dart';
 import 'service/tracer_service.dart';
@@ -17,7 +16,6 @@ class AddVisit extends StatefulWidget {
 }
 
 class _AddVisitState extends State<AddVisit> {
-
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -33,9 +31,9 @@ class _AddVisitState extends State<AddVisit> {
   String _date = "Date";
   String _time = "Time";
   String _organization = "The General Hospital Corporation";
-  String _selectedSite = null;
-  String _selectedLocation = null;
-  String _visitType = null;
+  String _selectedSite;
+  String _selectedLocation;
+  String _visitType;
 
   List<Site> _sites = List<Site>();
   List<String> _siteSelectList = List<String>();
@@ -50,7 +48,6 @@ class _AddVisitState extends State<AddVisit> {
   }
 
   void _init() async {
-
     // load all sites and locations
     _sites = await svc.getSites(_organization);
 
@@ -106,18 +103,26 @@ class _AddVisitState extends State<AddVisit> {
   void _save(BuildContext context) {
     print("save pressed");
 
-    final snackBar = SnackBar(content: Text(
-      'date = ' + _date 
-      + '\ntime = ' + _time
-      + '\norganization = ' + _organization
-      + '\nsite = ' + (_selectedSite == null ? "null" : _selectedSite)
-      + '\nlocation = ' + (_selectedLocation == null ? "null" : _selectedLocation)
-      + '\nvisit Type = ' + (_visitType == null ? "null" : _visitType)
-      + '\nsummary = ' + (_summaryController.text == null ? "null" : _summaryController.text)
-      ));
-    _scaffoldKey.currentState.showSnackBar(snackBar); 
+    final snackBar = SnackBar(
+        content: Text('date = ' +
+            _date +
+            '\ntime = ' +
+            _time +
+            '\norganization = ' +
+            _organization +
+            '\nsite = ' +
+            (_selectedSite == null ? "null" : _selectedSite) +
+            '\nlocation = ' +
+            (_selectedLocation == null ? "null" : _selectedLocation) +
+            '\nvisit Type = ' +
+            (_visitType == null ? "null" : _visitType) +
+            '\nsummary = ' +
+            (_summaryController.text == null
+                ? "null"
+                : _summaryController.text)));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,19 +158,19 @@ class _AddVisitState extends State<AddVisit> {
                         elevation: 4.0,
                         onPressed: () {
                           DatePicker.showDatePicker(context,
-                            theme: DatePickerTheme(
-                              containerHeight: 210.0,
-                            ),
-                            showTitleActions: true,
-                            minTime: DateTime(2000, 1, 1),
-                            maxTime: DateTime(2022, 12, 31),
-                            onConfirm: (date) {
-                              print('confirm $date');
-                              _date = new DateFormat("m/d/yy").format(date);
-                              setState(() {});
-                            },
-                            currentTime: DateTime.now(),
-                            locale: LocaleType.en);
+                              theme: DatePickerTheme(
+                                containerHeight: 210.0,
+                              ),
+                              showTitleActions: true,
+                              minTime: DateTime(2000, 1, 1),
+                              maxTime: DateTime(2022, 12, 31),
+                              onConfirm: (date) {
+                            print('confirm $date');
+                            _date = new DateFormat("m/d/yy").format(date);
+                            setState(() {});
+                          },
+                              currentTime: DateTime.now(),
+                              locale: LocaleType.en);
                         },
                         child: Container(
                           alignment: Alignment.center,
@@ -209,9 +214,8 @@ class _AddVisitState extends State<AddVisit> {
                         ),
                         color: Colors.white,
                       )
-                      
-                      
-                    /*
+
+                      /*
                       TextFormField(
                         controller: _dateFieldController,
                         focusNode: _dateFocusNode,
@@ -230,7 +234,6 @@ class _AddVisitState extends State<AddVisit> {
                         ),
                       ),
                     */
-
                     ],
                   )),
                   SizedBox(width: 12.0),

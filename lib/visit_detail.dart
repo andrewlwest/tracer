@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:Tracer/model/observationGroup.dart';
+import 'package:Tracer/model/tracerVisit/observationGroup.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
 import 'service/tracer_service.dart';
-import 'model/tracerVisit.dart';
+import 'model/tracerVisit/tracerVisit.dart';
+import 'logExceptions.dart';
 
 class VisitDetailPage extends StatelessWidget {
   static const String id = 'visit_detail_page_id';
@@ -184,6 +185,7 @@ class VisitDetailItemView extends StatelessWidget {
           ...observationGroup.observations.map((observation) {
             return ObsCatListTileView(
               displayName: observation.displayName,
+              observationId: observation.observationId,
             );
           }).toList(),
         ],
@@ -194,8 +196,8 @@ class VisitDetailItemView extends StatelessWidget {
 
 class ObsCatListTileView extends StatelessWidget {
   final String displayName;
-  const ObsCatListTileView({this.displayName});
-
+  final String observationId;
+  const ObsCatListTileView({this.displayName, this.observationId});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -248,10 +250,19 @@ class ObsCatListTileView extends StatelessWidget {
                 ],
               ),
             ),
-            title: Text(
-              displayName,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+            title: FlatButton(
+              child: Text(
+                displayName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              onPressed: () {
+                print('Go to next page;');
+                _onTapItem(
+                    context: context,
+                    observationId: observationId,
+                    observationName: displayName);
+              },
             ),
             trailing: Icon(
               //ICON IS GREEN CHECK IF COMPLIANT
@@ -275,6 +286,18 @@ class ObsCatListTileView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _onTapItem(
+      {BuildContext context, String observationId, String observationName}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => LogExceptions(
+                observationId: observationId,
+                observationName: observationName,
+              )),
     );
   }
 }

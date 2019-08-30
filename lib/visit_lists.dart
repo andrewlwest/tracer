@@ -20,7 +20,6 @@ import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
 
 import 'service/tracer_service.dart';
-import 'model/visit.dart';
 import 'visit_detail.dart';
 
 class VisitListPage extends StatelessWidget {
@@ -28,8 +27,6 @@ class VisitListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TracerService svc = new TracerService();
-
-    final ThemeData theme = Theme.of(context);
 
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 

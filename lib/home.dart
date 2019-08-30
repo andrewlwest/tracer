@@ -13,15 +13,13 @@
 // limitations under the License.
 
 import 'package:Tracer/ui/colors.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
-import 'dart:math' as math;
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
+    //final ThemeData theme = Theme.of(context);
 
     //OBSERVATION CATEGORY LIST TILE
     final obsCatListTile = new ListTile(

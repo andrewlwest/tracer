@@ -1,11 +1,16 @@
+import 'package:Tracer/model/observationTemplates/observationTemplates.dart';
+import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
-import 'dart:math' as math;
 
 class LogExceptions extends StatefulWidget {
+  final String observationId;
+  final String observationName;
+  LogExceptions({this.observationId, this.observationName});
   @override
-  _LogExceptionsState createState() => _LogExceptionsState();
+  _LogExceptionsState createState() => _LogExceptionsState(
+      observationId: observationId, observationName: observationName);
 }
 
 //SUBJECT MATTER EXPERT WIDGET
@@ -54,22 +59,6 @@ final scoreButtons = new Padding(
   child: Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: <Widget>[
-      // Ink(
-      //   decoration: ShapeDecoration(
-      //     color: Colors.lightBlue,
-      //     bor
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: new BorderRadius.circular(10.0),
-      //     ),
-      //   ),
-      //   child: IconButton(
-      //     icon: Icon(FontAwesomeIcons.ban),
-      //     color: Colors.white,
-      //     onPressed: () {
-      //       print("filled background");
-      //     },
-      //   ),
-      // ),
       IconButton(
         icon: Icon(FontAwesomeIcons.ban),
         color: kTracersGray300,
@@ -115,16 +104,57 @@ final scoreButtons = new Padding(
 );
 
 class _LogExceptionsState extends State<LogExceptions> {
-  final _commentsController = TextEditingController();
-
+  final String observationId;
+  final String observationName;
   String dropdownValue = 'MGH';
+  final TracerService svc = new TracerService();
+
+  _LogExceptionsState({this.observationId, this.observationName});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<ObservationTemplates>(
+      future: svc.getObservationTemplates(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) print(snapshot.error);
+        return snapshot.hasData
+            ? LogExceptionsView(
+                observationTemplates: snapshot.data,
+                observationId: observationId,
+                observationName: observationName)
+            : Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+}
+
+class LogExceptionsView extends StatefulWidget {
+  final ObservationTemplates observationTemplates;
+  final String observationId;
+  final String observationName;
+
+  LogExceptionsView(
+      {Key key,
+      this.observationTemplates,
+      this.observationId,
+      this.observationName})
+      : super(key: key);
+
+  _LogExceptionsViewState createState() =>
+      _LogExceptionsViewState(observationTemplates);
+}
+
+class _LogExceptionsViewState extends State<LogExceptionsView> {
+  final ObservationTemplates observationTemplates;
+  final _commentsController = TextEditingController();
+  _LogExceptionsViewState(this.observationTemplates);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kTracersBlue500,
-        title: Text("Meds, Specimens Treatment"),
+        title: Text(widget.observationName),
       ),
       body: SafeArea(
         child: ListView(
@@ -178,6 +208,11 @@ class _LogExceptionsState extends State<LogExceptions> {
                 ),
               ),
               SizedBox(height: 8.0),
+              ...observationTemplates
+                  .observationDefinitions[widget.observationId].exceptionList
+                  .map((exception) {
+                return ExceptionView(title: exception.text);
+              }).toList(),
 
               // STYLE LIST USING CheckboxListTile
               CheckboxListTile(
@@ -205,6 +240,31 @@ class _LogExceptionsState extends State<LogExceptions> {
                 onChanged: (bool value) {},
               ),
             ]),
+      ),
+    );
+  }
+}
+
+class ExceptionView extends StatelessWidget {
+  final String title;
+  const ExceptionView({this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          // STYLE LIST USING CheckboxListTile
+          CheckboxListTile(
+            value: false,
+            dense: true,
+            title: Text(title),
+            onChanged: (bool value) {},
+          ),
+          Divider(
+            height: 1,
+          ),
+        ],
       ),
     );
   }

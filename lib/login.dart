@@ -13,7 +13,6 @@
 // limitations under the License.
 
 //import 'dart:async';
-import 'dart:io';
 
 import 'package:Tracer/ui/colors.dart';
 //import 'package:aws_client/lambda.dart';
@@ -27,9 +26,8 @@ import 'package:aws_client/src/credentials.dart';
 */
 
 import 'package:Tracer/model/userListItem.dart';
-import 'package:Tracer/model/user.dart';
 import 'package:Tracer/service/tracer_service.dart';
-import 'package:shared_preferences/shared_preferences.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'visit_lists.dart';
 
 class LoginPage extends StatefulWidget {
@@ -45,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
   final TracerService svc = TracerService();
   List<UserListItem> userList = List<UserListItem>();
 
-
   @override
   void initState() {
     super.initState();
@@ -53,7 +50,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _init() async {
-
     userList = await svc.getAllUsers();
 
     print("here");
@@ -67,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
     }
     */
 
-  /*
+    /*
       function_arn: ' 'arn:aws:lambda:us-east-1:913250585160:function:hello_whirled'
       endpoint: 'https://lambda.us-east-1.amazonaws.com'
       region: 'us-east-1'
@@ -83,7 +79,6 @@ class _LoginPageState extends State<LoginPage> {
 
       await lambda.invoke('arn:aws:lambda:us-east-1:913250585160:function:hello_whirled', '{"method": "hello_whirled"}', invocationType: LambdaInvocationType.RequestResponse);
 */
-    
   }
 
   @override
@@ -138,9 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text('LOG IN'),
                   textColor: kTracersWhite,
                   onPressed: () {
-
                     login(context);
-                    
 
                     //Navigator.pop(context);
                   },
@@ -154,43 +147,36 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<Null> login(BuildContext context) async {
-    
     String login = _usernameController.value.text;
     String pass = _passwordController.value.text;
-    
+
     //bool success = await svc.login(login, pass);
     bool success = true;
-    print("success = " + (success ? "true":"false"));
+    print("success = " + (success ? "true" : "false"));
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    Iterable<UserListItem> filteredUserList = userList.where((user) => (user.username == login));
+    Iterable<UserListItem> filteredUserList =
+        userList.where((user) => (user.username == login));
     for (UserListItem item in filteredUserList) {
-    
-    //prefs.setString(key, value)
-      
-      print('hello ' + item.name + ' dept:' + item.department);
+      //prefs.setString(key, value)
 
-    } 
+      print('hello ' + item.name + ' dept:' + item.department);
+    }
 
     print('end');
 
     //Navigator.pop(context);
 
-  /*
+    /*
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => VisitDetailPage(visitId: visit.id)),
     );
   */
     Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => VisitListPage()),
-            );
-  
+      context,
+      MaterialPageRoute(builder: (context) => VisitListPage()),
+    );
   }
-
-
-
-
 }
