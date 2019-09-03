@@ -1,3 +1,4 @@
+import 'package:Tracer/model/observationTemplates/observationException.dart';
 import 'package:Tracer/model/observationTemplates/observationTemplates.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
@@ -151,6 +152,23 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
 
   @override
   Widget build(BuildContext context) {
+    List<ObservationException> selectedExceptions;
+
+    void addSelectedException(ObservationException observationException) {
+      if (selectedExceptions != null) {
+        int index = selectedExceptions.indexOf(observationException);
+        if (index == -1) {
+          selectedExceptions.add(observationException);
+        }
+      } else {
+        selectedExceptions = [observationException];
+      }
+      print('How many exceptions selected: ' +
+          (selectedExceptions.length).toString());
+    }
+
+    ;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kTracersBlue500,
@@ -210,8 +228,13 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
               SizedBox(height: 8.0),
               ...observationTemplates
                   .observationDefinitions[widget.observationId].exceptionList
-                  .map((exception) {
-                return ExceptionView(title: exception.text);
+                  .map((observationException) {
+                return ExceptionView(
+                  observationException: observationException,
+                  callback: (value) {
+                    addSelectedException(value);
+                  },
+                );
               }).toList(),
             ]),
       ),
@@ -219,10 +242,17 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
   }
 }
 
-class ExceptionView extends StatelessWidget {
-  final String title;
-  const ExceptionView({this.title});
+class ExceptionView extends StatefulWidget {
+  final ObservationException observationException;
+  final Function callback;
 
+  ExceptionView({this.observationException, this.callback});
+
+  _ExceptionViewState createState() => _ExceptionViewState();
+}
+
+class _ExceptionViewState extends State<ExceptionView> {
+  bool _checkbox_value = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -230,10 +260,17 @@ class ExceptionView extends StatelessWidget {
         children: <Widget>[
           // STYLE LIST USING CheckboxListTile
           CheckboxListTile(
-            value: false,
+            value: _checkbox_value,
             dense: true,
-            title: Text(title),
-            onChanged: (bool value) {},
+            title: Text(widget.observationException.text),
+            onChanged: (bool value) {
+              setState(() {
+                _checkbox_value = value;
+                if (value) {
+                  widget.callback(widget.observationException);
+                }
+              });
+            },
           ),
           Divider(
             height: 1,
