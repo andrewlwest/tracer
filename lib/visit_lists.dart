@@ -149,6 +149,10 @@ class VisitListPage extends StatelessWidget {
                   title: Text("Profile"),
                   trailing: Icon(Icons.arrow_forward),
                 ),
+                ListTile(
+                  title: Text("Sign Out"),
+                  trailing: Icon(Icons.exit_to_app),
+                ),
               ],
             ),
           ),
