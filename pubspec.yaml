@@ -14,6 +14,7 @@ dependencies:
   http: any
   shared_preferences: ^0.4.2
   flutter_datetime_picker: 1.2.5
+  flutter_launcher_icons: ^0.7.3
 
 dev_dependencies:
   flutter_test:
@@ -35,3 +36,12 @@ flutter:
   assets:
     - assets/tracers-ko.png
     - assets/tracer-logo-ko.png
+
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "assets/launcher/icon.png"
+  image_path_android: "assets/launcher/icon.png"
+  adaptive_icon_background: "assets/launcher/background.png"
+  adaptive_icon_foreground: "assets/launcher/foreground.png"
