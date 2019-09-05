@@ -79,24 +79,24 @@ class VisitListPage extends StatelessWidget {
                   Navigator.pushNamed(context, AddVisit.id);
                 },
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.search,
-                  semanticLabel: 'search',
-                ),
-                onPressed: () {
-                  print('Search button');
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.more_vert,
-                  semanticLabel: 'more',
-                ),
-                onPressed: () {
-                  print('More button');
-                },
-              ),
+              // IconButton(
+              //   icon: Icon(
+              //     Icons.search,
+              //     semanticLabel: 'search',
+              //   ),
+              //   onPressed: () {
+              //     print('Search button');
+              //   },
+              // ),
+              // IconButton(
+              //   icon: Icon(
+              //     Icons.more_vert,
+              //     semanticLabel: 'more',
+              //   ),
+              //   onPressed: () {
+              //     print('More button');
+              //   },
+              // ),
             ],
           ),
           body: TabBarView(
