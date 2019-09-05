@@ -236,11 +236,14 @@ class VisitListView extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      Text(
-                                        '${visits[position].summary}',
-                                        style: theme.textTheme.body2,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
+                                      SizedBox(
+                                        height: 45,
+                                        child: Text(
+                                          '${visits[position].summary}',
+                                          style: theme.textTheme.body2,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -253,17 +256,17 @@ class VisitListView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 //TODAY and UPCOMING CARDS WILL HAVE THE PROGRESS BAR SHOWN INSTEAD OF THE SCORE BAR
-                                new Expanded(
-                                  child: new SizedBox(
-                                    height: 4,
-                                    child: new LinearProgressIndicator(
-                                      valueColor: new AlwaysStoppedAnimation(
-                                          kTracersBlue500),
-                                      backgroundColor: kTracersBlue100,
-                                      value: .03,
-                                    ),
-                                  ),
-                                ),
+                                // new Expanded(
+                                //   child: new SizedBox(
+                                //     height: 4,
+                                //     child: new LinearProgressIndicator(
+                                //       valueColor: new AlwaysStoppedAnimation(
+                                //           kTracersBlue500),
+                                //       backgroundColor: kTracersBlue100,
+                                //       value: .03,
+                                //     ),
+                                //   ),
+                                // ),
                                 //PAST CARDS WILL HAVE THE SCORE BAR SHOWN INSTEAD OF THE PROGRESS BAR
                                 //vCardScore,
                                 new Expanded(

@@ -207,13 +207,13 @@ class ObsCatListTileView extends StatelessWidget {
         children: <Widget>[
           ListTile(
             contentPadding: EdgeInsets.all(0),
-            onTap:  () {
-                print('Go to next page;');
-                _onTapItem(
-                    context: context,
-                    observationId: observationId,
-                    observationName: displayName);
-              },
+            onTap: () {
+              print('Go to next page;');
+              _onTapItem(
+                  context: context,
+                  observationId: observationId,
+                  observationName: displayName);
+            },
             leading: SizedBox(
               width: 40,
               height: 42,
@@ -259,14 +259,11 @@ class ObsCatListTileView extends StatelessWidget {
                 ],
               ),
             ),
-            
-          title: Text(
-        displayName,
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-      ),
-            
-            
+            title: Text(
+              displayName,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
             trailing: Icon(
               //ICON IS GREEN CHECK IF COMPLIANT
               FontAwesomeIcons.solidCheckCircle,
