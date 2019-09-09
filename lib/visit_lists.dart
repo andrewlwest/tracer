@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:Tracer/addVisit.dart';
+import 'package:Tracer/createVisit.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';

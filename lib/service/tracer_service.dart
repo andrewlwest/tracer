@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:Tracer/constants.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/model/userListItem.dart';
-import 'package:Tracer/model/site.dart';
+import 'package:Tracer/model/place.dart';
+
 import 'package:Tracer/model/observationTemplates/observationTemplates.dart';
 
 class TracerService {
@@ -38,38 +39,21 @@ class TracerService {
     }
   }
 
-  Future<List<Site>> getSites(String organization) async {
-    var body = json.encode({"method": "getLocations", "filter": "all"});
-    final responseJson = await getTracerServiceResponse(body);
-    String success = responseJson['tracerServiceResponse']['success'];
-
-    if ('true' == success) {
-      List<Site> list = new List<Site>();
-      List siteItems = responseJson['tracerServiceResponse']['result']
-          ['organization']['sites'];
-
-      if (siteItems != null) {
-        for (var item in siteItems) {
-          list.add(Site.fromJson(item));
-        }
-      }
-      return list;
-    } else {
-      return null;
-    }
-  }
-
   Future<bool> login(String login, String pass) async {
-    var body = "PartnersUsername=" + login + "&PartnersPassword=" + pass;
-    print("TracerService: login: body = " + body.toString());
 
     Map<String, String> headers = {
-      'Content-type': 'text/plain',
       'OncallWeb-Mojo-Key': _buildParams()['oncallWebServiceKey'],
     };
 
-    final response = await http.post(_buildParams()['oncallwebAuthEndPoint'],
-        body: body, headers: headers);
+    Map<String, String> body = {
+      'PartnersUsername': login,
+      'PartnersPassword': pass,
+    };
+
+    //var body = "PartnersUsername=" + login + "&PartnersPassword=" + pass;
+    print("TracerService: login: body = " + body.toString());
+
+    final response = await http.post(_buildParams()['oncallwebAuthEndPoint'], body: body, headers: headers);
 
     print(response.body);
     return true;
@@ -152,6 +136,26 @@ class TracerService {
         }
       }
       return list;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<Place>> getPlaces() async {
+    var body = json.encode({"method": "getPlaces"});
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+
+    if ('true' == success) {
+      List placeList = responseJson['tracerServiceResponse']["result"]["places"];
+      List<Place> returnList = new List<Place>();
+
+      if (placeList != null) {
+        for (var place in placeList) {
+          returnList.add(Place.fromJson(place));
+        }
+      } 
+      return returnList;
     } else {
       return null;
     }

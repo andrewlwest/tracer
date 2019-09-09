@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _init() async {
-    userList = await svc.getAllUsers();
+    //userList = await svc.getAllUsers();
 
     print("here");
     /*
@@ -150,30 +150,32 @@ class _LoginPageState extends State<LoginPage> {
     String login = _usernameController.value.text;
     String pass = _passwordController.value.text;
 
-    //bool success = await svc.login(login, pass);
-    bool success = true;
+    bool success = await svc.login(login, pass);
     print("success = " + (success ? "true" : "false"));
+
+    // to simulate a successful login 
+    success = true;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    Iterable<UserListItem> filteredUserList =
-        userList.where((user) => (user.username == login));
+    Iterable<UserListItem> filteredUserList = userList.where((user) => (user.username == login));
     for (UserListItem item in filteredUserList) {
-      //prefs.setString(key, value)
-
+      prefs.setString("userLogin", item.username);
+      prefs.setString("userName", item.name);
+      prefs.setString("userDepartment", item.department);
       print('hello ' + item.name + ' dept:' + item.department);
     }
 
     print('end');
-
     //Navigator.pop(context);
 
     /*
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => VisitDetailPage(visitId: visit.id)),
-    );
-  */
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => VisitDetailPage(visitId: visit.id)),
+      );
+    */
+
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => VisitListPage()),
