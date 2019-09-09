@@ -154,20 +154,26 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
   Widget build(BuildContext context) {
     List<ObservationException> selectedExceptions;
 
-    void addSelectedException(ObservationException observationException) {
+    void addSelectedException(ExceptionDataSelected data) {
       if (selectedExceptions != null) {
-        int index = selectedExceptions.indexOf(observationException);
+        int index = selectedExceptions.indexOf(data.observationException);
         if (index == -1) {
-          selectedExceptions.add(observationException);
+          if (data.selected) {
+            selectedExceptions.add(data.observationException);
+          }
+        } else {
+          if (!data.selected) {
+            selectedExceptions.removeAt(index);
+          }
         }
       } else {
-        selectedExceptions = [observationException];
+        if (data.selected) {
+          selectedExceptions = [data.observationException];
+        }
       }
       print('How many exceptions selected: ' +
           (selectedExceptions.length).toString());
     }
-
-    ;
 
     return Scaffold(
       appBar: AppBar(
@@ -231,8 +237,8 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
                   .map((observationException) {
                 return ExceptionView(
                   observationException: observationException,
-                  callback: (value) {
-                    addSelectedException(value);
+                  callback: (data) {
+                    addSelectedException(data);
                   },
                 );
               }).toList(),
@@ -266,9 +272,10 @@ class _ExceptionViewState extends State<ExceptionView> {
             onChanged: (bool value) {
               setState(() {
                 _checkbox_value = value;
-                if (value) {
-                  widget.callback(widget.observationException);
-                }
+                var data = ExceptionDataSelected(
+                    observationException: widget.observationException,
+                    selected: value);
+                widget.callback(data);
               });
             },
           ),
@@ -279,4 +286,10 @@ class _ExceptionViewState extends State<ExceptionView> {
       ),
     );
   }
+}
+
+class ExceptionDataSelected {
+  ObservationException observationException;
+  bool selected;
+  ExceptionDataSelected({this.observationException, this.selected});
 }

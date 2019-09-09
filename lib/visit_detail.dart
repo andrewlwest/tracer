@@ -88,26 +88,26 @@ class VisitDetailView extends StatelessWidget {
               ],
             ),
             title: Text(tracervisit.location),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.search,
-                  semanticLabel: 'search',
-                ),
-                onPressed: () {
-                  print('Search button');
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.more_vert,
-                  semanticLabel: 'more',
-                ),
-                onPressed: () {
-                  print('More button');
-                },
-              ),
-            ],
+            // actions: <Widget>[
+            //   IconButton(
+            //     icon: Icon(
+            //       Icons.search,
+            //       semanticLabel: 'search',
+            //     ),
+            //     onPressed: () {
+            //       print('Search button');
+            //     },
+            //   ),
+            //   IconButton(
+            //     icon: Icon(
+            //       Icons.more_vert,
+            //       semanticLabel: 'more',
+            //     ),
+            //     onPressed: () {
+            //       print('More button');
+            //     },
+            //   ),
+            // ],
           ),
           body: TabBarView(
             children: <Widget>[
@@ -173,6 +173,7 @@ class VisitDetailItemView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: 18.0),
           Text(
@@ -206,6 +207,13 @@ class ObsCatListTileView extends StatelessWidget {
         children: <Widget>[
           ListTile(
             contentPadding: EdgeInsets.all(0),
+            onTap: () {
+              print('Go to next page;');
+              _onTapItem(
+                  context: context,
+                  observationId: observationId,
+                  observationName: displayName);
+            },
             leading: SizedBox(
               width: 40,
               height: 42,
@@ -251,19 +259,10 @@ class ObsCatListTileView extends StatelessWidget {
                 ],
               ),
             ),
-            title: FlatButton(
-              child: Text(
-                displayName,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              onPressed: () {
-                print('Go to next page;');
-                _onTapItem(
-                    context: context,
-                    observationId: observationId,
-                    observationName: displayName);
-              },
+            title: Text(
+              displayName,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
             trailing: Icon(
               //ICON IS GREEN CHECK IF COMPLIANT

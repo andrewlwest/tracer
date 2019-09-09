@@ -80,24 +80,24 @@ class VisitListPage extends StatelessWidget {
                   Navigator.pushNamed(context, AddVisit.id);
                 },
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.search,
-                  semanticLabel: 'search',
-                ),
-                onPressed: () {
-                  print('Search button');
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.more_vert,
-                  semanticLabel: 'more',
-                ),
-                onPressed: () {
-                  print('More button');
-                },
-              ),
+              // IconButton(
+              //   icon: Icon(
+              //     Icons.search,
+              //     semanticLabel: 'search',
+              //   ),
+              //   onPressed: () {
+              //     print('Search button');
+              //   },
+              // ),
+              // IconButton(
+              //   icon: Icon(
+              //     Icons.more_vert,
+              //     semanticLabel: 'more',
+              //   ),
+              //   onPressed: () {
+              //     print('More button');
+              //   },
+              // ),
             ],
           ),
           body: TabBarView(
@@ -149,6 +149,10 @@ class VisitListPage extends StatelessWidget {
                 ListTile(
                   title: Text("Profile"),
                   trailing: Icon(Icons.arrow_forward),
+                ),
+                ListTile(
+                  title: Text("Sign Out"),
+                  trailing: Icon(Icons.exit_to_app),
                 ),
               ],
             ),
@@ -237,11 +241,14 @@ class VisitListView extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      Text(
-                                        '${visits[position].summary}',
-                                        style: theme.textTheme.body2,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
+                                      SizedBox(
+                                        height: 45,
+                                        child: Text(
+                                          '${visits[position].summary}',
+                                          style: theme.textTheme.body2,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -254,17 +261,17 @@ class VisitListView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 //TODAY and UPCOMING CARDS WILL HAVE THE PROGRESS BAR SHOWN INSTEAD OF THE SCORE BAR
-                                new Expanded(
-                                  child: new SizedBox(
-                                    height: 4,
-                                    child: new LinearProgressIndicator(
-                                      valueColor: new AlwaysStoppedAnimation(
-                                          kTracersBlue500),
-                                      backgroundColor: kTracersBlue100,
-                                      value: .03,
-                                    ),
-                                  ),
-                                ),
+                                // new Expanded(
+                                //   child: new SizedBox(
+                                //     height: 4,
+                                //     child: new LinearProgressIndicator(
+                                //       valueColor: new AlwaysStoppedAnimation(
+                                //           kTracersBlue500),
+                                //       backgroundColor: kTracersBlue100,
+                                //       value: .03,
+                                //     ),
+                                //   ),
+                                // ),
                                 //PAST CARDS WILL HAVE THE SCORE BAR SHOWN INSTEAD OF THE PROGRESS BAR
                                 //vCardScore,
                                 new Expanded(

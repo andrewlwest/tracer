@@ -152,10 +152,12 @@ class _AddVisitState extends State<AddVisit> {
                   Expanded(
                       child: Column(
                     children: <Widget>[
-                      RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
-                        elevation: 4.0,
+                      OutlineButton(
+                        borderSide: BorderSide(
+                          color: Colors.black, //Color of the border
+                          style: BorderStyle.solid, //Style of the border
+                          width: .5, //width of the border
+                        ),
                         onPressed: () {
                           DatePicker.showDatePicker(context,
                               theme: DatePickerTheme(
@@ -186,29 +188,19 @@ class _AddVisitState extends State<AddVisit> {
                                         Icon(
                                           Icons.date_range,
                                           size: 18.0,
-                                          color: Colors.teal,
+                                          color: kTracersBlue500,
                                         ),
                                         Text(
                                           " $_date",
                                           style: TextStyle(
-                                              color: Colors.teal,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18.0),
+                                              color: kTracersBlue500,
+                                              fontSize: 12.0),
                                         ),
                                       ],
                                     ),
                                   )
                                 ],
                               ),
-                              /*
-                              Text(
-                                " ",
-                                style: TextStyle(
-                                    color: Colors.teal,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0),
-                              ),
-                              */
                             ],
                           ),
                         ),
@@ -240,10 +232,12 @@ class _AddVisitState extends State<AddVisit> {
                   Expanded(
                       child: Column(
                     children: <Widget>[
-                      RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
-                        elevation: 4.0,
+                      OutlineButton(
+                        borderSide: BorderSide(
+                          color: Colors.black, //Color of the border
+                          style: BorderStyle.solid, //Style of the border
+                          width: .5, //width of the border
+                        ),
                         onPressed: () {
                           DatePicker.showTimePicker(context,
                               theme: DatePickerTheme(
@@ -271,15 +265,14 @@ class _AddVisitState extends State<AddVisit> {
                                       children: <Widget>[
                                         Icon(
                                           Icons.access_time,
-                                          size: 18.0,
-                                          color: Colors.teal,
+                                          size: 16.0,
+                                          color: kTracersBlue500,
                                         ),
                                         Text(
                                           " $_time",
                                           style: TextStyle(
-                                              color: Colors.teal,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18.0),
+                                              color: kTracersBlue500,
+                                              fontSize: 12.0),
                                         ),
                                       ],
                                     ),
