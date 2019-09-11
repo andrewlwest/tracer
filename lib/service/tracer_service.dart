@@ -7,6 +7,8 @@ import 'package:Tracer/constants.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/model/place.dart';
+import 'package:Tracer/model/user.dart';
+
 
 import 'package:Tracer/model/observationTemplates/observationTemplates.dart';
 
@@ -51,12 +53,32 @@ class TracerService {
     };
 
     //var body = "PartnersUsername=" + login + "&PartnersPassword=" + pass;
-    print("TracerService: login: body = " + body.toString());
+    //print("TracerService: login: body = " + body.toString());
 
     final response = await http.post(_buildParams()['oncallwebAuthEndPoint'], body: body, headers: headers);
+    if (response.body.contains("AuthenticationSuccess")) {
+      return true;
+    } else {
+      return false;
+    }
 
-    print(response.body);
-    return true;
+  }
+
+  Future<User> getUser(String login) async {
+    var body = json.encode({"method": "getUsers"});
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+
+    if ('true' == success) {
+      Map<String, dynamic> json = responseJson['tracerServiceResponse']['result'];
+      if (json != null) {
+        return User.fromJson(json);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 
   Future<List<UserListItem>> getAllUsers() async {

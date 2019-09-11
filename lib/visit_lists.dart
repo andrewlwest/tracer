@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:Tracer/addVisit.dart';
+import 'package:Tracer/autoComplete.dart';
 import 'package:Tracer/createVisit.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
@@ -77,7 +78,10 @@ class VisitListPage extends StatelessWidget {
                   semanticLabel: 'add',
                 ),
                 onPressed: () {
+                  //Navigator.pushNamed(context, CreateVisit.id);
+                  //Navigator.pushNamed(context, AutoComplete.id);
                   Navigator.pushNamed(context, AddVisit.id);
+                  
                 },
               ),
               // IconButton(
@@ -162,6 +166,11 @@ class VisitListPage extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
 
 class VisitListView extends StatelessWidget {
   final List<VisitListItem> visits;

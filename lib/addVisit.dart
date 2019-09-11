@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 //import 'dart:math' as math;
 
-import 'package:Tracer/model/site.dart';
+//import 'package:Tracer/model/site.dart';
 import 'service/tracer_service.dart';
 
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:Tracer/players.dart';
 
 class AddVisit extends StatefulWidget {
   static const String id = 'add_visit_screen';
@@ -35,11 +37,16 @@ class _AddVisitState extends State<AddVisit> {
   String _selectedLocation;
   String _visitType;
 
-  List<Site> _sites = List<Site>();
+  //List<Site> _sites = List<Site>();
   List<String> _siteSelectList = List<String>();
   List<String> _locationSelectList = List<String>();
 
   TracerService svc = TracerService();
+
+
+  GlobalKey<AutoCompleteTextFieldState<Players>> key = new GlobalKey();
+  AutoCompleteTextField searchTextField;
+  TextEditingController controller = new TextEditingController();
 
   @override
   void initState() {
@@ -49,10 +56,10 @@ class _AddVisitState extends State<AddVisit> {
 
   void _init() async {
     // load all sites and locations
-    _sites = await svc.getSites(_organization);
+    //_sites = await svc.getSites(_organization);
 
     // create a simple list of string sites for use in the select
-    _siteSelectList = _sites.map((site) => site.name).toList();
+    //_siteSelectList = _sites.map((site) => site.name).toList();
 
     // old implementation for adding event listeners to fields
     //_dateFocusNode.addListener(_onDateFocusChange);
@@ -340,6 +347,54 @@ class _AddVisitState extends State<AddVisit> {
                 ),
               ),
               SizedBox(height: 12.0),
+
+
+              AutoCompleteTextField<Players>(
+                style: new TextStyle(color: Colors.black, fontSize: 16.0),
+                decoration: new InputDecoration(
+                    suffixIcon: Container(
+                      width: 85.0,
+                      height: 60.0,
+                    ),
+                    contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+                    filled: true,
+                    hintText: 'Search Player Name',
+                    hintStyle: TextStyle(color: Colors.black)),
+                itemSubmitted: (item) {
+                  setState(() => searchTextField.textField.controller.text =
+                      item.autocompleteterm);
+                },
+                clearOnSubmit: false,
+                key: key,
+                suggestions: PlayersViewModel.players,
+                itemBuilder: (context, item) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(item.autocompleteterm,
+                      style: TextStyle(
+                        fontSize: 16.0
+                      ),),
+                      Padding(
+                        padding: EdgeInsets.all(15.0),
+                      ),
+                      Text(item.country,
+                      )
+                    ],
+                  );
+                },
+                itemSorter: (a, b) {
+                  return a.autocompleteterm.compareTo(b.autocompleteterm);
+                },
+                itemFilter: (item, query) {
+                  return item.autocompleteterm
+                      .toLowerCase()
+                      .startsWith(query.toLowerCase());
+                }),
+          
+
+
+              /*
               DropdownButtonFormField<String>(
                 value: _selectedSite,
                 onChanged: (String newValue) {
@@ -361,6 +416,8 @@ class _AddVisitState extends State<AddVisit> {
                   labelText: 'Location',
                 ),
               ),
+              */
+
               SizedBox(height: 12.0),
               TextFormField(
                 maxLines: 3,

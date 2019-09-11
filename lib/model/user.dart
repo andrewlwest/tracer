@@ -7,10 +7,13 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User extends Object with _$UserSerializerMixin {
-  User(this.login, this.name);
 
-  String login;
+  User(this.username, this.name, this.department, this.roles);
+
+  String username;
   String name;
+  String department;
+  List<String> roles;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
@@ -18,5 +21,5 @@ class User extends Object with _$UserSerializerMixin {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   @override
-  String toString() => "$name ($login)";
+  String toString() => "$name ($username) $department ['$roles]";
 }
