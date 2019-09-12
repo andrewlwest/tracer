@@ -15,7 +15,7 @@ dependencies:
   shared_preferences: ^0.4.2
   flutter_datetime_picker: 1.2.5
   autocomplete_textfield: ^1.7.3
-  flutter_typeahead: ^1.6.1
+  provider: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -38,7 +38,6 @@ flutter:
     - assets/tracers-ko.png
     - assets/tracer-logo-ko.png
     - assets/players.json
-
 
 flutter_icons:
   ios: true

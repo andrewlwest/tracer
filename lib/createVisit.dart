@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:Tracer/model/place.dart';
 import 'package:Tracer/service/tracer_service.dart';
-import 'package:Tracer/model/autoPlace.dart';
 
 class CreateVisit extends StatefulWidget {
   static const String id = 'create_visit_screen';
@@ -22,78 +21,88 @@ class _CreateVisitState extends State<CreateVisit> {
         ),
         body: new Center(
             child: new Column(children: <Widget>[
-          new Column(children: <Widget>[AutoPlaceSearch()]),
+          new Column(children: <Widget>[PlaceSearch()]),
         ])));
   }
 }
 
-class AutoPlaceSearch extends StatefulWidget {
+class PlaceSearch extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _AutoPlaceSearchState();
+  State<StatefulWidget> createState() => _PlaceSearchState();
 }
 
-class _AutoPlaceSearchState extends State<AutoPlaceSearch> {
-  //static List<Place> suggestions = new List<Place>();
-  //static List<AutoPlace> suggestionsAuto = new List<AutoPlace>();
+class _PlaceSearchState extends State<PlaceSearch> {
+  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
 
-  bool loading = false;
+  AutoCompleteTextField textField;
 
-  void _loadData() async {
-    //suggestions = (await TracerService().getPlaces()).toList();
-
-    setState(() {
-      loading = false;
-    });
-  }
-
-  @override
-  void initState() {
-    // _loadData();
-    super.initState();
-  }
-
-  GlobalKey key = new GlobalKey<AutoCompleteTextFieldState<AutoPlace>>();
-
-  AutoCompleteTextField<AutoPlace> textField;
-
-  AutoPlace selected;
-
-  List<AutoPlace> suggestionsAuto = [
-    new AutoPlace('1', 'Medical Infusion Center', '165 Cambridge St',
+  Place selected;
+/*
+  List<Place> suggestionsAuto = [
+    new Place('1', 'Medical Infusion Center', '165 Cambridge St',
         '165 Cambridge Street, 8th floor Suite 820', 'Ambulatory'),
-    new AutoPlace('2', 'Neuropathy', '165 Cambridge St',
+    new Place('2', 'Neuropathy', '165 Cambridge St',
         '165 Cambridge Street, 8th floor Suite 820', 'Ambulatory'),
-    new AutoPlace('3', 'Sports Medicine', '165 Cambridge St',
+    new Place('3', 'Sports Medicine', '165 Cambridge St',
         '175 Cambridge Street, 4th floor', 'Ambulatory'),
-    new AutoPlace('4', 'Sports PT/OT', '165 Cambridge St',
+    new Place('4', 'Sports PT/OT', '165 Cambridge St',
         '175 Cambridge Street, 4th floor', 'Ambulatory'),
-    new AutoPlace('1', 'Medical Infusion Center', '165 Cambridge St',
+    new Place('1', 'Medical Infusion Center', '165 Cambridge St',
         '165 Cambridge Street, 8th floor Suite 820', 'Ambulatory')
   ];
+*/
+  _PlaceSearchState();
 
-  _AutoPlaceSearchState() {
-    textField = new AutoCompleteTextField<AutoPlace>(
-      decoration: new InputDecoration(
-          hintText: "Search Resturant:", suffixIcon: new Icon(Icons.search)),
-      itemSubmitted: (item) => setState(() => selected = item),
-      key: key,
-      suggestions: suggestionsAuto,
-      itemBuilder: (context, suggestion) => new Padding(
-          child: new ListTile(
-              title: new Text(suggestion.name),
-              trailing: new Text("Stars: {suggestion.location}")),
-          padding: EdgeInsets.all(8.0)),
-      itemSorter: (a, b) => a.name.compareTo(b.name),
-      itemFilter: (suggestion, input) =>
-          suggestion.name.toLowerCase().startsWith(input.toLowerCase()),
-    );
+  placeSelected(Place place) {
+    setState(() {
+      selected = place;
+      textField.textField.controller.text = place.name;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return new Column(children: [
       new Padding(
-          child: new Container(child: textField),
+          child: FutureBuilder<List<Place>>(
+            future: (new TracerService().getPlaces()),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) print(snapshot.error);
+
+              return snapshot.hasData
+                  ? Container(
+                      child: textField = new AutoCompleteTextField<Place>(
+                      decoration: new InputDecoration(
+                          hintText: "Search Resturant:",
+                          suffixIcon: new Icon(Icons.search)),
+                      itemSubmitted: (item) => placeSelected(item),
+                      key: key,
+                      suggestions: snapshot.data,
+                      itemBuilder: (context, item) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              item.name,
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(15.0),
+                            ),
+                            Text(
+                              item.location,
+                            )
+                          ],
+                        );
+                      },
+                      itemSorter: (a, b) => a.name.compareTo(b.name),
+                      itemFilter: (suggestion, input) => suggestion.name
+                          .toLowerCase()
+                          .startsWith(input.toLowerCase()),
+                    ))
+                  : Center(child: CircularProgressIndicator());
+            },
+          ),
           padding: EdgeInsets.all(16.0)),
       new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 64.0, 0.0, 0.0),
