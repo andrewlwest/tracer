@@ -34,7 +34,7 @@ class PlaceSearch extends StatefulWidget {
 class _PlaceSearchState extends State<PlaceSearch> {
   GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
 
-  AutoCompleteTextField textField;
+  AutoCompleteTextField searchTextField;
 
   Place selected;
 /*
@@ -56,7 +56,7 @@ class _PlaceSearchState extends State<PlaceSearch> {
   placeSelected(Place place) {
     setState(() {
       selected = place;
-      textField.textField.controller.text = place.name;
+      searchTextField.textField.controller.text = place.name;
     });
   }
 
@@ -71,10 +71,13 @@ class _PlaceSearchState extends State<PlaceSearch> {
 
               return snapshot.hasData
                   ? Container(
-                      child: textField = new AutoCompleteTextField<Place>(
+                      child: searchTextField = new AutoCompleteTextField<Place>(
                       decoration: new InputDecoration(
                           hintText: "Search Resturant:",
-                          suffixIcon: new Icon(Icons.search)),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.search),
+                            onPressed: () {},
+                          )),
                       itemSubmitted: (item) => placeSelected(item),
                       key: key,
                       suggestions: snapshot.data,
@@ -111,7 +114,7 @@ class _PlaceSearchState extends State<PlaceSearch> {
               ? new Column(children: [
                   new ListTile(
                       title: new Text(selected.name),
-                      trailing: new Text("Rating: ${selected.name}"))
+                      trailing: new Text(selected.location))
                 ])
               : new Icon(Icons.cancel),
         ),

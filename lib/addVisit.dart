@@ -1,3 +1,4 @@
+import 'package:Tracer/model/place.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,6 @@ import 'service/tracer_service.dart';
 
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:Tracer/players.dart';
 
 class AddVisit extends StatefulWidget {
   static const String id = 'add_visit_screen';
@@ -36,16 +36,15 @@ class _AddVisitState extends State<AddVisit> {
   String _selectedSite;
   String _selectedLocation;
   String _visitType;
-
+  Place _selectedPlace;
   //List<Site> _sites = List<Site>();
   List<String> _siteSelectList = List<String>();
   List<String> _locationSelectList = List<String>();
 
   TracerService svc = TracerService();
 
-
-  GlobalKey<AutoCompleteTextFieldState<Players>> key = new GlobalKey();
-  AutoCompleteTextField searchTextField;
+  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
+  AutoCompleteTextField<Place> searchTextField;
   TextEditingController controller = new TextEditingController();
 
   @override
@@ -115,12 +114,12 @@ class _AddVisitState extends State<AddVisit> {
             _date +
             '\ntime = ' +
             _time +
-            '\norganization = ' +
-            _organization +
+            '\npalce name = ' +
+            (_selectedPlace == null ? "null" : _selectedPlace.name) +
             '\nsite = ' +
-            (_selectedSite == null ? "null" : _selectedSite) +
+            (_selectedPlace == null ? "null" : _selectedPlace.site) +
             '\nlocation = ' +
-            (_selectedLocation == null ? "null" : _selectedLocation) +
+            (_selectedPlace == null ? "null" : _selectedPlace.location) +
             '\nvisit Type = ' +
             (_visitType == null ? "null" : _visitType) +
             '\nsummary = ' +
@@ -128,6 +127,13 @@ class _AddVisitState extends State<AddVisit> {
                 ? "null"
                 : _summaryController.text)));
     _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  void placeSelected(Place place) {
+    setState(() {
+      _selectedPlace = place;
+      //searchTextField.textField.controller.text = place.name;
+    });
   }
 
   @override
@@ -175,7 +181,7 @@ class _AddVisitState extends State<AddVisit> {
                               maxTime: DateTime(2022, 12, 31),
                               onConfirm: (date) {
                             print('confirm $date');
-                            _date = new DateFormat("m/d/yy").format(date);
+                            _date = new DateFormat.yMd().format(date);
                             setState(() {});
                           },
                               currentTime: DateTime.now(),
@@ -213,26 +219,6 @@ class _AddVisitState extends State<AddVisit> {
                         ),
                         color: Colors.white,
                       )
-
-                      /*
-                      TextFormField(
-                        controller: _dateFieldController,
-                        focusNode: _dateFocusNode,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          filled: false,
-                          fillColor: kTracersWhite,
-                          labelText: 'Date',
-                          suffixIcon: Padding(
-                            padding: EdgeInsets.all(0.0),
-                            child: Icon(
-                              FontAwesomeIcons.calendar,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                    */
                     ],
                   )),
                   SizedBox(width: 12.0),
@@ -286,138 +272,84 @@ class _AddVisitState extends State<AddVisit> {
                                   )
                                 ],
                               ),
-                              /*
-                              Text(
-                                " select",
-                                style: TextStyle(
-                                    color: Colors.teal,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0),
-                              ),
-                              */
                             ],
                           ),
                         ),
                         color: Colors.white,
                       )
-
-                      /*
-                      TextFormField(
-                        controller: _timeFieldController,
-                        focusNode: _timeFocusNode,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: kTracersWhite,
-                          labelText: 'Time',
-                          suffixIcon: Padding(
-                            padding: EdgeInsets.all(0.0),
-                            child: Icon(
-                              FontAwesomeIcons.clock,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                      */
                     ],
                   ))
                 ],
               ),
               SizedBox(height: 12.0),
-              DropdownButtonFormField<String>(
-                value: _selectedSite,
-                onChanged: (String newValue) {
-                  setState(() {
-                    _selectedSite = newValue;
-                  });
-                },
-                items: _siteSelectList
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: kTracersWhite,
-                  labelText: 'Site',
-                ),
+              Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: FutureBuilder<List<Place>>(
+                    future: (new TracerService().getPlaces()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) print(snapshot.error);
+
+                      return snapshot.hasData
+                          ? AutoCompleteTextField<Place>(
+                              style: new TextStyle(
+                                  color: Colors.black, fontSize: 16.0),
+                              decoration: new InputDecoration(
+                                  suffixIcon: IconButton(
+                                    icon: Icon(Icons.search),
+                                    onPressed: () {
+                                      setState(() {
+                                        controller.value = null;
+                                      });
+                                    },
+                                  ),
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      10.0, 30.0, 10.0, 20.0),
+                                  filled: true,
+                                  hintText: 'Search Player Name',
+                                  hintStyle: TextStyle(color: Colors.black)),
+                              itemSubmitted: (item) {
+                                setState(() => placeSelected(item));
+                              },
+                              clearOnSubmit: true,
+                              key: key,
+                              suggestions: snapshot.data,
+                              itemBuilder: (context, item) {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      item.name,
+                                      style: TextStyle(fontSize: 16.0),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(15.0),
+                                    ),
+                                    Text(
+                                      item.location,
+                                    )
+                                  ],
+                                );
+                              },
+                              itemSorter: (a, b) {
+                                return a.name.compareTo(b.name);
+                              },
+                              itemFilter: (item, query) {
+                                return item.name
+                                    .toLowerCase()
+                                    .startsWith(query.toLowerCase());
+                              })
+                          : Center(child: CircularProgressIndicator());
+                    }),
               ),
               SizedBox(height: 12.0),
-
-
-              AutoCompleteTextField<Players>(
-                style: new TextStyle(color: Colors.black, fontSize: 16.0),
-                decoration: new InputDecoration(
-                    suffixIcon: Container(
-                      width: 85.0,
-                      height: 60.0,
-                    ),
-                    contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
-                    filled: true,
-                    hintText: 'Search Player Name',
-                    hintStyle: TextStyle(color: Colors.black)),
-                itemSubmitted: (item) {
-                  setState(() => searchTextField.textField.controller.text =
-                      item.autocompleteterm);
-                },
-                clearOnSubmit: false,
-                key: key,
-                suggestions: PlayersViewModel.players,
-                itemBuilder: (context, item) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(item.autocompleteterm,
-                      style: TextStyle(
-                        fontSize: 16.0
-                      ),),
-                      Padding(
-                        padding: EdgeInsets.all(15.0),
-                      ),
-                      Text(item.country,
-                      )
-                    ],
-                  );
-                },
-                itemSorter: (a, b) {
-                  return a.autocompleteterm.compareTo(b.autocompleteterm);
-                },
-                itemFilter: (item, query) {
-                  return item.autocompleteterm
-                      .toLowerCase()
-                      .startsWith(query.toLowerCase());
-                }),
-          
-
-
-              /*
-              DropdownButtonFormField<String>(
-                value: _selectedSite,
-                onChanged: (String newValue) {
-                  setState(() {
-                    _selectedSite = newValue;
-                  });
-                },
-                items: _locationSelectList
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: kTracersWhite,
-                  labelText: 'Location',
-                ),
-              ),
-              */
-
+              Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: _selectedPlace != null
+                      ? ListTile(
+                          title: new Text(_selectedPlace.name),
+                          trailing: new Text(_selectedPlace.location))
+                      : Text('')),
               SizedBox(height: 12.0),
               TextFormField(
                 maxLines: 3,

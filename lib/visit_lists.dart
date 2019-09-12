@@ -80,7 +80,7 @@ class VisitListPage extends StatelessWidget {
                 onPressed: () {
                   //Navigator.pushNamed(context, CreateVisit.id);
                   //Navigator.pushNamed(context, AutoComplete.id);
-                  Navigator.pushNamed(context, CreateVisit.id);
+                  Navigator.pushNamed(context, AddVisit.id);
                 },
               ),
               // IconButton(

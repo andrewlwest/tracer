@@ -7,7 +7,6 @@ part 'place.g.dart';
 
 @JsonSerializable()
 class Place extends Object with _$PlaceSerializerMixin {
-
   Place(this.placeId, this.name, this.site, this.location, this.type);
 
   String placeId;
@@ -22,6 +21,6 @@ class Place extends Object with _$PlaceSerializerMixin {
   factory Place.fromJson(Map<String, dynamic> json) => _$PlaceFromJson(json);
 
   @override
-  String toString() => "id=$placeId name=$name site=$site location=$location type=$type";
-
+  //String toString() => "id=$placeId name=$name site=$site location=$location type=$type";
+  String toString() => "$name $site $location $type";
 }
