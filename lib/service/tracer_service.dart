@@ -9,7 +9,6 @@ import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/model/place.dart';
 import 'package:Tracer/model/user.dart';
 
-
 import 'package:Tracer/model/observationTemplates/observationTemplates.dart';
 
 class TracerService {
@@ -42,7 +41,6 @@ class TracerService {
   }
 
   Future<bool> login(String login, String pass) async {
-
     Map<String, String> headers = {
       'OncallWeb-Mojo-Key': _buildParams()['oncallWebServiceKey'],
     };
@@ -55,13 +53,13 @@ class TracerService {
     //var body = "PartnersUsername=" + login + "&PartnersPassword=" + pass;
     //print("TracerService: login: body = " + body.toString());
 
-    final response = await http.post(_buildParams()['oncallwebAuthEndPoint'], body: body, headers: headers);
+    final response = await http.post(_buildParams()['oncallwebAuthEndPoint'],
+        body: body, headers: headers);
     if (response.body.contains("AuthenticationSuccess")) {
       return true;
     } else {
       return false;
     }
-
   }
 
   Future<User> getUser(String login) async {
@@ -70,7 +68,8 @@ class TracerService {
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
-      Map<String, dynamic> json = responseJson['tracerServiceResponse']['result'];
+      Map<String, dynamic> json =
+          responseJson['tracerServiceResponse']['result'];
       if (json != null) {
         return User.fromJson(json);
       } else {
@@ -169,14 +168,15 @@ class TracerService {
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
-      List placeList = responseJson['tracerServiceResponse']["result"]["places"];
+      List placeList =
+          responseJson['tracerServiceResponse']["result"]["places"];
       List<Place> returnList = new List<Place>();
 
       if (placeList != null) {
         for (var place in placeList) {
           returnList.add(Place.fromJson(place));
         }
-      } 
+      }
       return returnList;
     } else {
       return null;
