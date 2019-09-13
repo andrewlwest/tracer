@@ -356,9 +356,9 @@ class _AddVisitState extends State<AddVisit> {
                                 return a.name.compareTo(b.name);
                               },
                               itemFilter: (item, query) {
-                                return item.name
+                                return (item.name + item.location)
                                     .toLowerCase()
-                                    .startsWith(query.toLowerCase());
+                                    .contains(query.toLowerCase());
                               })
                           : Center(child: CircularProgressIndicator());
                     }),
