@@ -21,6 +21,6 @@ class Place extends Object with _$PlaceSerializerMixin {
   factory Place.fromJson(Map<String, dynamic> json) => _$PlaceFromJson(json);
 
   @override
-  //String toString() => "id=$placeId name=$name site=$site location=$location type=$type";
-  String toString() => "$name $site $location $type";
+  String toString() =>
+      "id=$placeId name=$name site=$site location=$location type=$type";
 }

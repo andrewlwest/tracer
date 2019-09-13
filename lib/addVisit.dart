@@ -1,7 +1,7 @@
 import 'package:Tracer/model/place.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:convert';
 import 'package:intl/intl.dart';
 //import 'dart:math' as math;
 
@@ -22,24 +22,12 @@ class _AddVisitState extends State<AddVisit> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _summaryController = TextEditingController();
-  final _dateFieldController = TextEditingController();
-  final _timeFieldController = TextEditingController();
-
-  // listen for changes in focus
-  FocusNode _dateFocusNode = new FocusNode();
-  FocusNode _timeFocusNode = new FocusNode();
 
   // fields to hold form data
   String _date = "Date";
   String _time = "Time";
-  String _organization = "The General Hospital Corporation";
-  String _selectedSite;
-  String _selectedLocation;
   String _visitType;
   Place _selectedPlace;
-  //List<Site> _sites = List<Site>();
-  List<String> _siteSelectList = List<String>();
-  List<String> _locationSelectList = List<String>();
 
   TracerService svc = TracerService();
 
@@ -127,12 +115,41 @@ class _AddVisitState extends State<AddVisit> {
                 ? "null"
                 : _summaryController.text)));
     _scaffoldKey.currentState.showSnackBar(snackBar);
+    //post to server
+    /*
+    {
+    "method": "createTracerVisit",
+    "tracerVisit": {
+        "visitDatetime": "2019-08-28T15:00:00",
+        "place": {
+            "placeId": "13",
+            "site": "50 Staniford",
+            "location": "50 Staniford Street - 9th Floor",
+            "name": "Bulfinch Medical Group",
+            "type": "Ambulatory"
+        },
+        "summary": "Postman example, 2019-09-06 template",
+        "type": "comprehensive"
+    }
+}*/
+    var body = json.encode({
+      "method": "createTracerVisit",
+      "tracerVisit": {
+        "visitDatetime": _date + ' ' + _time,
+        "place": json.encode(_selectedPlace),
+        "summary": _summaryController.text,
+        "type": _visitType
+      }
+    });
+    print(body);
+    var createVisit = svc.getTracerServiceResponse(body);
+    Navigator.pop(context, "saved");
+    //now need to pop out window
   }
 
   void placeSelected(Place place) {
     setState(() {
       _selectedPlace = place;
-      //searchTextField.textField.controller.text = place.name;
     });
   }
 
@@ -180,7 +197,7 @@ class _AddVisitState extends State<AddVisit> {
                               minTime: DateTime(2000, 1, 1),
                               maxTime: DateTime(2022, 12, 31),
                               onConfirm: (date) {
-                            print('confirm $date');
+                            print('confirm date: $date');
                             _date = new DateFormat.yMd().format(date);
                             setState(() {});
                           },
@@ -237,7 +254,7 @@ class _AddVisitState extends State<AddVisit> {
                                 containerHeight: 210.0,
                               ),
                               showTitleActions: true, onConfirm: (time) {
-                            print('confirm $time');
+                            print('confirm time $time');
                             _time = new DateFormat("h:mm a").format(time);
                             setState(() {});
                           },
@@ -305,8 +322,8 @@ class _AddVisitState extends State<AddVisit> {
                                   contentPadding: EdgeInsets.fromLTRB(
                                       10.0, 30.0, 10.0, 20.0),
                                   filled: true,
-                                  hintText: 'Search Player Name',
-                                  hintStyle: TextStyle(color: Colors.black)),
+                                  hintText: 'Search Place',
+                                  hintStyle: TextStyle(color: Colors.grey)),
                               itemSubmitted: (item) {
                                 setState(() => placeSelected(item));
                               },
@@ -318,15 +335,19 @@ class _AddVisitState extends State<AddVisit> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      item.name,
-                                      style: TextStyle(fontSize: 16.0),
+                                    Expanded(
+                                      child: Text(
+                                        item.name,
+                                        style: TextStyle(fontSize: 16.0),
+                                      ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.all(15.0),
                                     ),
-                                    Text(
-                                      item.location,
+                                    Expanded(
+                                      child: Text(
+                                        item.location,
+                                      ),
                                     )
                                   ],
                                 );
@@ -346,9 +367,25 @@ class _AddVisitState extends State<AddVisit> {
               Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: _selectedPlace != null
-                      ? ListTile(
-                          title: new Text(_selectedPlace.name),
-                          trailing: new Text(_selectedPlace.location))
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                _selectedPlace.name,
+                                style: TextStyle(fontSize: 16.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(15.0),
+                            ),
+                            Expanded(
+                              child: Text(
+                                _selectedPlace.location,
+                              ),
+                            )
+                          ],
+                        )
                       : Text('')),
               SizedBox(height: 12.0),
               TextFormField(
@@ -383,76 +420,6 @@ class _AddVisitState extends State<AddVisit> {
                   labelText: 'Visit Type',
                 ),
               ),
-
-              /*
-              SizedBox(height: 30.0),
-              Text(
-                "Participants",
-                maxLines: 1,
-                style: Theme.of(context).textTheme.subhead,
-              ),
-              SizedBox(height: 8.0),
-              Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: "Search",
-                    //hintText: "Search",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              SizedBox(height: 8.0),
-
-              // STYLE LIST USING CheckboxListTile
-              CheckboxListTile(
-                value: true,
-                dense: true,
-                title: Text('Branch Hines'),
-                subtitle: Text('Pharmacy'),
-                secondary: CircleAvatar(
-                  backgroundColor: Color(
-                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
-                      .withOpacity(1.0),
-                  child: Text('BH'),
-                ),
-                onChanged: (bool value) {},
-              ),
-              Divider(
-                height: 1,
-              ),
-              CheckboxListTile(
-                value: true,
-                dense: true,
-                title: Text('Soto Edwards'),
-                subtitle: Text('Pharmacy'),
-                secondary: CircleAvatar(
-                  backgroundColor: Color(
-                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
-                      .withOpacity(1.0),
-                  child: Text('SE'),
-                ),
-                onChanged: (bool value) {},
-              ),
-              Divider(
-                height: 1,
-              ),
-              CheckboxListTile(
-                value: true,
-                dense: true,
-                title: Text('Lindsey Mcgowan'),
-                subtitle: Text('Pharmacy'),
-                secondary: CircleAvatar(
-                  backgroundColor: Color(
-                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
-                      .withOpacity(1.0),
-                  child: Text('LM'),
-                ),
-                onChanged: (bool value) {},
-              ),
-
-              */
             ]),
       ),
     );
