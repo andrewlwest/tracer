@@ -76,7 +76,8 @@ class TracerService {
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
-      Map<String, dynamic> json = responseJson['tracerServiceResponse']['result'];
+      Map<String, dynamic> json =
+          responseJson['tracerServiceResponse']['result'];
       if (json != null) {
         return User.fromJson(json);
       } else {
@@ -216,14 +217,15 @@ class TracerService {
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
-      List placeList = responseJson['tracerServiceResponse']["result"]["places"];
+      List placeList =
+          responseJson['tracerServiceResponse']["result"]["places"];
       List<Place> returnList = new List<Place>();
 
       if (placeList != null) {
         for (var place in placeList) {
           returnList.add(Place.fromJson(place));
         }
-      } 
+      }
       return returnList;
     } else {
       return null;

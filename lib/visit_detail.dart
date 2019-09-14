@@ -52,12 +52,10 @@ class _VisitDetailPageState extends State<VisitDetailPage> {
   }
 
   Future<Map<String, dynamic>> fetchVisitData(String visitId) async { // you need to return a Future to the FutureBuilder
-      
     Map<String, dynamic> returnMap = new Map<String, dynamic>();
     returnMap['template'] = await svc.getTemplate();
     returnMap['visit'] = await svc.getTracerVisit(visitId);
     return returnMap;
-
   }
 
   @override
@@ -264,13 +262,9 @@ class VisitDetailItemView extends StatelessWidget {
 }
 
 class ObsCatListTileView extends StatelessWidget {
-  
-  //final String displayName;
-  //final String observationId;
 
   final ObservationCategory observationCategory;
   final Observation observation;
-
   final String visitId;
   final Template template;
 

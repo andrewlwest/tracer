@@ -5,10 +5,6 @@ PODS:
     - SQLite.swift (= 0.11.6)
   - AWSCore (2.9.10)
   - Flutter (1.0.0)
-  - keyboard_visibility (0.5.0):
-    - Flutter
-    - Reachability
-  - Reachability (3.2)
   - ReachabilitySwift (4.3.0)
   - shared_preferences (0.0.1):
     - Flutter
@@ -19,22 +15,18 @@ PODS:
 DEPENDENCIES:
   - AWSAppSync (~> 2.14.0)
   - Flutter (from `.symlinks/flutter/ios`)
-  - keyboard_visibility (from `.symlinks/plugins/keyboard_visibility/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AWSAppSync
     - AWSCore
-    - Reachability
     - ReachabilitySwift
     - SQLite.swift
 
 EXTERNAL SOURCES:
   Flutter:
     :path: ".symlinks/flutter/ios"
-  keyboard_visibility:
-    :path: ".symlinks/plugins/keyboard_visibility/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
 
@@ -42,8 +34,6 @@ SPEC CHECKSUMS:
   AWSAppSync: 91f63b95f572d908f0a001d5c3016b117e49297a
   AWSCore: 22b6bbc6761ca9981d878155d11bc02edd681a64
   Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  keyboard_visibility: 96a24de806fe6823c3ad956c01ba2ec6d056616f
-  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   ReachabilitySwift: 408477d1b6ed9779dba301953171e017c31241f3
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
   SQLite.swift: 46d890be8601964454bd3392527f863d1b802d45

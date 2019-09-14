@@ -1,6 +1,7 @@
+import 'package:Tracer/model/place.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:convert';
 import 'package:intl/intl.dart';
 //import 'dart:math' as math;
 
@@ -9,7 +10,6 @@ import 'service/tracer_service.dart';
 
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:Tracer/players.dart';
 
 class AddVisit extends StatefulWidget {
   static const String id = 'add_visit_screen';
@@ -22,30 +22,17 @@ class _AddVisitState extends State<AddVisit> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _summaryController = TextEditingController();
-  final _dateFieldController = TextEditingController();
-  final _timeFieldController = TextEditingController();
-
-  // listen for changes in focus
-  FocusNode _dateFocusNode = new FocusNode();
-  FocusNode _timeFocusNode = new FocusNode();
 
   // fields to hold form data
   String _date = "Date";
   String _time = "Time";
-  String _organization = "The General Hospital Corporation";
-  String _selectedSite;
-  String _selectedLocation;
   String _visitType;
-
-  //List<Site> _sites = List<Site>();
-  List<String> _siteSelectList = List<String>();
-  List<String> _locationSelectList = List<String>();
+  Place _selectedPlace;
 
   TracerService svc = TracerService();
 
-
-  GlobalKey<AutoCompleteTextFieldState<Players>> key = new GlobalKey();
-  AutoCompleteTextField searchTextField;
+  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
+  AutoCompleteTextField<Place> searchTextField;
   TextEditingController controller = new TextEditingController();
 
   @override
@@ -115,12 +102,12 @@ class _AddVisitState extends State<AddVisit> {
             _date +
             '\ntime = ' +
             _time +
-            '\norganization = ' +
-            _organization +
+            '\npalce name = ' +
+            (_selectedPlace == null ? "null" : _selectedPlace.name) +
             '\nsite = ' +
-            (_selectedSite == null ? "null" : _selectedSite) +
+            (_selectedPlace == null ? "null" : _selectedPlace.site) +
             '\nlocation = ' +
-            (_selectedLocation == null ? "null" : _selectedLocation) +
+            (_selectedPlace == null ? "null" : _selectedPlace.location) +
             '\nvisit Type = ' +
             (_visitType == null ? "null" : _visitType) +
             '\nsummary = ' +
@@ -128,6 +115,42 @@ class _AddVisitState extends State<AddVisit> {
                 ? "null"
                 : _summaryController.text)));
     _scaffoldKey.currentState.showSnackBar(snackBar);
+    //post to server
+    /*
+    {
+    "method": "createTracerVisit",
+    "tracerVisit": {
+        "visitDatetime": "2019-08-28T15:00:00",
+        "place": {
+            "placeId": "13",
+            "site": "50 Staniford",
+            "location": "50 Staniford Street - 9th Floor",
+            "name": "Bulfinch Medical Group",
+            "type": "Ambulatory"
+        },
+        "summary": "Postman example, 2019-09-06 template",
+        "type": "comprehensive"
+    }
+}*/
+    var body = json.encode({
+      "method": "createTracerVisit",
+      "tracerVisit": {
+        "visitDatetime": _date + ' ' + _time,
+        "place": json.encode(_selectedPlace),
+        "summary": _summaryController.text,
+        "type": _visitType
+      }
+    });
+    print(body);
+    var createVisit = svc.getTracerServiceResponse(body);
+    Navigator.pop(context, "saved");
+    //now need to pop out window
+  }
+
+  void placeSelected(Place place) {
+    setState(() {
+      _selectedPlace = place;
+    });
   }
 
   @override
@@ -174,8 +197,8 @@ class _AddVisitState extends State<AddVisit> {
                               minTime: DateTime(2000, 1, 1),
                               maxTime: DateTime(2022, 12, 31),
                               onConfirm: (date) {
-                            print('confirm $date');
-                            _date = new DateFormat("m/d/yy").format(date);
+                            print('confirm date: $date');
+                            _date = new DateFormat.yMd().format(date);
                             setState(() {});
                           },
                               currentTime: DateTime.now(),
@@ -213,26 +236,6 @@ class _AddVisitState extends State<AddVisit> {
                         ),
                         color: Colors.white,
                       )
-
-                      /*
-                      TextFormField(
-                        controller: _dateFieldController,
-                        focusNode: _dateFocusNode,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          filled: false,
-                          fillColor: kTracersWhite,
-                          labelText: 'Date',
-                          suffixIcon: Padding(
-                            padding: EdgeInsets.all(0.0),
-                            child: Icon(
-                              FontAwesomeIcons.calendar,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                    */
                     ],
                   )),
                   SizedBox(width: 12.0),
@@ -251,7 +254,7 @@ class _AddVisitState extends State<AddVisit> {
                                 containerHeight: 210.0,
                               ),
                               showTitleActions: true, onConfirm: (time) {
-                            print('confirm $time');
+                            print('confirm time $time');
                             _time = new DateFormat("h:mm a").format(time);
                             setState(() {});
                           },
@@ -286,138 +289,104 @@ class _AddVisitState extends State<AddVisit> {
                                   )
                                 ],
                               ),
-                              /*
-                              Text(
-                                " select",
-                                style: TextStyle(
-                                    color: Colors.teal,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0),
-                              ),
-                              */
                             ],
                           ),
                         ),
                         color: Colors.white,
                       )
-
-                      /*
-                      TextFormField(
-                        controller: _timeFieldController,
-                        focusNode: _timeFocusNode,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: kTracersWhite,
-                          labelText: 'Time',
-                          suffixIcon: Padding(
-                            padding: EdgeInsets.all(0.0),
-                            child: Icon(
-                              FontAwesomeIcons.clock,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                      */
                     ],
                   ))
                 ],
               ),
               SizedBox(height: 12.0),
-              DropdownButtonFormField<String>(
-                value: _selectedSite,
-                onChanged: (String newValue) {
-                  setState(() {
-                    _selectedSite = newValue;
-                  });
-                },
-                items: _siteSelectList
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: kTracersWhite,
-                  labelText: 'Site',
-                ),
+              Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: FutureBuilder<List<Place>>(
+                    future: (new TracerService().getPlaces()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) print(snapshot.error);
+
+                      return snapshot.hasData
+                          ? AutoCompleteTextField<Place>(
+                              style: new TextStyle(
+                                  color: Colors.black, fontSize: 16.0),
+                              decoration: new InputDecoration(
+                                  suffixIcon: IconButton(
+                                    icon: Icon(Icons.search),
+                                    onPressed: () {
+                                      setState(() {
+                                        controller.value = null;
+                                      });
+                                    },
+                                  ),
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      10.0, 30.0, 10.0, 20.0),
+                                  filled: true,
+                                  hintText: 'Search Place',
+                                  hintStyle: TextStyle(color: Colors.grey)),
+                              itemSubmitted: (item) {
+                                setState(() => placeSelected(item));
+                              },
+                              clearOnSubmit: true,
+                              key: key,
+                              suggestions: snapshot.data,
+                              itemBuilder: (context, item) {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                        item.name,
+                                        style: TextStyle(fontSize: 16.0),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(15.0),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        item.location,
+                                      ),
+                                    )
+                                  ],
+                                );
+                              },
+                              itemSorter: (a, b) {
+                                return a.name.compareTo(b.name);
+                              },
+                              itemFilter: (item, query) {
+                                return (item.name + item.location)
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase());
+                              })
+                          : Center(child: CircularProgressIndicator());
+                    }),
               ),
               SizedBox(height: 12.0),
-
-
-              AutoCompleteTextField<Players>(
-                style: new TextStyle(color: Colors.black, fontSize: 16.0),
-                decoration: new InputDecoration(
-                    suffixIcon: Container(
-                      width: 85.0,
-                      height: 60.0,
-                    ),
-                    contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
-                    filled: true,
-                    hintText: 'Search Player Name',
-                    hintStyle: TextStyle(color: Colors.black)),
-                itemSubmitted: (item) {
-                  setState(() => searchTextField.textField.controller.text =
-                      item.autocompleteterm);
-                },
-                clearOnSubmit: false,
-                key: key,
-                suggestions: PlayersViewModel.players,
-                itemBuilder: (context, item) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(item.autocompleteterm,
-                      style: TextStyle(
-                        fontSize: 16.0
-                      ),),
-                      Padding(
-                        padding: EdgeInsets.all(15.0),
-                      ),
-                      Text(item.country,
-                      )
-                    ],
-                  );
-                },
-                itemSorter: (a, b) {
-                  return a.autocompleteterm.compareTo(b.autocompleteterm);
-                },
-                itemFilter: (item, query) {
-                  return item.autocompleteterm
-                      .toLowerCase()
-                      .startsWith(query.toLowerCase());
-                }),
-          
-
-
-              /*
-              DropdownButtonFormField<String>(
-                value: _selectedSite,
-                onChanged: (String newValue) {
-                  setState(() {
-                    _selectedSite = newValue;
-                  });
-                },
-                items: _locationSelectList
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: kTracersWhite,
-                  labelText: 'Location',
-                ),
-              ),
-              */
-
+              Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: _selectedPlace != null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                _selectedPlace.name,
+                                style: TextStyle(fontSize: 16.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(15.0),
+                            ),
+                            Expanded(
+                              child: Text(
+                                _selectedPlace.location,
+                              ),
+                            )
+                          ],
+                        )
+                      : Text('')),
               SizedBox(height: 12.0),
               TextFormField(
                 maxLines: 3,
@@ -451,76 +420,6 @@ class _AddVisitState extends State<AddVisit> {
                   labelText: 'Visit Type',
                 ),
               ),
-
-              /*
-              SizedBox(height: 30.0),
-              Text(
-                "Participants",
-                maxLines: 1,
-                style: Theme.of(context).textTheme.subhead,
-              ),
-              SizedBox(height: 8.0),
-              Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: "Search",
-                    //hintText: "Search",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              SizedBox(height: 8.0),
-
-              // STYLE LIST USING CheckboxListTile
-              CheckboxListTile(
-                value: true,
-                dense: true,
-                title: Text('Branch Hines'),
-                subtitle: Text('Pharmacy'),
-                secondary: CircleAvatar(
-                  backgroundColor: Color(
-                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
-                      .withOpacity(1.0),
-                  child: Text('BH'),
-                ),
-                onChanged: (bool value) {},
-              ),
-              Divider(
-                height: 1,
-              ),
-              CheckboxListTile(
-                value: true,
-                dense: true,
-                title: Text('Soto Edwards'),
-                subtitle: Text('Pharmacy'),
-                secondary: CircleAvatar(
-                  backgroundColor: Color(
-                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
-                      .withOpacity(1.0),
-                  child: Text('SE'),
-                ),
-                onChanged: (bool value) {},
-              ),
-              Divider(
-                height: 1,
-              ),
-              CheckboxListTile(
-                value: true,
-                dense: true,
-                title: Text('Lindsey Mcgowan'),
-                subtitle: Text('Pharmacy'),
-                secondary: CircleAvatar(
-                  backgroundColor: Color(
-                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
-                      .withOpacity(1.0),
-                  child: Text('LM'),
-                ),
-                onChanged: (bool value) {},
-              ),
-
-              */
             ]),
       ),
     );

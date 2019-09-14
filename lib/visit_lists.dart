@@ -16,8 +16,6 @@ import 'package:Tracer/model/template/template.dart';
 import 'package:intl/intl.dart';
 
 import 'package:Tracer/addVisit.dart';
-import 'package:Tracer/autoComplete.dart';
-import 'package:Tracer/createVisit.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
@@ -168,7 +166,6 @@ class VisitListPage extends StatelessWidget {
     );
   }
 }
-
 
 class VisitListView extends StatelessWidget {
 

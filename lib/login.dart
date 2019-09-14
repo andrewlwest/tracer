@@ -1,4 +1,3 @@
-
 import 'package:Tracer/model/application.dart';
 import 'package:Tracer/model/user.dart';
 import 'package:Tracer/ui/colors.dart';
@@ -14,7 +13,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -110,6 +108,9 @@ class _LoginPageState extends State<LoginPage> {
   Future<Null> login(BuildContext context) async {
     String login = _usernameController.value.text;
     String pass = _passwordController.value.text;
+
+
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => VisitListPage()));
 
     bool success = await svc.login(login, pass);
     print("success = " + (success ? "true" : "false"));
