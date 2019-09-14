@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:Tracer/model/template/template.dart';
+import 'package:intl/intl.dart';
+
 import 'package:Tracer/addVisit.dart';
 import 'package:Tracer/autoComplete.dart';
 import 'package:Tracer/createVisit.dart';
@@ -81,7 +84,6 @@ class VisitListPage extends StatelessWidget {
                   //Navigator.pushNamed(context, CreateVisit.id);
                   //Navigator.pushNamed(context, AutoComplete.id);
                   Navigator.pushNamed(context, AddVisit.id);
-                  
                 },
               ),
               // IconButton(
@@ -168,11 +170,8 @@ class VisitListPage extends StatelessWidget {
 }
 
 
-
-
-
-
 class VisitListView extends StatelessWidget {
+
   final List<VisitListItem> visits;
 
   VisitListView({Key key, this.visits}) : super(key: key);
@@ -205,7 +204,7 @@ class VisitListView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      '${visits[position].site}',
+                                      '${visits[position].place.site}',
                                       maxLines: 1,
                                       style: theme.textTheme.caption,
                                     ),
@@ -217,7 +216,8 @@ class VisitListView extends StatelessWidget {
                                   Padding(
                                     padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
                                     child: Text(
-                                      'Today',
+                                      //'${visits[position].visitDatetime}',
+                                      new DateFormat('M/d/yy h:mm aa').format(visits[position].visitDatetime), 
                                       maxLines: 1,
                                       style: theme.textTheme.caption,
                                     ),
@@ -232,7 +232,7 @@ class VisitListView extends StatelessWidget {
                               new Column(
                                 children: <Widget>[
                                   Text(
-                                    '${visits[position].location}',
+                                    '${visits[position].place.location}',
                                     style: theme.textTheme.headline,
                                     maxLines: 1,
                                   ),
@@ -296,16 +296,17 @@ class VisitListView extends StatelessWidget {
                                           color: Colors.black45,
                                           iconSize: 16,
                                           onPressed: () async {
-                                            final String currentTeam =
-                                                await _asyncInputDialog(
-                                                    context);
+                                            final String todo =
+                                                await _todoInputDialog(
+                                                    context, visits[position]);
                                             print(
-                                                "Current team name is $currentTeam");
+                                                "todo is $todo");
                                           },
                                         ),
                                       ],
                                     ),
-                                    //ASSIGN USERS ICON
+
+                                    //participants  ICON
                                     Column(
                                       children: <Widget>[
                                         IconButton(
@@ -313,8 +314,12 @@ class VisitListView extends StatelessWidget {
                                               FontAwesomeIcons.solidUserCircle),
                                           color: Colors.black45,
                                           iconSize: 16,
-                                          onPressed: () {
-                                            print('To Do Button');
+                                          onPressed: () async {
+                                            final String participants =
+                                                await _participantsInputDialog(
+                                                    context, visits[position]);
+                                            print(
+                                                "participants are $participants");
                                           },
                                         ),
                                       ],
@@ -360,8 +365,64 @@ void _onTapItem(BuildContext context, VisitListItem visit) {
 */
 }
 
-Future<String> _asyncInputDialog(BuildContext context) async {
-  String toDo = '';
+
+Future<String> _participantsInputDialog(BuildContext context, VisitListItem visit) async {
+  
+  final TracerService svc = new TracerService();
+  final _controller = TextEditingController();
+
+  _controller.text = visit.participants;
+
+  return showDialog<String>(
+    context: context,
+    barrierDismissible:
+        false, // dialog is dismissible with a tap on the barrier
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Participants'),
+        content: new Row(
+          children: <Widget>[
+            new Expanded(
+                child: new TextFormField(
+              controller: _controller,
+              maxLines: 10,
+              autofocus: true,
+              decoration: new InputDecoration(
+                filled: true,
+                fillColor: kTracersGray100,
+                //labelText: 'Notes',
+              ),
+            ))
+          ],
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('CANCEL'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: Text('OK'),
+            onPressed: () async {
+              bool success = await svc.savePropertyForVisit("participants",_controller.text, visit.id);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+Future<String> _todoInputDialog(BuildContext context, VisitListItem visit) async {
+  
+  final TracerService svc = new TracerService();
+  final _controller = TextEditingController();
+
+  _controller.text = visit.todo;
+
   return showDialog<String>(
     context: context,
     barrierDismissible:
@@ -373,12 +434,13 @@ Future<String> _asyncInputDialog(BuildContext context) async {
           children: <Widget>[
             new Expanded(
                 child: new TextFormField(
+              controller: _controller,
               maxLines: 10,
               autofocus: true,
               decoration: new InputDecoration(
                 filled: true,
                 fillColor: kTracersGray100,
-                labelText: 'Notes',
+                //labelText: 'Notes',
               ),
             ))
           ],
@@ -387,13 +449,14 @@ Future<String> _asyncInputDialog(BuildContext context) async {
           FlatButton(
             child: Text('CANCEL'),
             onPressed: () {
-              Navigator.of(context).pop(toDo);
+              Navigator.of(context).pop();
             },
           ),
           FlatButton(
             child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop(toDo);
+            onPressed: () async {
+              bool success = await svc.savePropertyForVisit("todo",_controller.text, visit.id);
+              Navigator.of(context).pop();
             },
           ),
         ],

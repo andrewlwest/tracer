@@ -32,13 +32,13 @@ class _LoginPageState extends State<LoginPage> {
     //userList = await svc.getAllUsers();
 
     SharedPreferences.getInstance().then((sp)  {
-      print("sp " + sp.getString("userLogin"));
+      //print("sp " + sp.getString("userLogin"));
       setState(() {
         _userLogin = sp.getString("userLogin");
         _usernameController.text = _userLogin;
       });
     });
-    print("login is " + _userLogin);
+    //print("login is " + _userLogin);
   }
 
   @override
@@ -121,8 +121,11 @@ class _LoginPageState extends State<LoginPage> {
 
       // load user
       User user = await svc.getUser(login);
-
       print("user = $user");
+
+      // set the authenticqated user object in the Application singleton.
+      Application application = new Application();
+      application.user = user;
 
       Navigator.push(context,MaterialPageRoute(builder: (context) => VisitListPage()));
 

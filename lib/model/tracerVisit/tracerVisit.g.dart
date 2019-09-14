@@ -8,48 +8,82 @@ part of 'tracerVisit.dart';
 
 TracerVisit _$TracerVisitFromJson(Map<String, dynamic> json) {
   return new TracerVisit(
-      json['summary'] as String,
-      json['location'] as String,
-      json['summaryStatus'] == null
+      json['id'] as String,
+      json['place'] == null
           ? null
-          : new SummaryStatus.fromJson(
-              json['summaryStatus'] as Map<String, dynamic>),
+          : new Place.fromJson(json['place'] as Map<String, dynamic>),
+      json['summary'] as String,
+      json['summaryStats'] == null
+          ? null
+          : new SummaryStats.fromJson(
+              json['summaryStats'] as Map<String, dynamic>),
       json['todo'] as String,
       json['participants'] as String,
-      json['site'] as String,
       json['completionStatus'] as String,
-      (json['observationGroups'] as List)
-          ?.map((e) => e == null
-              ? null
-              : new ObservationGroup.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
-      (json['observations'] as Map<String, dynamic>)?.map((k, e) =>
+      (json['observationCategories'] as Map<String, dynamic>)?.map((k, e) =>
           new MapEntry(
               k,
               e == null
                   ? null
-                  : new Observation.fromJson(e as Map<String, dynamic>))));
+                  : new Observation.fromJson(e as Map<String, dynamic>))),
+      (json['exceptions'] as Map<String, dynamic>)?.map((k, e) => new MapEntry(
+          k,
+          e == null
+              ? null
+              : new ObservationException.fromJson(e as Map<String, dynamic>))),
+      json['template_version'] as String,
+      json['type'] as String)
+    ..visitDatetime = json['visitDatetime'] == null
+        ? null
+        : DateTime.parse(json['visitDatetime'] as String);
 }
 
 abstract class _$TracerVisitSerializerMixin {
+  String get id;
+  Place get place;
   String get summary;
-  String get location;
-  String get todo;
   String get participants;
-  String get site;
+  String get todo;
+  DateTime get visitDatetime;
+  SummaryStats get summaryStats;
   String get completionStatus;
-  List<ObservationGroup> get observationGroups;
-  SummaryStatus get summaryStatus;
   Map<String, Observation> get observations;
+  Map<String, ObservationException> get exceptions;
+  String get template_version;
+  String get type;
   Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'place': place,
         'summary': summary,
-        'location': location,
-        'todo': todo,
         'participants': participants,
-        'site': site,
+        'todo': todo,
+        'visitDatetime': visitDatetime?.toIso8601String(),
+        'summaryStats': summaryStats,
         'completionStatus': completionStatus,
-        'observationGroups': observationGroups,
-        'summaryStatus': summaryStatus,
-        'observations': observations
+        'observationCategories': observations,
+        'exceptions': exceptions,
+        'template_version': template_version,
+        'type': type
+      };
+}
+
+SummaryStats _$SummaryStatsFromJson(Map<String, dynamic> json) {
+  return new SummaryStats(
+      json['percentNonCompliant'] as int,
+      json['percentComplete'] as int,
+      json['percentAdvisory'] as int,
+      json['percentCompliant'] as int);
+}
+
+abstract class _$SummaryStatsSerializerMixin {
+  int get percentNonCompliant;
+  int get percentComplete;
+  int get percentAdvisory;
+  int get percentCompliant;
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'percentNonCompliant': percentNonCompliant,
+        'percentComplete': percentComplete,
+        'percentAdvisory': percentAdvisory,
+        'percentCompliant': percentCompliant
       };
 }

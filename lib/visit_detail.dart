@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/tracerVisit/observation.dart';
-import 'package:Tracer/model/tracerVisit/observationGroup.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +22,66 @@ import 'service/tracer_service.dart';
 import 'model/tracerVisit/tracerVisit.dart';
 import 'logExceptions.dart';
 
+
+class VisitDetailPage extends StatefulWidget {
+  static const String id = 'visit_detail_page_id';
+  VisitDetailPage({@required this.visitId});
+
+  final String visitId;
+
+  @override
+  _VisitDetailPageState createState() => _VisitDetailPageState(visitId: visitId);
+}
+
+class _VisitDetailPageState extends State<VisitDetailPage> {
+  
+  final String visitId;
+  final TracerService svc = new TracerService();
+  Template template;
+
+  _VisitDetailPageState({this.visitId});
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  void _init() async {
+    // load stuff here
+  }
+
+  Future<Map<String, dynamic>> fetchVisitData(String visitId) async { // you need to return a Future to the FutureBuilder
+      
+    Map<String, dynamic> returnMap = new Map<String, dynamic>();
+    returnMap['template'] = await svc.getTemplate();
+    returnMap['visit'] = await svc.getTracerVisit(visitId);
+    return returnMap;
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: fetchVisitData(this.visitId),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) print(snapshot.error);
+
+        return snapshot.hasData
+            ? VisitDetailView(tracerVisit: snapshot.data['visit'], template: snapshot.data['template'])
+            : Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+}
+
+
+/*
 class VisitDetailPage extends StatelessWidget {
   static const String id = 'visit_detail_page_id';
   VisitDetailPage({@required this.visitId});
   final String visitId;
+
 
   final TracerService svc = new TracerService();
 
@@ -43,10 +99,13 @@ class VisitDetailPage extends StatelessWidget {
     );
   }
 }
+*/
 
 class VisitDetailView extends StatelessWidget {
-  final TracerVisit tracervisit;
-  const VisitDetailView({this.tracervisit});
+  final TracerVisit tracerVisit;
+  final Template template;
+
+  const VisitDetailView({this.tracerVisit, this.template});
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +146,7 @@ class VisitDetailView extends StatelessWidget {
                     child: Text("EXCEPTIONS"))
               ],
             ),
-            title: Text(tracervisit.location),
+            title: Text(tracerVisit.place.location),
             // actions: <Widget>[
             //   IconButton(
             //     icon: Icon(
@@ -116,10 +175,12 @@ class VisitDetailView extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(12, 16, 12, 16),
                 //padding: EdgeInsets.symmetric(horizontal: 24.0),
                 children: <Widget>[
-                  ...tracervisit.observationGroups.map((observationGroup) {
+                  ...template.observationGroups.map((observationGroup) {
                     return VisitDetailItemView(
+                        visitId: tracerVisit.id,
                         observationGroup: observationGroup,
-                        observations: tracervisit.observations);
+                        observations: tracerVisit.observations,
+                        template: template);
                   }).toList(),
                 ],
               ),
@@ -164,10 +225,14 @@ class VisitDetailView extends StatelessWidget {
   }
 }
 
+
 class VisitDetailItemView extends StatelessWidget {
   final ObservationGroup observationGroup;
   final Map<String, Observation> observations;
-  const VisitDetailItemView({this.observationGroup, this.observations});
+  final Template template;
+  final String visitId;
+
+  const VisitDetailItemView({this.visitId, this.observationGroup, this.observations, this.template});
 
   @override
   Widget build(BuildContext context) {
@@ -184,10 +249,12 @@ class VisitDetailItemView extends StatelessWidget {
             textAlign: TextAlign.left,
           ),
           SizedBox(height: 8.0),
-          ...observationGroup.observationIds.map((observationId) {
+          ...observationGroup.observationCategories.map((observationCategory) {
             return ObsCatListTileView(
-              displayName: observations[observationId].displayName,
-              observationId: observationId,
+              observationCategory: observationCategory,
+              observation: observations[observationCategory.observationCategoryId],
+              template: template,
+              visitId: visitId
             );
           }).toList(),
         ],
@@ -197,9 +264,18 @@ class VisitDetailItemView extends StatelessWidget {
 }
 
 class ObsCatListTileView extends StatelessWidget {
-  final String displayName;
-  final String observationId;
-  const ObsCatListTileView({this.displayName, this.observationId});
+  
+  //final String displayName;
+  //final String observationId;
+
+  final ObservationCategory observationCategory;
+  final Observation observation;
+
+  final String visitId;
+  final Template template;
+
+  const ObsCatListTileView({this.observationCategory, this.observation, this.visitId, this.template});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -211,8 +287,9 @@ class ObsCatListTileView extends StatelessWidget {
               print('Go to next page;');
               _onTapItem(
                   context: context,
-                  observationId: observationId,
-                  observationName: displayName);
+                  observationCategoryId: observation.observationCategoryId,
+                  visitId: visitId,
+                  template: template);
             },
             leading: SizedBox(
               width: 40,
@@ -260,7 +337,7 @@ class ObsCatListTileView extends StatelessWidget {
               ),
             ),
             title: Text(
-              displayName,
+              observation.displayName,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -289,14 +366,14 @@ class ObsCatListTileView extends StatelessWidget {
     );
   }
 
-  void _onTapItem(
-      {BuildContext context, String observationId, String observationName}) {
+  void _onTapItem({BuildContext context, String observationCategoryId, String visitId, Template template}) {
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => LogExceptions(
-                observationId: observationId,
-                observationName: observationName,
+                visitId: visitId,
+                observationCategoryId: observationCategoryId,
+                template: template,
               )),
     );
   }
