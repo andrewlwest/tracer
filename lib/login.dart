@@ -28,16 +28,15 @@ class _LoginPageState extends State<LoginPage> {
 
   void _init() async {
     //userList = await svc.getAllUsers();
-/*
+
     SharedPreferences.getInstance().then((sp)  {
-      print("sp " + sp.getString("userLogin"));
+      //print("sp " + sp.getString("userLogin"));
       setState(() {
         _userLogin = sp.getString("userLogin");
         _usernameController.text = _userLogin;
       });
     });
-    print("login is " + _userLogin);
-    */
+    //print("login is " + _userLogin);
   }
 
   @override
@@ -110,10 +109,9 @@ class _LoginPageState extends State<LoginPage> {
     String login = _usernameController.value.text;
     String pass = _passwordController.value.text;
 
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => VisitListPage()));
 
-/*
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => VisitListPage()));
+
     bool success = await svc.login(login, pass);
     print("success = " + (success ? "true" : "false"));
 
@@ -124,8 +122,11 @@ class _LoginPageState extends State<LoginPage> {
 
       // load user
       User user = await svc.getUser(login);
-
       print("user = $user");
+
+      // set the authenticqated user object in the Application singleton.
+      Application application = new Application();
+      application.user = user;
 
       Navigator.push(context,MaterialPageRoute(builder: (context) => VisitListPage()));
 
@@ -134,6 +135,6 @@ class _LoginPageState extends State<LoginPage> {
         content: Text('login failed, try again'));
       _scaffoldKey.currentState.showSnackBar(snackBar);
     }
-*/
+
   }
 }

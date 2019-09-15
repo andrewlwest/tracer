@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:Tracer/model/template/template.dart';
+import 'package:Tracer/model/tracerVisit/observation.dart';
 import 'package:Tracer/model/tracerVisit/tracerVisit.dart';
 import 'package:http/http.dart' as http;
 import 'package:Tracer/constants.dart';
@@ -9,7 +11,6 @@ import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/model/place.dart';
 import 'package:Tracer/model/user.dart';
 
-import 'package:Tracer/model/observationTemplates/observationTemplates.dart';
 
 class TracerService {
   static const Map<String, dynamic> _DEFAULT_PARAMS = <String, dynamic>{
@@ -41,6 +42,10 @@ class TracerService {
   }
 
   Future<bool> login(String login, String pass) async {
+
+    // remove this statement for performing auth
+    //return true;
+
     Map<String, String> headers = {
       'OncallWeb-Mojo-Key': _buildParams()['oncallWebServiceKey'],
     };
@@ -50,16 +55,19 @@ class TracerService {
       'PartnersPassword': pass,
     };
 
-    //var body = "PartnersUsername=" + login + "&PartnersPassword=" + pass;
-    //print("TracerService: login: body = " + body.toString());
-
-    final response = await http.post(_buildParams()['oncallwebAuthEndPoint'],
-        body: body, headers: headers);
+    final response = await http.post(_buildParams()['oncallwebAuthEndPoint'], body: body, headers: headers);
     if (response.body.contains("AuthenticationSuccess")) {
       return true;
     } else {
       return false;
     }
+  }
+
+  Future<bool> savePropertyForVisit(String propertyName, String propertyValue, String visitId) async {
+    var body = json.encode({"method": "setVisitProperty","visitId":visitId,"propertyName":propertyName,"propertyValue":propertyValue});
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+    return ('true' == success);
   }
 
   Future<User> getUser(String login) async {
@@ -113,8 +121,8 @@ class TracerService {
           responseJson['tracerServiceResponse']["result"];
 
       if (visitJSONItems != null) {
-        TracerVisit list = TracerVisit.fromJson(visitJSONItems);
-        return list;
+        TracerVisit visit = TracerVisit.fromJson(visitJSONItems);
+        return visit;
       }
       return null;
     } else {
@@ -122,6 +130,45 @@ class TracerService {
     }
   }
 
+  Future<Template> getTemplate() async {
+    var body = json.encode({"method": "getObservationsTemplate"});
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+
+    if ('true' == success) {
+      Template template = Template.fromJson(responseJson['tracerServiceResponse']["result"]);
+
+      Map<String, ObservationCategory> observationCategories = new Map<String, ObservationCategory>();
+      for (ObservationGroup og in template.observationGroups) {
+        for (ObservationCategory oc in og.observationCategories) {
+          observationCategories[oc.observationCategoryId] = oc;
+        }
+      }
+      template.observationCategories = observationCategories;
+      return template;
+
+    } else {
+      return null;
+    }
+  }
+
+  Future<Observation> getObservation(String visitId, String observationCategoryId) async {
+
+    var body = json.encode({"method": "getObservation", "visitId": visitId, "observationCategoryId":observationCategoryId});
+    
+    print("body = " + body);
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+
+    if ('true' == success) {
+      Observation observation = Observation.fromJson(responseJson['tracerServiceResponse']['result']['observationCategories'][observationCategoryId]);
+      return observation;
+    } else {
+      return null;
+    }
+  }
+
+  /*
   Future<ObservationTemplates> getObservationTemplates() async {
     var body = json.encode({"method": "getObservationsTemplate"});
     final responseJson = await getTracerServiceResponse(body);
@@ -141,6 +188,7 @@ class TracerService {
       return null;
     }
   }
+  */
 
   Future<List<VisitListItem>> getAllVisits() async {
     var body = json.encode({"method": "getTracerVisitList", "filter": "all"});
@@ -156,6 +204,7 @@ class TracerService {
           list.add(VisitListItem.fromJson(item));
         }
       }
+      print ("here");
       return list;
     } else {
       return null;

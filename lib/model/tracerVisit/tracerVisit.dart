@@ -1,32 +1,57 @@
+//import 'package:Tracer/model/observationTemplates/observationGroup.dart';
+//import 'package:Tracer/model/observationTemplates/observationException.dart';
+import 'package:Tracer/model/place.dart';
+import 'package:Tracer/model/template/template.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'summaryStatus.dart';
-import 'observationGroup.dart';
 import 'observation.dart';
+
 part 'tracerVisit.g.dart';
 
 @JsonSerializable()
 class TracerVisit extends Object with _$TracerVisitSerializerMixin {
+
+  String id;
+  Place place;
   String summary;
-  String location;
-  String todo;
   String participants;
-  String site;
+  String todo;
+  DateTime visitDatetime;
+  SummaryStats summaryStats;
   String completionStatus;
-  List<ObservationGroup> observationGroups;
-  SummaryStatus summaryStatus;
+
+  @JsonKey(name: 'observationCategories')
   Map<String, Observation> observations;
+  
+  Map<String, ObservationException> exceptions;
+  
+  String template_version;
+  String type;
 
   TracerVisit(
-      this.summary,
-      this.location,
-      this.summaryStatus,
-      this.todo,
-      this.participants,
-      this.site,
-      this.completionStatus,
-      this.observationGroups,
-      this.observations);
+    this.id,
+    this.place,
+    this.summary,
+    this.summaryStats,
+    this.todo,
+    this.participants,
+    this.completionStatus,
+    this.observations,
+    this.exceptions,
+    this.template_version,
+    this.type);
 
   factory TracerVisit.fromJson(Map<String, dynamic> json) =>
       _$TracerVisitFromJson(json);
+}
+
+@JsonSerializable()
+class SummaryStats  extends Object with _$SummaryStatsSerializerMixin {
+    int percentNonCompliant;
+    int percentComplete;
+    int percentAdvisory;
+    int percentCompliant;
+  
+  SummaryStats(this.percentNonCompliant, this.percentComplete, this.percentAdvisory, this.percentCompliant);
+  
+  factory SummaryStats.fromJson(Map<String, dynamic> json) => _$SummaryStatsFromJson(json); 
 }

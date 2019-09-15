@@ -1,4 +1,6 @@
+import 'package:Tracer/model/place.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 
 /// This allows the `VisitListItem` class to access private members in
 /// the generated file. The value for this is *.g.dart, where
@@ -13,12 +15,26 @@ enum Category {
 }
 
 /*
-				"id": "2e859082b1f8430c8805082d79d265f8",
-				"location": "Echo Lab Blake 2",
-				"organization": "The General Hospital Corporation",
-				"site": "MGH",
-				"summary": "My karma ran over your dogma.",
-				"visitDatetime": "2019-08-09T10:00:00-04:00"
+                "completionStatus": null,
+                "summary": "Postman example, 2019-09-06 template",
+                "participants": "Mike waz here. And all of us",
+                "summaryStats": {
+                    "percentNonCompliant": 0,
+                    "percentComplete": 0,
+                    "percentAdvisory": 0,
+                    "percentCompliant": 0
+                },
+                "todo": "Honey do. Honey don't",
+                "visitDatetime": "2019-08-28T15:00:00",
+                "place": {
+                    "placeId": "13",
+                    "name": "Bulfinch Medical Group",
+                    "site": "50 Staniford",
+                    "location": "50 Staniford Street - 9th Floor",
+                    "type": "Ambulatory"
+                },
+                "id": "b3e8e77b010147d888ccad43bb8bca59",
+                "type": "comprehensive"
 */
 
 // to generate json serializable helper class:
@@ -28,15 +44,16 @@ enum Category {
 /// JSON serialization logic to be generated.
 @JsonSerializable()
 class VisitListItem extends Object with _$VisitListItemSerializerMixin {
-  VisitListItem(this.id, this.location, this.organization, this.site,
-      this.summary, this.visitDateTime);
+  VisitListItem(this.id, this.place, this.summary, this.participants,
+      this.todo, this.visitDatetime);
 
   String id;
-  String location;
-  String organization;
-  String site;
+  Place place;
   String summary;
-  DateTime visitDateTime;
+  String participants;
+  String todo;
+  DateTime visitDatetime;
+  SummaryStats summaryStats;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
@@ -45,5 +62,19 @@ class VisitListItem extends Object with _$VisitListItemSerializerMixin {
       _$VisitListItemFromJson(json);
 
   @override
-  String toString() => "$location (id=$id)";
+  String toString() => "$place (id=$id)";
+}
+
+@JsonSerializable()
+class SummaryStats extends Object with _$SummaryStatsSerializerMixin {
+
+  int percentNonCompliant;
+  int percentComplete;
+  int percentAdvisory;
+  int percentCompliant;
+  
+  SummaryStats();
+
+  factory SummaryStats.fromJson(Map<String, dynamic> json) => _$SummaryStatsFromJson(json);
+
 }
