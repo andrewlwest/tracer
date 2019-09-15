@@ -135,16 +135,33 @@ class _AddVisitState extends State<AddVisit> {
     var body = json.encode({
       "method": "createTracerVisit",
       "tracerVisit": {
-        "visitDatetime": _date + ' ' + _time,
-        "place": json.encode(_selectedPlace),
+        "visitDatetime": convertDateTime(_date, _time),
+        "place": _selectedPlace,
         "summary": _summaryController.text,
         "type": _visitType
       }
     });
     print(body);
-    var createVisit = svc.getTracerServiceResponse(body);
-    Navigator.pop(context, "saved");
+    //var createVisit = svc.getTracerServiceResponse(body);
+    //Navigator.pop(context, "saved");
     //now need to pop out window
+  }
+
+  String convertDateTime(String date, String time) {
+    var dateArray = date.split('/');
+    String year = dateArray[2];
+    String month = dateArray[1];
+    String day = dateArray[0];
+    if (day.length == 1) day = '0' + day;
+    if (month.length == 1) month = '0' + month;
+
+    var timeArray = time.split(new RegExp(':| '));
+    String hour = timeArray[0];
+    String minute = timeArray[1];
+    String ampm = timeArray[2];
+
+    if (ampm == 'PM') hour = (int.parse(hour) + 12).toString();
+    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':00';
   }
 
   void placeSelected(Place place) {
