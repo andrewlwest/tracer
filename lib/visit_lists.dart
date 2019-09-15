@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:Tracer/model/template/template.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 import 'package:Tracer/addVisit.dart';
@@ -25,11 +26,41 @@ import 'font_awesome_flutter.dart';
 import 'service/tracer_service.dart';
 import 'visit_detail.dart';
 
-class VisitListPage extends StatelessWidget {
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+class VisitListPage extends StatefulWidget {
   static const String id = 'visit_list_page_id';
+  
+  @override
+  _VisitListPageState createState() => _VisitListPageState();
+}
+
+
+class _VisitListPageState extends State<VisitListPage> {
+
+  Future<List<VisitListItem>> _visitListFuture;
+  final TracerService svc = new TracerService();
+
+  @override
+  void initState() {
+    super.initState();
+    _visitListFuture = svc.getAllVisits();
+  }
+
+  void _init() async {
+    // load data here
+  }
+
+  void refreshVisitList() async {
+    print('in refreshVisitList');
+    // reload
+    setState(() {
+      _visitListFuture = svc.getAllVisits();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TracerService svc = new TracerService();
 
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
@@ -79,9 +110,9 @@ class VisitListPage extends StatelessWidget {
                   semanticLabel: 'add',
                 ),
                 onPressed: () {
-                  //Navigator.pushNamed(context, CreateVisit.id);
-                  //Navigator.pushNamed(context, AutoComplete.id);
-                  Navigator.pushNamed(context, AddVisit.id);
+                  Navigator.pushNamed(context, AddVisit.id).whenComplete(refreshVisitList);
+                  //Navigator.pushNamed(context, AddVisit.id).then(    (value) { refreshVisitList();}       );
+                  //refreshVisitList();
                 },
               ),
               // IconButton(
@@ -109,7 +140,7 @@ class VisitListPage extends StatelessWidget {
               //TODAY TAB PANE CONTENT
 
               FutureBuilder<List<VisitListItem>>(
-                future: svc.getAllVisits(),
+                future: _visitListFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) print(snapshot.error);
 
@@ -170,14 +201,60 @@ class VisitListPage extends StatelessWidget {
 class VisitListView extends StatelessWidget {
 
   final List<VisitListItem> visits;
+  //final TracerService svc = new TracerService();
 
   VisitListView({Key key, this.visits}) : super(key: key);
+
+  // pull to refresh 
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  // pull down
+  void _onRefresh() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    
+    // need to switch to stateful, or find some way to refresh the future builder
+    //visits = await svc.getAllVisits();
+
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
     return Container(
+        child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: false,
+        header: WaterDropHeader(),
+        footer: CustomFooter(
+          builder: (BuildContext context,LoadStatus mode){
+            Widget body ;
+            if(mode==LoadStatus.idle){
+              body =  Text("pull up load");
+            }
+            else if(mode==LoadStatus.loading){
+              body =  CupertinoActivityIndicator();
+            }
+            else if(mode == LoadStatus.failed){
+              body = Text("Load Failed!Click retry!");
+            }
+            else if(mode == LoadStatus.canLoading){
+                body = Text("release to load more");
+            }
+            else{
+              body = Text("No more Data");
+            }
+            return Container(
+              height: 55.0,
+              child: Center(child:body),
+            );
+          },
+        ),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
         child: ListView.builder(
             itemCount: visits.length,
             padding: const EdgeInsets.all(15.0),
@@ -346,7 +423,10 @@ class VisitListView extends StatelessWidget {
                   ),
                 ),
               );
-            }));
+            }
+          )
+        )
+    );
   }
 }
 

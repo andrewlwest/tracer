@@ -1,5 +1,7 @@
 import 'package:Tracer/model/place.dart';
 import 'package:Tracer/ui/colors.dart';
+import 'package:Tracer/ui/date_picker.dart' as datePicker;
+import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -29,6 +31,9 @@ class _AddVisitState extends State<AddVisit> {
   String _visitType;
   Place _selectedPlace;
 
+  DateTime _visitDateTime;
+  timePicker.TimeOfDay _visitTimeOfDay;
+
   TracerService svc = TracerService();
 
   GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
@@ -51,57 +56,20 @@ class _AddVisitState extends State<AddVisit> {
     // old implementation for adding event listeners to fields
     //_dateFocusNode.addListener(_onDateFocusChange);
     //_timeFocusNode..addListener(_onTimeFocusChange);
+    _visitTimeOfDay = new timePicker.TimeOfDay(hour:12,minute: 0);
+    _visitDateTime = DateTime.now();
+
   }
 
-/*
-
-  // these onchange functions are not used ... if we have to hook up focus events for feids
-  // we will have to do something like this
-
-  void _onDateFocusChange() {
-    debugPrint("date Focus: " + _dateFocusNode.hasFocus.toString());
-    if (_dateFocusNode.hasFocus) {
-      DatePicker.showDatePicker(context,
-          showTitleActions: true,
-          minTime: DateTime(2000, 1, 1),
-          maxTime: DateTime(2022, 12, 31), onChanged: (date) {
-        print('change $date');
-      }, onConfirm: (date) {
-        _dateFieldController.text =
-            '${date.year} - ${date.month} - ${date.day}';
-        //_date = '${date.year} - ${date.month} - ${date.day}';
-        setState(() {});
-        print('confirm $date');
-      }, currentTime: DateTime.now(), locale: LocaleType.en);
-    }
-  }
-
-  void _onTimeFocusChange() {
-    debugPrint("time Focus: " + _timeFocusNode.hasFocus.toString());
-    if (_timeFocusNode.hasFocus) {
-      DatePicker.showTimePicker(context,
-          theme: DatePickerTheme(
-            containerHeight: 210.0,
-          ),
-          showTitleActions: true, onConfirm: (time) {
-        print('confirm $time');
-        _timeFieldController.text =
-            '${time.hour} : ${time.minute} : ${time.second}';
-        setState(() {});
-      }, currentTime: DateTime.now(), locale: LocaleType.en);
-      setState(() {});
-    }
-  }
-  */
-
-  void _save(BuildContext context) {
+  void _save(BuildContext context) async {
     print("save pressed");
 
+    DateTime dateTime = new DateTime(_visitDateTime.year, _visitDateTime.month, _visitDateTime.day, _visitTimeOfDay.hour, _visitTimeOfDay.minute, 0, 0, 0);
+
+    /*
     final snackBar = SnackBar(
-        content: Text('date = ' +
-            _date +
-            '\ntime = ' +
-            _time +
+        content: Text('dateTime = ' +
+            dateTime.toIso8601String() +
             '\npalce name = ' +
             (_selectedPlace == null ? "null" : _selectedPlace.name) +
             '\nsite = ' +
@@ -115,36 +83,17 @@ class _AddVisitState extends State<AddVisit> {
                 ? "null"
                 : _summaryController.text)));
     _scaffoldKey.currentState.showSnackBar(snackBar);
-    //post to server
-    /*
-    {
-    "method": "createTracerVisit",
-    "tracerVisit": {
-        "visitDatetime": "2019-08-28T15:00:00",
-        "place": {
-            "placeId": "13",
-            "site": "50 Staniford",
-            "location": "50 Staniford Street - 9th Floor",
-            "name": "Bulfinch Medical Group",
-            "type": "Ambulatory"
-        },
-        "summary": "Postman example, 2019-09-06 template",
-        "type": "comprehensive"
-    }
-}*/
-    var body = json.encode({
-      "method": "createTracerVisit",
-      "tracerVisit": {
-        "visitDatetime": _date + ' ' + _time,
-        "place": json.encode(_selectedPlace),
-        "summary": _summaryController.text,
-        "type": _visitType
-      }
-    });
-    print(body);
-    var createVisit = svc.getTracerServiceResponse(body);
+    */
+
+    // combine date and time into new DateTime
+    var newHour = _visitTimeOfDay.hour;
+    var newMin = _visitTimeOfDay.minute;
+
+    var visitListItem = await svc.createVisit(dateTime, _selectedPlace,  _summaryController.text, _visitType);
+    //var createVisit = svc.getTracerServiceResponse(body);
+
     Navigator.pop(context, "saved");
-    //now need to pop out window
+
   }
 
   void placeSelected(Place place) {
@@ -188,6 +137,24 @@ class _AddVisitState extends State<AddVisit> {
                           style: BorderStyle.solid, //Style of the border
                           width: .5, //width of the border
                         ),
+                        onPressed: () async {
+                            DateTime dateTime = await datePicker.showDatePicker(
+                              context: context,
+                              firstDate: DateTime(2018, 01, 01),
+                              initialDate: _visitDateTime,
+                              lastDate: DateTime(2022, 01, 01),
+                              initialDatePickerMode: datePicker.DatePickerMode.day,
+                              ) as DateTime;
+
+                            if (dateTime != null) {
+                              //_date = new DateFormat.yMd().format(dateTime);
+
+                              _date = new DateFormat('EEE, MMM d').format(dateTime);
+                              _visitDateTime = dateTime;
+                              setState(() {});
+                            }
+                        },
+                        /*
                         onPressed: () {
                           DatePicker.showDatePicker(context,
                               theme: DatePickerTheme(
@@ -199,11 +166,14 @@ class _AddVisitState extends State<AddVisit> {
                               onConfirm: (date) {
                             print('confirm date: $date');
                             _date = new DateFormat.yMd().format(date);
+
                             setState(() {});
                           },
                               currentTime: DateTime.now(),
                               locale: LocaleType.en);
                         },
+
+                        */
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -240,7 +210,7 @@ class _AddVisitState extends State<AddVisit> {
                   )),
                   SizedBox(width: 12.0),
                   Expanded(
-                      child: Column(
+                    child: Column(
                     children: <Widget>[
                       OutlineButton(
                         borderSide: BorderSide(
@@ -248,6 +218,19 @@ class _AddVisitState extends State<AddVisit> {
                           style: BorderStyle.solid, //Style of the border
                           width: .5, //width of the border
                         ),
+                        onPressed: () async {
+                          timePicker.TimeOfDay timeOfDay = await timePicker.showTimePicker(
+                            context: context,
+                            initialTime: _visitTimeOfDay,
+                          ) as timePicker.TimeOfDay;
+
+                          if (timeOfDay != null) {
+                            _time = timeOfDay.toString();
+                            _visitTimeOfDay = timeOfDay;
+                            setState(() {});
+                          }
+                        },
+                        /*
                         onPressed: () {
                           DatePicker.showTimePicker(context,
                               theme: DatePickerTheme(
@@ -262,6 +245,7 @@ class _AddVisitState extends State<AddVisit> {
                               locale: LocaleType.en);
                           setState(() {});
                         },
+                        */
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -360,7 +344,7 @@ class _AddVisitState extends State<AddVisit> {
                                     .toLowerCase()
                                     .contains(query.toLowerCase());
                               })
-                          : Center(child: CircularProgressIndicator());
+                          : Center(child: LinearProgressIndicator());
                     }),
               ),
               SizedBox(height: 12.0),
@@ -424,4 +408,5 @@ class _AddVisitState extends State<AddVisit> {
       ),
     );
   }
+  
 }

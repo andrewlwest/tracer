@@ -14,6 +14,7 @@
 
 import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/tracerVisit/observation.dart';
+import 'package:Tracer/model/user.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -261,6 +262,7 @@ class VisitDetailItemView extends StatelessWidget {
   }
 }
 
+
 class ObsCatListTileView extends StatelessWidget {
 
   final ObservationCategory observationCategory;
@@ -291,6 +293,8 @@ class ObsCatListTileView extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   CircleAvatar(
+
+
                     // IF ASSIGNED IT WILL HAVE A PHOTO OR INITIALS
                     //backgroundColor: Color((math.Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0),
                     //child: Text('BH'),
@@ -327,6 +331,7 @@ class ObsCatListTileView extends StatelessWidget {
                       ),
                     ),
                   ),
+
                 ],
               ),
             ),

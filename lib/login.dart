@@ -109,11 +109,9 @@ class _LoginPageState extends State<LoginPage> {
     String login = _usernameController.value.text;
     String pass = _passwordController.value.text;
 
-
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => VisitListPage()));
-
     bool success = await svc.login(login, pass);
-    print("success = " + (success ? "true" : "false"));
+    //print("success = " + (success ? "true" : "false"));
+    //bool success = true;
 
     // if successful partners login.. lookup user and persist
     if (success) {

@@ -195,6 +195,8 @@ class TracerService {
     final responseJson = await getTracerServiceResponse(body);
     String success = responseJson['tracerServiceResponse']['success'];
 
+    print('in getAllVisits success = $success');
+
     if ('true' == success) {
       List<VisitListItem> list = new List<VisitListItem>();
       List visitJSONItems = responseJson['tracerServiceResponse']["result"];
@@ -227,6 +229,30 @@ class TracerService {
         }
       }
       return returnList;
+    } else {
+      return null;
+    }
+  }
+
+  Future<VisitListItem> createVisit(DateTime dateTime, Place place, String summary, String visitType) async {
+
+    var body = json.encode({
+      "method": "createTracerVisit",
+      "tracerVisit": {
+        "visitDatetime": dateTime.toIso8601String(),
+        "place": place,
+        "summary": summary,
+        "type": visitType
+      }
+    });
+    print(body);
+
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+
+    if ('true' == success) {
+      String newId = responseJson['tracerServiceResponse']['result']['id'];
+      return VisitListItem(newId, place, summary, null, null, dateTime);
     } else {
       return null;
     }
