@@ -327,7 +327,7 @@ Widget _SmeListTitle(UserListItem sme) {
       child: Stack(
         children: <Widget>[
           CircleAvatar(
-            backgroundColor: kTracersGray300,
+            backgroundColor: kTracersBlue900,
             child: Text(initials) 
           ),
         ],

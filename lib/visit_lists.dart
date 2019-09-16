@@ -401,14 +401,28 @@ class VisitListView extends StatelessWidget {
                                         //MORE ACTIONS ICON
                                         Column(
                                           children: <Widget>[
-                                            IconButton(
+                                            PopupMenuButton<int>(
                                               icon: Icon(
-                                                  FontAwesomeIcons.ellipsisV),
-                                              color: Colors.black45,
-                                              iconSize: 16,
-                                              onPressed: () {
-                                                print('Card Actions');
-                                              },
+                                                Icons.more_vert,
+                                                color: Colors.black45,
+                                              ),
+                                              itemBuilder: (context) => [
+                                                PopupMenuItem(
+                                                  value: 1,
+                                                  child: ListTile(
+                                                    leading: Icon(Icons.edit),
+                                                    title: Text('Edit visit'),
+                                                  ),
+                                                ),
+                                                const PopupMenuDivider(),
+                                                PopupMenuItem(
+                                                  value: 2,
+                                                  child: ListTile(
+                                                    leading: Icon(Icons.delete),
+                                                    title: Text('Delete visit'),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
