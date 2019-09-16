@@ -76,8 +76,6 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
   final Template template;
   UserListItem selectedUserListItem;
 
-  bool assigned;
-
   final _commentsController = TextEditingController();
 
   TracerService svc = TracerService();
@@ -90,7 +88,7 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
 
   @override
   void initState() {
-    assigned = (observation != null && observation.sme != null && observation.sme.name != null);
+    _commentsController.text = observation.comment;
     super.initState();
   }
 
@@ -142,7 +140,8 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
         child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             children: <Widget>[
-              _scoreButtons(observation),
+              ScoreButtons(visitId: visitId,observation: observation),
+              //_scoreButtons(observation, visitId),
 
               SizedBox(height: 16.0),
 
@@ -349,57 +348,108 @@ Widget _SmeListTitle(UserListItem sme) {
 }
 
 
+
+Future<bool> setObservationScore(Observation observation, String score, String visitId) async {
+  TracerService svc = TracerService();
+
+  bool success = await svc.setObservationProperty("score", score, visitId, observation.observationCategoryId);
+
+  return success;
+}
+
+
 //SCORE BUTTONS WIDGET
-_scoreButtons(Observation observation) {
+class ScoreButtons extends StatefulWidget {
+  Observation observation;
+  String visitId;
+  
+  ScoreButtons({this.visitId, this.observation});
+  _ScoreButtonsState createState() => _ScoreButtonsState(observation, visitId);
+}
 
-  String score = observation.score;
+class _ScoreButtonsState extends State<ScoreButtons> {
+  final Observation observation;
+  final String visitId;
+  String _score;
 
-  return Padding(
-  padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: <Widget>[
-      IconButton(
-        icon: Icon(FontAwesomeIcons.ban),
-        color: (score == "notApplicable") ? kTracersGray100 : kTracersGray300,
-        iconSize: 24,
-        onPressed: () {
-          print('NOT APPLICABLE'); // notApplicable
-        },
+  _ScoreButtonsState(this.observation, this.visitId);
+
+  @override
+  void initState() {
+    _score = observation.score;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(FontAwesomeIcons.ban),
+            color: (_score == "notApplicable") ? kTracersGray100 : kTracersGray300,
+            iconSize: 24,
+            onPressed: () async {
+              bool success = await setObservationScore(observation, "notApplicable", visitId);
+              setState(() {
+                _score = "notApplicable";
+              });
+              print('NOT APPLICABLE'); // notApplicable
+            },
+          ),
+          IconButton(
+            icon: Icon(FontAwesomeIcons.circle),
+            color: (_score == "notAssessed") ? kTracersGray100 : kTracersGray300,
+            iconSize: 24,
+            onPressed: () async{
+              bool success = await setObservationScore(observation, "notAssessed", visitId);
+              setState(() {
+                _score = "notAssessed";
+              });
+              print('DID NOT ASSESS'); // notAssessed
+            },
+          ),
+          IconButton(
+            icon: Icon(FontAwesomeIcons.solidCheckCircle),
+            color: (_score == "compliant") ? kTracersGreen500 : kTracersGray300,
+            iconSize: 24,
+            onPressed: () async {
+              bool success = await setObservationScore(observation, "compliant", visitId);
+              setState(() {
+                _score = "compliant";
+              });
+              print('COMPLIANT'); // compliant
+            },
+          ),
+          IconButton(
+            icon: Icon(FontAwesomeIcons.exclamationCircle),
+            color: (_score == "advisory") ? kTracersYellow500 : kTracersGray300,
+            iconSize: 24,
+            onPressed: () async {
+              bool success = await setObservationScore(observation, "advisory", visitId);
+              setState(() {
+                _score = "advisory";
+              });
+              print('ADVISORY'); // advisory
+            },
+          ),
+          IconButton(
+            icon: Icon(FontAwesomeIcons.solidTimesCircle),
+            color: (_score == "nonCompliant") ? kTracersRed500 : kTracersGray300,
+            iconSize: 24,
+            onPressed: () async {
+              bool success = await setObservationScore(observation, "nonCompliant", visitId);
+              setState(() {
+                _score = "nonCompliant";
+              });
+              print('NON_COMPLIANT'); // nonCompliant
+            },
+          ),
+        ],
       ),
-      IconButton(
-        icon: Icon(FontAwesomeIcons.circle),
-        color: (score == "notAssessed") ? kTracersGray100 : kTracersGray300,
-        iconSize: 24,
-        onPressed: () {
-          print('DID NOT ASSESS'); // notAssessed
-        },
-      ),
-      IconButton(
-        icon: Icon(FontAwesomeIcons.solidCheckCircle),
-        color: (score == "compliant") ? kTracersGreen500 : kTracersGray300,
-        iconSize: 24,
-        onPressed: () {
-          print('COMPLIANT'); // compliant
-        },
-      ),
-      IconButton(
-        icon: Icon(FontAwesomeIcons.exclamationCircle),
-        color: (score == "advisory") ? kTracersYellow500 : kTracersGray300,
-        iconSize: 24,
-        onPressed: () {
-          print('ADVISORY'); // advisory
-        },
-      ),
-      IconButton(
-        icon: Icon(FontAwesomeIcons.solidTimesCircle),
-        color: (score == "nonCompliant") ? kTracersRed500 : kTracersGray300,
-        iconSize: 24,
-        onPressed: () {
-          print('NON_COMPLIANT'); // nonCompliant
-        },
-      ),
-    ],
-  ),
-);
+    );
+  }
 }
