@@ -13,6 +13,8 @@ class Observation extends Object with _$ObservationSerializerMixin {
   String score;
   String observationCategoryId;
   String displayName;
+
+  @JsonKey(defaultValue: true)
   bool noExceptionsFound;
 
   Observation(this.sme, this.comment, this.freeTextException, this.score, this.observationCategoryId,

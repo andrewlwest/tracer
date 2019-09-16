@@ -16,7 +16,7 @@ Observation _$ObservationFromJson(Map<String, dynamic> json) {
       json['score'] as String,
       json['observationCategoryId'] as String,
       json['displayName'] as String,
-      json['noExceptionsFound'] as bool);
+      json['noExceptionsFound'] as bool ?? true);
 }
 
 abstract class _$ObservationSerializerMixin {

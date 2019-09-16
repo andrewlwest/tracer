@@ -70,6 +70,16 @@ class TracerService {
     return ('true' == success);
   }
 
+  Future<bool> setObservationProperty(String propertyName, dynamic propertyValue, String visitId, String observationCategoryId) async {
+    var body = json.encode({"method": "setObservationProperty","visitId":visitId,"observationCategoryId":observationCategoryId, "propertyName":propertyName,"propertyValue":propertyValue});
+    
+    print(body);
+    
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+    return ('true' == success);
+  }
+
   Future<User> getUser(String login) async {
     var body = json.encode({"method": "getUsers"});
     final responseJson = await getTracerServiceResponse(body);

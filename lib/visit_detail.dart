@@ -224,7 +224,7 @@ class VisitDetailView extends StatelessWidget {
   }
 }
 
-
+// observation groups
 class VisitDetailItemView extends StatelessWidget {
   final ObservationGroup observationGroup;
   final Map<String, Observation> observations;
@@ -262,6 +262,101 @@ class VisitDetailItemView extends StatelessWidget {
   }
 }
 
+Widget _observationAssignmentStatus(Observation observation) {
+  if (observation != null && observation.sme != null && observation.sme.name != null) {
+
+    List<String> nameParts= observation.sme.name.split(",");
+    String initials = nameParts[1].trim().substring(0,1).toUpperCase() + nameParts[0].trim().substring(0,1).toUpperCase();
+
+    return CircleAvatar(
+      backgroundColor: kTracersGreen500,
+      child: Text(initials),
+    );
+  } else {
+    return CircleAvatar(
+      child: Icon(
+        FontAwesomeIcons.solidUserCircle,
+        size: 35,
+        color: kTracersGray300,
+      ),
+      backgroundColor: kTracersWhite,
+    );
+  }
+}
+
+Widget _observationExceptionStatus(Observation observation) {
+  if (observation == null || observation.score == null) {
+      return CircleAvatar(
+        maxRadius: 8,
+        backgroundColor: kTracersGray300,
+        child: Icon(
+          Icons.flag,
+          size: 12,
+          color: kTracersWhite,
+        ),
+      );
+  } else if (observation.noExceptionsFound) {
+      return CircleAvatar(
+        maxRadius: 8,
+        backgroundColor: kTracersBlue500,
+        child: Icon(
+          Icons.flag,
+          size: 12,
+          color: kTracersWhite,
+        ),
+      );
+  } else {
+      return CircleAvatar(
+        maxRadius: 8,
+        backgroundColor: kTracersRed500,
+        child: Icon(
+          Icons.flag,
+          size: 12,
+          color: kTracersWhite,
+        ),
+      );
+  }
+}
+
+Widget _observationScoreIcon(Observation observation) {
+
+  if (observation != null && observation.score != null) {
+    if (observation.score == "compliant") {
+      return Icon(
+        FontAwesomeIcons.solidCheckCircle,
+        color: kTracersGreen500,
+        size: 16.0,);
+    } else if (observation.score == "advisory") {
+      return Icon(
+        FontAwesomeIcons.exclamationCircle,
+        color: kTracersYellow500,
+        size: 16.0,);
+    } else if (observation.score == "nonCompliant") {
+      return Icon(
+        FontAwesomeIcons.solidTimesCircle,
+        color: kTracersRed500,
+        size: 16.0,);
+    } else if (observation.score == "notApplicable") {
+      return Icon(
+        FontAwesomeIcons.solidTimesCircle,
+        color: kTracersRed500,
+        size: 16.0,);
+    } else if (observation.score == "notAssessed") {
+      return Icon(
+        FontAwesomeIcons.solidTimesCircle,
+        color: kTracersRed500,
+        size: 16.0,);
+    } else {
+      return Icon(
+        FontAwesomeIcons.questionCircle,
+        color: kTracersGray300,
+        size: 16.0,);
+    }
+  } else {
+    return SizedBox(height: 8.0);
+  }
+}
+
 
 class ObsCatListTileView extends StatelessWidget {
 
@@ -283,7 +378,7 @@ class ObsCatListTileView extends StatelessWidget {
               print('Go to next page;');
               _onTapItem(
                   context: context,
-                  observationCategoryId: observation.observationCategoryId,
+                  observationCategoryId: observationCategory.observationCategoryId,
                   visitId: visitId,
                   template: template);
             },
@@ -292,6 +387,9 @@ class ObsCatListTileView extends StatelessWidget {
               height: 42,
               child: Stack(
                 children: <Widget>[
+                  _observationAssignmentStatus(observation),
+
+                  /*
                   CircleAvatar(
 
 
@@ -309,17 +407,21 @@ class ObsCatListTileView extends StatelessWidget {
                     backgroundColor: kTracersWhite,
                     //END IF NOT ASSIGNED
                   ),
+                  */
+
                   Container(
                     padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
                     alignment: Alignment.bottomCenter,
-                    child: CircleAvatar(
+                    child: _observationExceptionStatus(observation),
+                    /*
+                    CircleAvatar(
                       maxRadius: 8,
 
                       //IF NOT YEY ASSESED FLAG ICON IS GRAY
-                      backgroundColor: kTracersGray300,
+                      //backgroundColor: kTracersGray300,
 
                       //IF NO EXCEOPTIONS FOUND ICON IS BLUE
-                      //backgroundColor: kTracersBlue500,
+                      backgroundColor: kTracersBlue500,
 
                       //IF EXCEPTIONS FOUND FLAG ICON IS RED
                       //backgroundColor: kTracersRed500,
@@ -330,6 +432,8 @@ class ObsCatListTileView extends StatelessWidget {
                         color: kTracersWhite,
                       ),
                     ),
+                    */
+
                   ),
 
                 ],
@@ -340,7 +444,10 @@ class ObsCatListTileView extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
-            trailing: Icon(
+            trailing: _observationScoreIcon(observation),
+            
+            /*
+            Icon(
               //ICON IS GREEN CHECK IF COMPLIANT
               FontAwesomeIcons.solidCheckCircle,
               color: kTracersGreen500,
@@ -354,6 +461,7 @@ class ObsCatListTileView extends StatelessWidget {
               //color: kTracersRed500,
               size: 16.0,
             ),
+            */
           ),
           Divider(
             height: 1.0,

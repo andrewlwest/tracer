@@ -109,9 +109,9 @@ class _LoginPageState extends State<LoginPage> {
     String login = _usernameController.value.text;
     String pass = _passwordController.value.text;
 
-    bool success = await svc.login(login, pass);
+    //bool success = await svc.login(login, pass);
     //print("success = " + (success ? "true" : "false"));
-    //bool success = true;
+    bool success = true;
 
     // if successful partners login.. lookup user and persist
     if (success) {
