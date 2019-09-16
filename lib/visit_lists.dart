@@ -30,25 +30,37 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class VisitListPage extends StatefulWidget {
   static const String id = 'visit_list_page_id';
-  
+
   @override
   _VisitListPageState createState() => _VisitListPageState();
 }
 
-
-class _VisitListPageState extends State<VisitListPage> {
+class _VisitListPageState extends State<VisitListPage>
+    with SingleTickerProviderStateMixin {
+  TabController _tabController;
 
   Future<List<VisitListItem>> _visitListFuture;
   final TracerService svc = new TracerService();
+  final String pageTitle = 'Tracer';
+
+  final List<Tab> myTabs = <Tab>[
+    Tab(text: 'TODAY'),
+    Tab(text: 'UPCOMING'),
+    Tab(text: 'PAST'),
+    Tab(text: 'TODO'),
+  ];
 
   @override
   void initState() {
     super.initState();
     _visitListFuture = svc.getAllVisits();
+    _tabController = TabController(vsync: this, length: myTabs.length);
   }
 
-  void _init() async {
-    // load data here
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void refreshVisitList() async {
@@ -61,12 +73,11 @@ class _VisitListPageState extends State<VisitListPage> {
 
   @override
   Widget build(BuildContext context) {
-
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
     return MaterialApp(
       home: DefaultTabController(
-        length: 4,
+        length: myTabs.length,
         child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
@@ -84,25 +95,16 @@ class _VisitListPageState extends State<VisitListPage> {
             bottom: TabBar(
               isScrollable: true,
               tabs: [
-                Container(
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: Text("TODAY")),
-                Container(
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: Text("UPCOMING")),
-                Container(
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: Text("PAST")),
-                Container(
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: Text("TODO"))
+                ...myTabs.map((Tab tab) {
+                  final String label = tab.text.toUpperCase();
+                  return Container(
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: Text(label));
+                }).toList()
               ],
             ),
-            title: Text('Tracer'),
+            title: Text(pageTitle),
             actions: <Widget>[
               IconButton(
                 icon: Icon(
@@ -110,7 +112,8 @@ class _VisitListPageState extends State<VisitListPage> {
                   semanticLabel: 'add',
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, AddVisit.id).whenComplete(refreshVisitList);
+                  Navigator.pushNamed(context, AddVisit.id)
+                      .whenComplete(refreshVisitList);
                   //Navigator.pushNamed(context, AddVisit.id).then(    (value) { refreshVisitList();}       );
                   //refreshVisitList();
                 },
@@ -136,28 +139,23 @@ class _VisitListPageState extends State<VisitListPage> {
             ],
           ),
           body: TabBarView(
+            controller: _tabController,
             children: <Widget>[
               //TODAY TAB PANE CONTENT
 
-              FutureBuilder<List<VisitListItem>>(
-                future: _visitListFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) print(snapshot.error);
+              ...myTabs.map((Tab tab) {
+                final String label = tab.text.toLowerCase();
+                return FutureBuilder<List<VisitListItem>>(
+                  future: _visitListFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) print(snapshot.error);
 
-                  return snapshot.hasData
-                      ? VisitListView(visits: snapshot.data)
-                      : Center(child: CircularProgressIndicator());
-                },
-              ),
-
-              //UPCOMING TAB PANE CONTENT
-              Text('Upcoming'),
-
-              //PAST TAB PANE CONTENT
-              Text('Past'),
-
-              //ADMIN TAB PANE CONTENT
-              Text('Admin'),
+                    return snapshot.hasData
+                        ? VisitListView(visits: snapshot.data)
+                        : Center(child: CircularProgressIndicator());
+                  },
+                );
+              }).toList(),
             ],
           ),
           drawer: Drawer(
@@ -199,20 +197,20 @@ class _VisitListPageState extends State<VisitListPage> {
 }
 
 class VisitListView extends StatelessWidget {
-
   final List<VisitListItem> visits;
   //final TracerService svc = new TracerService();
 
   VisitListView({Key key, this.visits}) : super(key: key);
 
-  // pull to refresh 
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  // pull to refresh
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   // pull down
-  void _onRefresh() async{
+  void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
-    
+
     // need to switch to stateful, or find some way to refresh the future builder
     //visits = await svc.getAllVisits();
 
@@ -226,207 +224,206 @@ class VisitListView extends StatelessWidget {
 
     return Container(
         child: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: false,
-        header: WaterDropHeader(),
-        footer: CustomFooter(
-          builder: (BuildContext context,LoadStatus mode){
-            Widget body ;
-            if(mode==LoadStatus.idle){
-              body =  Text("pull up load");
-            }
-            else if(mode==LoadStatus.loading){
-              body =  CupertinoActivityIndicator();
-            }
-            else if(mode == LoadStatus.failed){
-              body = Text("Load Failed!Click retry!");
-            }
-            else if(mode == LoadStatus.canLoading){
-                body = Text("release to load more");
-            }
-            else{
-              body = Text("No more Data");
-            }
-            return Container(
-              height: 55.0,
-              child: Center(child:body),
-            );
-          },
-        ),
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        child: ListView.builder(
-            itemCount: visits.length,
-            padding: const EdgeInsets.all(15.0),
-            itemBuilder: (context, position) {
-              return new InkWell(
-                onTap: () => _onTapItem(
-                    context, visits[position]), // handle your onTap here
-                child: SizedBox(
-                  height: 174,
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(16.0, 12.0, 0, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
+            enablePullDown: true,
+            enablePullUp: false,
+            header: WaterDropHeader(),
+            footer: CustomFooter(
+              builder: (BuildContext context, LoadStatus mode) {
+                Widget body;
+                if (mode == LoadStatus.idle) {
+                  body = Text("pull up load");
+                } else if (mode == LoadStatus.loading) {
+                  body = CupertinoActivityIndicator();
+                } else if (mode == LoadStatus.failed) {
+                  body = Text("Load Failed!Click retry!");
+                } else if (mode == LoadStatus.canLoading) {
+                  body = Text("release to load more");
+                } else {
+                  body = Text("No more Data");
+                }
+                return Container(
+                  height: 55.0,
+                  child: Center(child: body),
+                );
+              },
+            ),
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            child: ListView.builder(
+                itemCount: visits.length,
+                padding: const EdgeInsets.all(15.0),
+                itemBuilder: (context, position) {
+                  return new InkWell(
+                    onTap: () => _onTapItem(
+                        context, visits[position]), // handle your onTap here
+                    child: SizedBox(
+                      height: 174,
+                      child: Card(
+                        clipBehavior: Clip.antiAlias,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(16.0, 12.0, 0, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              new Expanded(
-                                child: new Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      '${visits[position].place.location}',
-                                      maxLines: 1,
-                                      style: theme.textTheme.caption,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              new Column(
+                              Row(
                                 children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
-                                    child: Text(
-                                      //'${visits[position].visitDatetime}',
-                                      new DateFormat('M/d/yy h:mm aa').format(visits[position].visitDatetime), 
-                                      maxLines: 1,
-                                      style: theme.textTheme.caption,
+                                  new Expanded(
+                                    child: new Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '${visits[position].place.location}',
+                                          maxLines: 1,
+                                          style: theme.textTheme.caption,
+                                        ),
+                                      ],
                                     ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10.0),
-                          Row(
-                            children: <Widget>[
-                              new Column(
-                                children: <Widget>[
-                                  Text(
-                                    '${visits[position].place.name}',
-                                    style: theme.textTheme.headline,
-                                    maxLines: 1,
+                                  ),
+                                  new Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                        child: Text(
+                                          //'${visits[position].visitDatetime}',
+                                          new DateFormat('M/d/yy h:mm aa')
+                                              .format(visits[position]
+                                                  .visitDatetime),
+                                          maxLines: 1,
+                                          style: theme.textTheme.caption,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
-                            child: Row(
-                              children: <Widget>[
-                                new Flexible(
-                                  child: new Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                              SizedBox(height: 10.0),
+                              Row(
+                                children: <Widget>[
+                                  new Column(
                                     children: <Widget>[
-                                      SizedBox(
-                                        height: 45,
-                                        child: Text(
-                                          '${visits[position].summary}',
-                                          style: theme.textTheme.body2,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                        ),
+                                      Text(
+                                        '${visits[position].place.name}',
+                                        style: theme.textTheme.headline,
+                                        maxLines: 1,
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                //TODAY and UPCOMING CARDS WILL HAVE THE PROGRESS BAR SHOWN INSTEAD OF THE SCORE BAR
-                                // new Expanded(
-                                //   child: new SizedBox(
-                                //     height: 4,
-                                //     child: new LinearProgressIndicator(
-                                //       valueColor: new AlwaysStoppedAnimation(
-                                //           kTracersBlue500),
-                                //       backgroundColor: kTracersBlue100,
-                                //       value: .03,
-                                //     ),
-                                //   ),
-                                // ),
-                                //PAST CARDS WILL HAVE THE SCORE BAR SHOWN INSTEAD OF THE PROGRESS BAR
-                                //vCardScore,
-                                new Expanded(
-                                    child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                ],
+                              ),
+                              SizedBox(height: 8.0),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                child: Row(
                                   children: <Widget>[
-                                    //TO DO ICON
-                                    Column(
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: Icon(
-                                              FontAwesomeIcons.solidClipboard),
-                                          color: Colors.black45,
-                                          iconSize: 16,
-                                          onPressed: () async {
-                                            final String todo =
-                                                await _todoInputDialog(
-                                                    context, visits[position]);
-                                            print(
-                                                "todo is $todo");
-                                          },
-                                        ),
-                                      ],
-                                    ),
-
-                                    //participants  ICON
-                                    Column(
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: Icon(
-                                              FontAwesomeIcons.solidUserCircle),
-                                          color: Colors.black45,
-                                          iconSize: 16,
-                                          onPressed: () async {
-                                            final String participants =
-                                                await _participantsInputDialog(
-                                                    context, visits[position]);
-                                            print(
-                                                "participants are $participants");
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                    //MORE ACTIONS ICON
-                                    Column(
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon:
-                                              Icon(FontAwesomeIcons.ellipsisV),
-                                          color: Colors.black45,
-                                          iconSize: 16,
-                                          onPressed: () {
-                                            print('Card Actions');
-                                          },
-                                        ),
-                                      ],
+                                    new Flexible(
+                                      child: new Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: 45,
+                                            child: Text(
+                                              '${visits[position].summary}',
+                                              style: theme.textTheme.body2,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
-                                )),
-                              ],
-                            ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    //TODAY and UPCOMING CARDS WILL HAVE THE PROGRESS BAR SHOWN INSTEAD OF THE SCORE BAR
+                                    // new Expanded(
+                                    //   child: new SizedBox(
+                                    //     height: 4,
+                                    //     child: new LinearProgressIndicator(
+                                    //       valueColor: new AlwaysStoppedAnimation(
+                                    //           kTracersBlue500),
+                                    //       backgroundColor: kTracersBlue100,
+                                    //       value: .03,
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    //PAST CARDS WILL HAVE THE SCORE BAR SHOWN INSTEAD OF THE PROGRESS BAR
+                                    //vCardScore,
+                                    new Expanded(
+                                        child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        //TO DO ICON
+                                        Column(
+                                          children: <Widget>[
+                                            IconButton(
+                                              icon: Icon(FontAwesomeIcons
+                                                  .solidClipboard),
+                                              color: Colors.black45,
+                                              iconSize: 16,
+                                              onPressed: () async {
+                                                final String todo =
+                                                    await _todoInputDialog(
+                                                        context,
+                                                        visits[position]);
+                                                print("todo is $todo");
+                                              },
+                                            ),
+                                          ],
+                                        ),
+
+                                        //participants  ICON
+                                        Column(
+                                          children: <Widget>[
+                                            IconButton(
+                                              icon: Icon(FontAwesomeIcons
+                                                  .solidUserCircle),
+                                              color: Colors.black45,
+                                              iconSize: 16,
+                                              onPressed: () async {
+                                                final String participants =
+                                                    await _participantsInputDialog(
+                                                        context,
+                                                        visits[position]);
+                                                print(
+                                                    "participants are $participants");
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        //MORE ACTIONS ICON
+                                        Column(
+                                          children: <Widget>[
+                                            IconButton(
+                                              icon: Icon(
+                                                  FontAwesomeIcons.ellipsisV),
+                                              color: Colors.black45,
+                                              iconSize: 16,
+                                              onPressed: () {
+                                                print('Card Actions');
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              );
-            }
-          )
-        )
-    );
+                  );
+                })));
   }
 }
 
@@ -442,9 +439,8 @@ void _onTapItem(BuildContext context, VisitListItem visit) {
 */
 }
 
-
-Future<String> _participantsInputDialog(BuildContext context, VisitListItem visit) async {
-  
+Future<String> _participantsInputDialog(
+    BuildContext context, VisitListItem visit) async {
   final TracerService svc = new TracerService();
   final _controller = TextEditingController();
 
@@ -482,7 +478,8 @@ Future<String> _participantsInputDialog(BuildContext context, VisitListItem visi
           FlatButton(
             child: Text('OK'),
             onPressed: () async {
-              bool success = await svc.savePropertyForVisit("participants",_controller.text, visit.id);
+              bool success = await svc.savePropertyForVisit(
+                  "participants", _controller.text, visit.id);
               Navigator.of(context).pop();
             },
           ),
@@ -492,9 +489,8 @@ Future<String> _participantsInputDialog(BuildContext context, VisitListItem visi
   );
 }
 
-
-Future<String> _todoInputDialog(BuildContext context, VisitListItem visit) async {
-  
+Future<String> _todoInputDialog(
+    BuildContext context, VisitListItem visit) async {
   final TracerService svc = new TracerService();
   final _controller = TextEditingController();
 
@@ -532,7 +528,8 @@ Future<String> _todoInputDialog(BuildContext context, VisitListItem visit) async
           FlatButton(
             child: Text('OK'),
             onPressed: () async {
-              bool success = await svc.savePropertyForVisit("todo",_controller.text, visit.id);
+              bool success = await svc.savePropertyForVisit(
+                  "todo", _controller.text, visit.id);
               Navigator.of(context).pop();
             },
           ),
