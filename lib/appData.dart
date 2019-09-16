@@ -1,17 +1,19 @@
-
 import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/user.dart';
 
-class Application {
-  static final Application _singleton = new Application._internal();
+
+class AppData {
+  static final AppData _singleton = new AppData._internal();
 
   User user;
   Template template;
 
-  factory Application() {
+  factory AppData() {
     return _singleton;
   }
 
-  Application._internal();
+  AppData._internal();
 
 }
+
+AppData appData = new AppData();

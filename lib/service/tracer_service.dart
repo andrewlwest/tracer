@@ -7,7 +7,6 @@ import 'package:Tracer/model/tracerVisit/tracerVisit.dart';
 import 'package:http/http.dart' as http;
 import 'package:Tracer/constants.dart';
 import 'package:Tracer/model/visitListItem.dart';
-import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/model/place.dart';
 import 'package:Tracer/model/user.dart';
 
@@ -80,14 +79,39 @@ class TracerService {
     return ('true' == success);
   }
 
+  Future<bool> updateObservationException(String visitId, ObservationException exception, bool isSelected) async {
+    var body = json.encode({"method": isSelected ? "addException" : "deleteException","visitId":visitId,"exception":exception});
+    print(body);
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+    return ('true' == success);
+  }
+
+/*
+  Future<bool> addException(String visitId, ObservationException exception) async {
+    var body = json.encode({"method": "addException","visitId":visitId,"exception":exception});
+    print(body);
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+    return ('true' == success);
+  }
+
+  Future<bool> deleteException(String visitId, ObservationException exception) async {
+    var body = json.encode({"method": "deleteException","visitId":visitId,"exception":exception});
+    print(body);
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+    return ('true' == success);
+  }
+*/
+
   Future<User> getUser(String login) async {
-    var body = json.encode({"method": "getUsers"});
+    var body = json.encode({"method": "getUser", "username": login});
     final responseJson = await getTracerServiceResponse(body);
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
-      Map<String, dynamic> json =
-          responseJson['tracerServiceResponse']['result'];
+      var json = responseJson['tracerServiceResponse']['result'];
       if (json != null) {
         return User.fromJson(json);
       } else {
@@ -98,18 +122,18 @@ class TracerService {
     }
   }
 
-  Future<List<UserListItem>> getAllUsers() async {
+  Future<List<User>> getAllUsers() async {
     var body = json.encode({"method": "getUsers"});
     final responseJson = await getTracerServiceResponse(body);
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
-      List<UserListItem> list = new List<UserListItem>();
+      List<User> list = new List<User>();
       List userItems = responseJson['tracerServiceResponse']['result']['users'];
 
       if (userItems != null) {
         for (var item in userItems) {
-          list.add(UserListItem.fromJson(item));
+          list.add(User.fromJson(item));
         }
       }
       return list;
@@ -172,33 +196,26 @@ class TracerService {
 
     if ('true' == success) {
       Observation observation = Observation.fromJson(responseJson['tracerServiceResponse']['result']['observationCategories'][observationCategoryId]);
+      
+
+      // add other data 
+      Map<String,dynamic> rawMap = responseJson['tracerServiceResponse']['result']['exceptions'];
+      Map<String, ObservationException> exceptionMap = new Map<String, ObservationException>();
+
+      rawMap.forEach((k, v) {
+        var key = k;
+        var value = v;
+        exceptionMap[key] = ObservationException.fromJson(value);
+      });
+
+      observation.exceptions = exceptionMap;
+      observation.visitId = visitId;
+      
       return observation;
     } else {
       return null;
     }
   }
-
-  /*
-  Future<ObservationTemplates> getObservationTemplates() async {
-    var body = json.encode({"method": "getObservationsTemplate"});
-    final responseJson = await getTracerServiceResponse(body);
-    String success = responseJson['tracerServiceResponse']['success'];
-
-    if ('true' == success) {
-      Map<String, dynamic> visitJSONItems =
-          responseJson['tracerServiceResponse']["result"];
-
-      if (visitJSONItems != null) {
-        ObservationTemplates list =
-            ObservationTemplates.fromJson(visitJSONItems);
-        return list;
-      }
-      return null;
-    } else {
-      return null;
-    }
-  }
-  */
 
   Future<List<VisitListItem>> getAllVisits() async {
     var body = json.encode({"method": "getTracerVisitList", "filter": "all"});

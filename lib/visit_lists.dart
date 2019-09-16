@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:Tracer/appData.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -35,7 +36,6 @@ class VisitListPage extends StatefulWidget {
   _VisitListPageState createState() => _VisitListPageState();
 }
 
-
 class _VisitListPageState extends State<VisitListPage> {
 
   Future<List<VisitListItem>> _visitListFuture;
@@ -45,10 +45,16 @@ class _VisitListPageState extends State<VisitListPage> {
   void initState() {
     super.initState();
     _visitListFuture = svc.getAllVisits();
+    _init();
   }
 
   void _init() async {
     // load data here
+
+    // load app var
+    Template template = await svc.getTemplate();
+    appData.template = template;
+
   }
 
   void refreshVisitList() async {
@@ -164,8 +170,8 @@ class _VisitListPageState extends State<VisitListPage> {
             child: ListView(
               children: <Widget>[
                 UserAccountsDrawerHeader(
-                  accountName: Text("Branch Himes"),
-                  accountEmail: Text("bh@mgh.harvard.edu"),
+                  accountName: Text(appData.user.name),
+                  accountEmail: Text("missing required email"),
                   decoration: BoxDecoration(
                     color: kTracersBlue500,
                   ),

@@ -1,7 +1,7 @@
+import 'package:Tracer/appData.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/tracerVisit/observation.dart';
 import 'package:Tracer/model/user.dart';
-import 'package:Tracer/model/userListItem.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
@@ -9,29 +9,26 @@ import 'font_awesome_flutter.dart';
 
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
-class LogExceptions extends StatefulWidget {
+class ObservationDetailPage extends StatefulWidget {
 
   final String observationCategoryId;
-  final Template template;
   final String visitId;
 
-  LogExceptions({this.visitId, this.observationCategoryId, this.template});
+  ObservationDetailPage({this.visitId, this.observationCategoryId});
 
   @override
-  _LogExceptionsState createState() => _LogExceptionsState(
-      visitId: visitId, template: template, observationCategoryId: observationCategoryId);
+  _ObservationDetailPageState createState() => _ObservationDetailPageState(
+      visitId: visitId, observationCategoryId: observationCategoryId);
 }
 
-
-class _LogExceptionsState extends State<LogExceptions> {
+class _ObservationDetailPageState extends State<ObservationDetailPage> {
   final String observationCategoryId;
-  final Template template;
   final String visitId;
 
   String dropdownValue = 'MGH';
   final TracerService svc = new TracerService();
 
-  _LogExceptionsState({this.visitId, this.observationCategoryId, this.template});
+  _ObservationDetailPageState({this.visitId, this.observationCategoryId});
 
   @override
   Widget build(BuildContext context) {
@@ -40,69 +37,69 @@ class _LogExceptionsState extends State<LogExceptions> {
       builder: (context, snapshot) {
         if (snapshot.hasError) print(snapshot.error);
         return snapshot.hasData
-            ? LogExceptionsView(
+            ? ObservationDetailView(
                 observation: snapshot.data,
-                visitId: visitId,
-                template: template)
+                visitId: visitId)
             : Center(child: CircularProgressIndicator());
       },
     );
   }
 }
 
-class LogExceptionsView extends StatefulWidget {
+class ObservationDetailView extends StatefulWidget {
   final Observation observation;
   final String visitId;
-  final Template template;
 
-  UserListItem selectedUserListItem;
-
-  LogExceptionsView(
+  ObservationDetailView(
       {Key key,
       this.observation,
-      this.visitId,
-      this.template,
-      this.selectedUserListItem})
+      this.visitId})
       : super(key: key);
 
-  _LogExceptionsViewState createState() =>
-      _LogExceptionsViewState(observation,visitId,template,selectedUserListItem);
+  _ObservationDetailViewState createState() =>
+      _ObservationDetailViewState(observation,visitId);
 }
 
-class _LogExceptionsViewState extends State<LogExceptionsView> {
-
+class _ObservationDetailViewState extends State<ObservationDetailView> {
   final Observation observation;
   final String visitId;
-  final Template template;
-  UserListItem selectedUserListItem;
-
+  
+  User _assignedUser;
   final _commentsController = TextEditingController();
+  final _freeTextExceptionController = TextEditingController();
 
   TracerService svc = TracerService();
 
-  GlobalKey<AutoCompleteTextFieldState<UserListItem>> key = new GlobalKey();
-  AutoCompleteTextField<UserListItem> searchTextField;
+  GlobalKey<AutoCompleteTextFieldState<User>> key = new GlobalKey();
+  AutoCompleteTextField<User> searchTextField;
   TextEditingController controller = new TextEditingController();
 
-  _LogExceptionsViewState(this.observation,this.visitId,this.template,this.selectedUserListItem);
+  _ObservationDetailViewState(this.observation,this.visitId);
 
   @override
   void initState() {
     _commentsController.text = observation.comment;
+    _freeTextExceptionController.text = observation.freeTextException;
+    _assignedUser = observation != null && observation.sme != null && observation.sme.name != null ? observation.sme : null;
     super.initState();
   }
 
-  void smeSelected(UserListItem user) async {
+  void smeSelected(User user) async {
     bool success = await svc.setObservationProperty("SME", user.toJson(), visitId, observation.observationCategoryId);
-    setState(() {
-      selectedUserListItem = user;
-    });
+    if (success) {
+      setState(() {
+        _assignedUser = user;
+      });
+    } else {
+      print('observation detail page: could not set sme');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<ObservationException> selectedExceptions;
+    //List<ObservationException> selectedExceptions;
 
+    /*
     void addSelectedException(ExceptionDataSelected data) {
       if (selectedExceptions != null) {
         int index = selectedExceptions.indexOf(data.observationException);
@@ -123,13 +120,7 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
       print('How many exceptions selected: ' +
           (selectedExceptions.length).toString());
     }
-
-    UserListItem assignedUser = null;
-    if (selectedUserListItem != null) {
-      assignedUser = selectedUserListItem;
-    } else if (observation != null && observation.sme != null && observation.sme.name != null) {
-      assignedUser = UserListItem(department: observation.sme.department, name: observation.sme.name, username: observation.sme.username);
-    }
+    */
 
     return Scaffold(
       appBar: AppBar(
@@ -152,15 +143,15 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
               ),
 
               //SUBJECT MATTER EXPERT
-              assignedUser != null ? _SmeListTitle(assignedUser) : Padding(
+              _assignedUser != null ? smeListTitle(_assignedUser) : Padding(
                 padding: const EdgeInsets.all(0.0),
-                child: FutureBuilder<List<UserListItem>>(
+                child: FutureBuilder<List<User>>(
                     future: svc.getAllUsers(),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) print(snapshot.error);
 
                       return snapshot.hasData
-                          ? AutoCompleteTextField<UserListItem>(
+                          ? AutoCompleteTextField<User>(
                               style: new TextStyle(
                                   color: Colors.black, fontSize: 16.0),
                               decoration: new InputDecoration(
@@ -238,20 +229,24 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
               ),
               SizedBox(height: 8.0),
 
-              
-              ...template.observationCategories[observation.observationCategoryId].exceptionIds
+              ...appData.template.observationCategories[observation.observationCategoryId].exceptionIds
                   .map((exceptionId) {
                 return ExceptionView(
-                  observationException: template.exceptions[exceptionId],
-                  callback: (data) {
-                    addSelectedException(data);
+                  observationException: appData.template.exceptions[exceptionId],
+                  isSelected: observation.exceptions[exceptionId] != null,
+                  visitId: visitId,
+                  /*
+                  callback: (exception, isSelected) {
+                    updateException(exception, isSelected);
                   },
+                  */
                 );
               }).toList(),
-                            //COMMENTS BOX
+              
+              //free text exception 
               TextFormField(
                 maxLines: 3,
-                //controller: _commentsController,
+                controller: _freeTextExceptionController,
                 decoration: InputDecoration(
                   //border: OutlineInputBorder(),
                   filled: true,
@@ -264,19 +259,41 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
       ),
     );
   }
+
+
+
+
+
 }
 
 class ExceptionView extends StatefulWidget {
   final ObservationException observationException;
+  final bool isSelected;
   final Function callback;
+  final String visitId;
 
-  ExceptionView({this.observationException, this.callback});
+  ExceptionView({this.observationException, this.isSelected, this.callback, this.visitId});
 
-  _ExceptionViewState createState() => _ExceptionViewState();
+  _ExceptionViewState createState() => _ExceptionViewState(observationException,isSelected,callback,visitId);
 }
 
 class _ExceptionViewState extends State<ExceptionView> {
-  bool _checkbox_value = false;
+  final ObservationException observationException;
+  final bool isSelected;
+  final Function callback;
+  final String visitId;
+
+  TracerService svc = TracerService();
+  bool _checkboxValue = false;
+  
+  _ExceptionViewState(this.observationException, this.isSelected, this.callback, this.visitId);
+
+  @override
+  void initState() {
+    _checkboxValue = isSelected;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -284,17 +301,23 @@ class _ExceptionViewState extends State<ExceptionView> {
         children: <Widget>[
           // STYLE LIST USING CheckboxListTile
           CheckboxListTile(
-            value: _checkbox_value,
+            value: _checkboxValue,
             dense: true,
-            title: Text(widget.observationException.text),
-            onChanged: (bool value) {
-              setState(() {
-                _checkbox_value = value;
-                var data = ExceptionDataSelected(
-                    observationException: widget.observationException,
-                    selected: value);
-                widget.callback(data);
-              });
+            title: Text(observationException.text),
+            onChanged: (bool value) async {
+              bool success = await svc.updateObservationException(visitId, observationException, value);
+
+              if (success) {
+                setState(() {
+                  _checkboxValue = value;
+                  /*
+                  var data = ExceptionDataSelected(
+                      observationException: widget.observationException,
+                      selected: value);
+                  widget.callback(data);
+                  */
+                });
+              }
             },
           ),
           Divider(
@@ -313,10 +336,7 @@ class ExceptionDataSelected {
 }
 
 //SUBJECT MATTER EXPERT WIDGET
-Widget _SmeListTitle(UserListItem sme) {
-
-  List<String> nameParts = sme.name.split(",");
-  String initials = nameParts[1].trim().substring(0,1).toUpperCase() + nameParts[0].trim().substring(0,1).toUpperCase();
+Widget smeListTitle(User sme) {
 
   return ListTile(
     dense: true,
@@ -328,7 +348,7 @@ Widget _SmeListTitle(UserListItem sme) {
         children: <Widget>[
           CircleAvatar(
             backgroundColor: kTracersGray300,
-            child: Text(initials) 
+            child: Text(sme.initials()) 
           ),
         ],
       ),
@@ -347,21 +367,16 @@ Widget _SmeListTitle(UserListItem sme) {
   );
 }
 
-
-
 Future<bool> setObservationScore(Observation observation, String score, String visitId) async {
   TracerService svc = TracerService();
-
   bool success = await svc.setObservationProperty("score", score, visitId, observation.observationCategoryId);
-
   return success;
 }
 
-
 //SCORE BUTTONS WIDGET
 class ScoreButtons extends StatefulWidget {
-  Observation observation;
-  String visitId;
+  final Observation observation;
+  final String visitId;
   
   ScoreButtons({this.visitId, this.observation});
   _ScoreButtonsState createState() => _ScoreButtonsState(observation, visitId);

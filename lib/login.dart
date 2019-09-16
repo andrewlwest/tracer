@@ -1,4 +1,4 @@
-import 'package:Tracer/model/application.dart';
+import 'package:Tracer/appData.dart';
 import 'package:Tracer/model/user.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
@@ -123,8 +123,8 @@ class _LoginPageState extends State<LoginPage> {
       print("user = $user");
 
       // set the authenticqated user object in the Application singleton.
-      Application application = new Application();
-      application.user = user;
+      //Application application = new Application();
+      appData.user = user;
 
       Navigator.push(context,MaterialPageRoute(builder: (context) => VisitListPage()));
 
