@@ -238,19 +238,7 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
               ),
               SizedBox(height: 8.0),
 
-              //EXCEPTIONS SEARCH BOX
-              Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: "Search",
-                    //hintText: "Search",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              SizedBox(height: 8.0),
+              
               ...template.observationCategories[observation.observationCategoryId].exceptionIds
                   .map((exceptionId) {
                 return ExceptionView(
@@ -260,6 +248,18 @@ class _LogExceptionsViewState extends State<LogExceptionsView> {
                   },
                 );
               }).toList(),
+                            //COMMENTS BOX
+              TextFormField(
+                maxLines: 3,
+                //controller: _commentsController,
+                decoration: InputDecoration(
+                  //border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: kTracersGray100,
+                  labelText: 'Free Text Exceptions (Optional), enter description here',
+                ),
+              ),
+              SizedBox(height: 16.0),
             ]),
       ),
     );

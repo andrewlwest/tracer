@@ -124,6 +124,8 @@ class VisitDetailView extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
+
+            /*
             bottom: TabBar(
               isScrollable: true,
               tabs: [
@@ -145,7 +147,8 @@ class VisitDetailView extends StatelessWidget {
                     child: Text("EXCEPTIONS"))
               ],
             ),
-            title: Text(tracerVisit.place.location),
+            */
+            title: Text(tracerVisit.place.name),
             // actions: <Widget>[
             //   IconButton(
             //     icon: Icon(

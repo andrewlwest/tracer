@@ -87,19 +87,19 @@ class _VisitListPageState extends State<VisitListPage> {
                 Container(
                     height: 50,
                     alignment: Alignment.center,
-                    child: Text("Today")),
+                    child: Text("TODAY")),
                 Container(
                     height: 50,
                     alignment: Alignment.center,
-                    child: Text("Upcoming")),
+                    child: Text("UPCOMING")),
                 Container(
                     height: 50,
                     alignment: Alignment.center,
-                    child: Text("Past")),
+                    child: Text("PAST")),
                 Container(
                     height: 50,
                     alignment: Alignment.center,
-                    child: Text("Admin"))
+                    child: Text("TODO"))
               ],
             ),
             title: Text('Tracer'),
@@ -278,7 +278,7 @@ class VisitListView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      '${visits[position].place.site}',
+                                      '${visits[position].place.location}',
                                       maxLines: 1,
                                       style: theme.textTheme.caption,
                                     ),
@@ -306,7 +306,7 @@ class VisitListView extends StatelessWidget {
                               new Column(
                                 children: <Widget>[
                                   Text(
-                                    '${visits[position].place.location}',
+                                    '${visits[position].place.name}',
                                     style: theme.textTheme.headline,
                                     maxLines: 1,
                                   ),
