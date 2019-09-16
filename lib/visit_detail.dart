@@ -239,7 +239,7 @@ Widget _observationAssignmentStatus(Observation observation) {
     String initials = nameParts[1].trim().substring(0,1).toUpperCase() + nameParts[0].trim().substring(0,1).toUpperCase();
 
     return CircleAvatar(
-      backgroundColor: kTracersGreen500,
+      backgroundColor: kTracersBlue900,
       child: Text(initials),
     );
   } else {

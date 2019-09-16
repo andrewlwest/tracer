@@ -347,8 +347,8 @@ Widget smeListTitle(User sme) {
       child: Stack(
         children: <Widget>[
           CircleAvatar(
-            backgroundColor: kTracersGray300,
-            child: Text(sme.initials()) 
+            backgroundColor: kTracersBlue900,
+            child: Text(initials) 
           ),
         ],
       ),

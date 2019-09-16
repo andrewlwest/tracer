@@ -56,15 +56,22 @@ class _AddVisitState extends State<AddVisit> {
     // old implementation for adding event listeners to fields
     //_dateFocusNode.addListener(_onDateFocusChange);
     //_timeFocusNode..addListener(_onTimeFocusChange);
-    _visitTimeOfDay = new timePicker.TimeOfDay(hour:12,minute: 0);
+    _visitTimeOfDay = new timePicker.TimeOfDay(hour: 12, minute: 0);
     _visitDateTime = DateTime.now();
-
   }
 
   void _save(BuildContext context) async {
     print("save pressed");
 
-    DateTime dateTime = new DateTime(_visitDateTime.year, _visitDateTime.month, _visitDateTime.day, _visitTimeOfDay.hour, _visitTimeOfDay.minute, 0, 0, 0);
+    DateTime dateTime = new DateTime(
+        _visitDateTime.year,
+        _visitDateTime.month,
+        _visitDateTime.day,
+        _visitTimeOfDay.hour,
+        _visitTimeOfDay.minute,
+        0,
+        0,
+        0);
 
     /*
     final snackBar = SnackBar(
@@ -89,11 +96,11 @@ class _AddVisitState extends State<AddVisit> {
     var newHour = _visitTimeOfDay.hour;
     var newMin = _visitTimeOfDay.minute;
 
-    var visitListItem = await svc.createVisit(dateTime, _selectedPlace,  _summaryController.text, _visitType);
+    var visitListItem = await svc.createVisit(
+        dateTime, _selectedPlace, _summaryController.text, _visitType);
     //var createVisit = svc.getTracerServiceResponse(body);
 
     Navigator.pop(context, "saved");
-
   }
 
   String convertDateTime(String date, String time) {
@@ -121,6 +128,8 @@ class _AddVisitState extends State<AddVisit> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -155,21 +164,23 @@ class _AddVisitState extends State<AddVisit> {
                           width: .5, //width of the border
                         ),
                         onPressed: () async {
-                            DateTime dateTime = await datePicker.showDatePicker(
-                              context: context,
-                              firstDate: DateTime(2018, 01, 01),
-                              initialDate: _visitDateTime,
-                              lastDate: DateTime(2022, 01, 01),
-                              initialDatePickerMode: datePicker.DatePickerMode.day,
-                              ) as DateTime;
+                          DateTime dateTime = await datePicker.showDatePicker(
+                            context: context,
+                            firstDate: DateTime(2018, 01, 01),
+                            initialDate: _visitDateTime,
+                            lastDate: DateTime(2022, 01, 01),
+                            initialDatePickerMode:
+                                datePicker.DatePickerMode.day,
+                          ) as DateTime;
 
-                            if (dateTime != null) {
-                              //_date = new DateFormat.yMd().format(dateTime);
+                          if (dateTime != null) {
+                            //_date = new DateFormat.yMd().format(dateTime);
 
-                              _date = new DateFormat('EEE, MMM d').format(dateTime);
-                              _visitDateTime = dateTime;
-                              setState(() {});
-                            }
+                            _date =
+                                new DateFormat('EEE, MMM d').format(dateTime);
+                            _visitDateTime = dateTime;
+                            setState(() {});
+                          }
                         },
                         /*
                         onPressed: () {
@@ -227,7 +238,7 @@ class _AddVisitState extends State<AddVisit> {
                   )),
                   SizedBox(width: 12.0),
                   Expanded(
-                    child: Column(
+                      child: Column(
                     children: <Widget>[
                       OutlineButton(
                         borderSide: BorderSide(
@@ -236,7 +247,8 @@ class _AddVisitState extends State<AddVisit> {
                           width: .5, //width of the border
                         ),
                         onPressed: () async {
-                          timePicker.TimeOfDay timeOfDay = await timePicker.showTimePicker(
+                          timePicker.TimeOfDay timeOfDay =
+                              await timePicker.showTimePicker(
                             context: context,
                             initialTime: _visitTimeOfDay,
                           ) as timePicker.TimeOfDay;
@@ -312,6 +324,8 @@ class _AddVisitState extends State<AddVisit> {
                               style: new TextStyle(
                                   color: Colors.black, fontSize: 16.0),
                               decoration: new InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  fillColor: kTracersWhite,
                                   suffixIcon: IconButton(
                                     icon: Icon(Icons.search),
                                     onPressed: () {
@@ -332,24 +346,27 @@ class _AddVisitState extends State<AddVisit> {
                               key: key,
                               suggestions: snapshot.data,
                               itemBuilder: (context, item) {
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Expanded(
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 8, left:8, right: 8),
                                       child: Text(
                                         item.name,
-                                        style: TextStyle(fontSize: 16.0),
+                                        style: theme.textTheme.body1,
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.all(15.0),
-                                    ),
-                                    Expanded(
+                                      padding: EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),
                                       child: Text(
                                         item.location,
+                                        style: theme.textTheme.body2,
                                       ),
-                                    )
+                                    ),
+                                    Divider(
+                                      height: 1,
+                                      color: Colors.grey,
+                                    ),
                                   ],
                                 );
                               },
@@ -368,23 +385,17 @@ class _AddVisitState extends State<AddVisit> {
               Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: _selectedPlace != null
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                _selectedPlace.name,
-                                style: TextStyle(fontSize: 16.0),
-                              ),
+                            Text(
+                              _selectedPlace.name,
+                              style: theme.textTheme.body1,
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(15.0),
+                            Text(
+                              _selectedPlace.location,
+                              style: theme.textTheme.body2,
                             ),
-                            Expanded(
-                              child: Text(
-                                _selectedPlace.location,
-                              ),
-                            )
                           ],
                         )
                       : Text('')),
@@ -425,5 +436,4 @@ class _AddVisitState extends State<AddVisit> {
       ),
     );
   }
-  
 }
