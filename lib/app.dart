@@ -16,12 +16,8 @@ import 'package:Tracer/createVisit.dart';
 import 'package:Tracer/login.dart';
 import 'package:Tracer/visit_lists.dart';
 import 'package:flutter/material.dart';
-import 'package:Tracer/autoComplete.dart';
-
 import 'addVisit.dart';
 import 'ui/colors.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TracerApp extends StatelessWidget {
 
@@ -39,7 +35,6 @@ class TracerApp extends StatelessWidget {
         // When navigating to the "/second" route, build the SecondScreen widget.
         AddVisit.id: (context) => AddVisit(),
         CreateVisit.id: (context) => CreateVisit(),
-        AutoComplete.id: (context) => AutoComplete(),
 
         //'/visitDetail': (context) => VisitDetailPage(),
       },

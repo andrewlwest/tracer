@@ -1,6 +1,6 @@
 name: Tracer
 description: MGH LCS App for JC Visits
-version: 0.1.0+2019091401
+version: 0.1.0+2019091701
 
 dependencies:
   flutter:
@@ -11,10 +11,8 @@ dependencies:
   font_awesome_flutter: ^8.5.0
   flutter_staggered_grid_view: ^0.2.7
   json_annotation: ^0.2.3
-  aws_client: ^0.2.0
   http: any
   shared_preferences: ^0.4.2
-  flutter_datetime_picker: 1.2.5
   autocomplete_textfield: ^1.7.3
   pull_to_refresh: ^1.5.6
 
@@ -38,7 +36,6 @@ flutter:
   assets:
     - assets/tracers-ko.png
     - assets/tracer-logo-ko.png
-    - assets/players.json
 
 flutter_icons:
   ios: true

@@ -7,6 +7,7 @@ part of 'user.dart';
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) {
+  $checkKeys(json, disallowNullValues: const ['username', 'name']);
   return new User(
       json['username'] as String,
       json['name'] as String,
@@ -19,10 +20,19 @@ abstract class _$UserSerializerMixin {
   String get name;
   String get department;
   List<String> get roles;
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'username': username,
-        'name': name,
-        'department': department,
-        'roles': roles
-      };
+  Map<String, dynamic> toJson() {
+    var val = <String, dynamic>{};
+
+    void writeNotNull(String key, dynamic value) {
+      if (value != null) {
+        val[key] = value;
+      }
+    }
+
+    writeNotNull('username', username);
+    writeNotNull('name', name);
+    val['department'] = department;
+    val['roles'] = roles;
+    return val;
+  }
 }
