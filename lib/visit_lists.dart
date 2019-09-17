@@ -13,7 +13,9 @@
 // limitations under the License.
 
 import 'package:Tracer/appData.dart';
-import 'package:Tracer/model/template/template.dart';
+import 'package:Tracer/service/tracer_service.dart';
+import 'package:Tracer/ui/font_awesome_flutter.dart';
+import 'package:Tracer/visit_detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:Tracer/addVisit.dart';
@@ -21,9 +23,6 @@ import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'font_awesome_flutter.dart';
-import 'service/tracer_service.dart';
-import 'visit_detail.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MyTab {
@@ -198,8 +197,8 @@ class _VisitListPageState extends State<VisitListPage>
             child: ListView(
               children: <Widget>[
                 UserAccountsDrawerHeader(
-                  // accountName: Text(appData.user.name),
-                  //  accountEmail: Text("missing required email"),
+                  accountName: Text(appData.user.name),
+                  accountEmail: Text("missing required email"),
                   decoration: BoxDecoration(
                     color: kTracersBlue500,
                   ),

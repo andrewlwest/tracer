@@ -4,9 +4,8 @@ import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/user.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
+import 'package:Tracer/ui/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
-import 'font_awesome_flutter.dart';
-
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
 class ObservationDetailPage extends StatefulWidget {

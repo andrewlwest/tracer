@@ -1,10 +1,10 @@
 import 'package:Tracer/model/place.dart';
+import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'service/tracer_service.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
 class AddVisit extends StatefulWidget {

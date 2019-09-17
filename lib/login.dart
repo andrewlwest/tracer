@@ -1,5 +1,4 @@
-import 'package:Tracer/appData.dart';
-import 'package:Tracer/model/user.dart';
+
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:Tracer/service/tracer_service.dart';

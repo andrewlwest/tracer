@@ -3,12 +3,11 @@ import 'package:Tracer/model/observation.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/tracerVisit.dart';
 import 'package:Tracer/observation_detail.dart';
+import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
+import 'package:Tracer/ui/font_awesome_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'font_awesome_flutter.dart';
-import 'service/tracer_service.dart';
-
 
 class VisitDetailPage extends StatefulWidget {
   static const String id = 'visit_detail_page_id';
