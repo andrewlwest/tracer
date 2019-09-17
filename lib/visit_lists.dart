@@ -206,11 +206,19 @@ class _VisitListPageState extends State<VisitListPage>
   }
 }
 
-class VisitListView extends StatelessWidget {
+class VisitListView extends StatefulWidget {
+  final List<VisitListItem> visits;
+  VisitListView({Key key, this.visits}) : super(key: key);
+
+  _VisitListViewState createState() => _VisitListViewState(visits: visits);
+}
+
+class _VisitListViewState extends State<VisitListView> {
+
   final List<VisitListItem> visits;
   //final TracerService svc = new TracerService();
 
-  VisitListView({Key key, this.visits}) : super(key: key);
+  _VisitListViewState({Key key, this.visits});
 
   // pull to refresh
   final RefreshController _refreshController =
@@ -420,15 +428,19 @@ class VisitListView extends StatelessWidget {
                                                           await Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
-                                                                    EditVisit(
-                                                                      visitId:
-                                                                          visits[position]
-                                                                              .id,
-                                                                    ),
-                                                                    ),
+                                                          builder: (context) =>
+                                                              EditVisit(
+                                                            visit: visits[
+                                                                position],
+                                                          ),
+                                                        ),
                                                       );
+                                                      if (returnData == 'updated') {
+                                                        setState(() {//ToDo
+                                                          visits[position] = visits[
+                                                                position];
+                                                        });
+                                                      }
                                                     },
                                                     title: Text('Edit visit'),
                                                   ),

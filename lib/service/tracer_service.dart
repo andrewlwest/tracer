@@ -310,7 +310,32 @@ class TracerService {
 
     if ('true' == success) {
       String newId = responseJson['tracerServiceResponse']['result']['id'];
-      return VisitListItem(newId, place, summary, null, null, dateTime);
+      return VisitListItem(newId, place, summary, null, null, dateTime,visitType);
+    } else {
+      return null;
+    }
+  }
+
+ Future<VisitListItem> updateVisit({String visitId,
+      DateTime dateTime, Place place, String summary, String visitType}) async {
+    var body = json.encode({
+      "method": "createTracerVisit",
+      "tracerVisit": {
+        "id": visitId,
+        "visitDatetime": dateTime.toIso8601String(),
+        "place": place,
+        "summary": summary,
+        "type": visitType
+      }
+    });
+    print(body);
+
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+
+    if ('true' == success) {
+      String newId = responseJson['tracerServiceResponse']['result']['id'];
+      return VisitListItem(newId, place, summary, null, null, dateTime,visitType);
     } else {
       return null;
     }

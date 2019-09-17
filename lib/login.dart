@@ -115,16 +115,16 @@ class _LoginPageState extends State<LoginPage> {
 
     // if successful partners login.. lookup user and persist
     if (success) {
-      //SharedPreferences prefs = await SharedPreferences.getInstance();
-      //prefs.setString("userLogin", login);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString("userLogin", login);
 
       // load user
-      //User user = await svc.getUser(login);
-      //print("user = $user");
+      User user = await svc.getUser(login);
+      print("user = $user");
 
       // set the authenticqated user object in the Application singleton.
       //Application application = new Application();
-      //appData.user = user;
+      appData.user = user;
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => VisitListPage()));

@@ -17,7 +17,8 @@ VisitListItem _$VisitListItemFromJson(Map<String, dynamic> json) {
       json['todo'] as String,
       json['visitDatetime'] == null
           ? null
-          : DateTime.parse(json['visitDatetime'] as String))
+          : DateTime.parse(json['visitDatetime'] as String),
+      json['type'] as String)
     ..summaryStats = json['summaryStats'] == null
         ? null
         : new SummaryStats.fromJson(
@@ -32,6 +33,7 @@ abstract class _$VisitListItemSerializerMixin {
   String get todo;
   DateTime get visitDatetime;
   SummaryStats get summaryStats;
+  String get type;
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'place': place,
@@ -39,7 +41,8 @@ abstract class _$VisitListItemSerializerMixin {
         'participants': participants,
         'todo': todo,
         'visitDatetime': visitDatetime?.toIso8601String(),
-        'summaryStats': summaryStats
+        'summaryStats': summaryStats,
+        'type': type
       };
 }
 
