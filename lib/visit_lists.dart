@@ -169,7 +169,12 @@ class _VisitListPageState extends State<VisitListPage>
                     if (snapshot.hasError) print(snapshot.error);
 
                     return snapshot.hasData
-                        ? VisitListView(visits: snapshot.data)
+                        ? VisitListView(
+                            visits: snapshot.data,
+                            callback: () {
+                              refreshVisitList();
+                            },
+                          )
                         : Center(child: CircularProgressIndicator());
                   },
                 );
@@ -216,17 +221,19 @@ class _VisitListPageState extends State<VisitListPage>
 
 class VisitListView extends StatefulWidget {
   final List<VisitListItem> visits;
-  VisitListView({Key key, this.visits}) : super(key: key);
+  final Function callback;
+  VisitListView({Key key, this.visits, this.callback}) : super(key: key);
 
-  _VisitListViewState createState() => _VisitListViewState(visits: visits);
+  _VisitListViewState createState() =>
+      _VisitListViewState(visits: visits, callback: callback);
 }
 
 class _VisitListViewState extends State<VisitListView> {
-
+  final Function callback;
   final List<VisitListItem> visits;
   //final TracerService svc = new TracerService();
 
-  _VisitListViewState({Key key, this.visits});
+  _VisitListViewState({Key key, this.visits, this.callback});
 
   // pull to refresh
   final RefreshController _refreshController =
@@ -431,25 +438,6 @@ class _VisitListViewState extends State<VisitListView> {
                                                   value: 1,
                                                   child: ListTile(
                                                     leading: Icon(Icons.edit),
-                                                    onTap: () async {
-                                                      final returnData =
-                                                          await Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              EditVisit(
-                                                            visit: visits[
-                                                                position],
-                                                          ),
-                                                        ),
-                                                      );
-                                                      if (returnData == 'updated') {
-                                                        setState(() {//ToDo
-                                                          visits[position] = visits[
-                                                                position];
-                                                        });
-                                                      }
-                                                    },
                                                     title: Text('Edit visit'),
                                                   ),
                                                 ),
@@ -462,6 +450,30 @@ class _VisitListViewState extends State<VisitListView> {
                                                   ),
                                                 ),
                                               ],
+                                              onSelected: (value) async {
+                                                print("value: $value");
+                                                if (value == 1) {
+                                                  final returnData =
+                                                      await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EditVisit(
+                                                        visit: visits[position],
+                                                      ),
+                                                    ),
+                                                  );
+                                                  if (returnData == 'updated') {
+                                                    setState(() {
+                                                      //ToDo
+                                                      callback();
+                                                    });
+                                                  }
+                                                } else {
+                                                  //Are you sure you want to delete it?
+                                                  
+                                                }
+                                              },
                                             ),
                                           ],
                                         ),
