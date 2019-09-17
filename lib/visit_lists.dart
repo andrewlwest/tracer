@@ -275,7 +275,7 @@ class _VisitListViewState extends State<VisitListView> {
             ),
             controller: _refreshController,
             onRefresh: _onRefresh,
-            child: ListView.builder(
+            child: visits.isEmpty ? Center(child: Text('No Visits')) : ListView.builder(
                 itemCount: visits.length,
                 padding: const EdgeInsets.all(15.0),
                 itemBuilder: (context, position) {
