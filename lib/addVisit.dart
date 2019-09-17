@@ -284,6 +284,7 @@ class _AddVisitState extends State<AddVisit> {
 
                       return snapshot.hasData
                           ? AutoCompleteTextField<Place>(
+                              suggestionsAmount: 20,
                               decoration: new InputDecoration(
                                   border: OutlineInputBorder(),
                                   fillColor: kTracersWhite,
