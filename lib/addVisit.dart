@@ -3,14 +3,8 @@ import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart';
-//import 'dart:math' as math;
-
-//import 'package:Tracer/model/site.dart';
 import 'service/tracer_service.dart';
-
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
 class AddVisit extends StatefulWidget {
@@ -47,15 +41,6 @@ class _AddVisitState extends State<AddVisit> {
   }
 
   void _init() async {
-    // load all sites and locations
-    //_sites = await svc.getSites(_organization);
-
-    // create a simple list of string sites for use in the select
-    //_siteSelectList = _sites.map((site) => site.name).toList();
-
-    // old implementation for adding event listeners to fields
-    //_dateFocusNode.addListener(_onDateFocusChange);
-    //_timeFocusNode..addListener(_onTimeFocusChange);
     _visitTimeOfDay = new timePicker.TimeOfDay(hour: 12, minute: 0);
     _visitDateTime = DateTime.now();
   }
@@ -73,32 +58,10 @@ class _AddVisitState extends State<AddVisit> {
         0,
         0);
 
-    /*
-    final snackBar = SnackBar(
-        content: Text('dateTime = ' +
-            dateTime.toIso8601String() +
-            '\npalce name = ' +
-            (_selectedPlace == null ? "null" : _selectedPlace.name) +
-            '\nsite = ' +
-            (_selectedPlace == null ? "null" : _selectedPlace.site) +
-            '\nlocation = ' +
-            (_selectedPlace == null ? "null" : _selectedPlace.location) +
-            '\nvisit Type = ' +
-            (_visitType == null ? "null" : _visitType) +
-            '\nsummary = ' +
-            (_summaryController.text == null
-                ? "null"
-                : _summaryController.text)));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
-    */
-
-    // combine date and time into new DateTime
-    var newHour = _visitTimeOfDay.hour;
-    var newMin = _visitTimeOfDay.minute;
-
     var visitListItem = await svc.createVisit(
         dateTime, _selectedPlace, _summaryController.text, _visitType);
-    //var createVisit = svc.getTracerServiceResponse(body);
+
+    print('visit created with id = ' + visitListItem.id);
 
     Navigator.pop(context, "saved");
   }
@@ -171,7 +134,7 @@ class _AddVisitState extends State<AddVisit> {
                             lastDate: DateTime(2022, 01, 01),
                             initialDatePickerMode:
                                 datePicker.DatePickerMode.day,
-                          ) as DateTime;
+                          );
 
                           if (dateTime != null) {
                             //_date = new DateFormat.yMd().format(dateTime);
@@ -251,7 +214,7 @@ class _AddVisitState extends State<AddVisit> {
                               await timePicker.showTimePicker(
                             context: context,
                             initialTime: _visitTimeOfDay,
-                          ) as timePicker.TimeOfDay;
+                          );
 
                           if (timeOfDay != null) {
                             _time = timeOfDay.toString();

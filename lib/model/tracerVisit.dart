@@ -1,5 +1,3 @@
-//import 'package:Tracer/model/observationTemplates/observationGroup.dart';
-//import 'package:Tracer/model/observationTemplates/observationException.dart';
 import 'package:Tracer/model/place.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -24,7 +22,8 @@ class TracerVisit extends Object with _$TracerVisitSerializerMixin {
   
   Map<String, ObservationException> exceptions;
   
-  String template_version;
+  @JsonKey(name: 'template_version')
+  String templateVersion;
   String type;
 
   TracerVisit(
@@ -37,7 +36,7 @@ class TracerVisit extends Object with _$TracerVisitSerializerMixin {
     this.completionStatus,
     this.observations,
     this.exceptions,
-    this.template_version,
+    this.templateVersion,
     this.type);
 
   factory TracerVisit.fromJson(Map<String, dynamic> json) =>

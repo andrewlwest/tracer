@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 /// This allows the `site` class to access private members in
@@ -9,9 +8,14 @@ part 'user.g.dart';
 @JsonSerializable()
 class User extends Object with _$UserSerializerMixin {
 
-  User(@required this.username, @required this.name, this.department, this.roles);
+  User(this.username, this.name, this.department, this.roles);
 
+  @JsonKey(disallowNullValue: true)
+  @JsonKey(required: true)
   String username;
+
+  @JsonKey(disallowNullValue: true)
+  @JsonKey(required: true)
   String name;
   String department;
   List<String> roles;
