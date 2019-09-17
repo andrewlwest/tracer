@@ -28,6 +28,21 @@ import 'visit_detail.dart';
 
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+class MyTab {
+  const MyTab({this.title, this.filter});
+
+  final String title;
+  final String filter;
+}
+
+const List<MyTab> myTabs = const <MyTab>[
+  const MyTab(title: 'TODAY', filter: 'today'),
+  const MyTab(title: 'UPCOMING', filter: 'future'),
+  const MyTab(title: 'PAST', filter: 'past'),
+  const MyTab(title: 'TODO', filter: 'hastodo'),
+  const MyTab(title: 'ALL', filter: 'all'),
+];
+
 class VisitListPage extends StatefulWidget {
   static const String id = 'visit_list_page_id';
 
@@ -43,26 +58,27 @@ class _VisitListPageState extends State<VisitListPage>
   final TracerService svc = new TracerService();
   final String pageTitle = 'Tracer';
 
-  final List<Tab> myTabs = <Tab>[
-    Tab(text: 'TODAY'),
-    Tab(text: 'UPCOMING'),
-    Tab(text: 'PAST'),
-    Tab(text: 'TODO'),
-  ];
-
   @override
   void initState() {
     super.initState();
-    _visitListFuture = svc.getAllVisits();
     _tabController = TabController(vsync: this, length: myTabs.length);
+    // _tabController.addListener(_handleTabSelection);
   }
 
+/*
+  void _handleTabSelection() {
+    setState(() {
+      pageCount++;
+    });
+  }
+
+  Future<List<VisitListItem>> getVisitList(String filter) {}
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-
+*/
   void refreshVisitList() async {
     print('in refreshVisitList');
     // reload
@@ -94,9 +110,10 @@ class _VisitListPageState extends State<VisitListPage>
             ),
             bottom: TabBar(
               isScrollable: true,
+              controller: _tabController,
               tabs: [
-                ...myTabs.map((Tab tab) {
-                  final String label = tab.text.toUpperCase();
+                ...myTabs.map((MyTab tab) {
+                  final String label = tab.title.toUpperCase();
                   return Container(
                       height: 50,
                       alignment: Alignment.center,
@@ -143,10 +160,10 @@ class _VisitListPageState extends State<VisitListPage>
             children: <Widget>[
               //TODAY TAB PANE CONTENT
 
-              ...myTabs.map((Tab tab) {
-                final String label = tab.text.toLowerCase();
+              ...myTabs.map((MyTab tab) {
+                final String filter = tab.filter.toLowerCase();
                 return FutureBuilder<List<VisitListItem>>(
-                  future: _visitListFuture,
+                  future: svc.getAllVisits(filter: filter),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) print(snapshot.error);
 
