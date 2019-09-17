@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:Tracer/appData.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -179,8 +180,8 @@ class _VisitListPageState extends State<VisitListPage>
             child: ListView(
               children: <Widget>[
                 UserAccountsDrawerHeader(
-                  accountName: Text("Branch Himes"),
-                  accountEmail: Text("bh@mgh.harvard.edu"),
+                  accountName: Text(appData.user.name),
+                  accountEmail: Text("missing required email"),
                   decoration: BoxDecoration(
                     color: kTracersBlue500,
                   ),
