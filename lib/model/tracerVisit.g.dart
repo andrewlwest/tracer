@@ -49,7 +49,7 @@ abstract class _$TracerVisitSerializerMixin {
   String get completionStatus;
   Map<String, Observation> get observations;
   Map<String, ObservationException> get exceptions;
-  String get template_version;
+  String get templateVersion;
   String get type;
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
@@ -62,7 +62,7 @@ abstract class _$TracerVisitSerializerMixin {
         'completionStatus': completionStatus,
         'observationCategories': observations,
         'exceptions': exceptions,
-        'template_version': template_version,
+        'template_version': templateVersion,
         'type': type
       };
 }

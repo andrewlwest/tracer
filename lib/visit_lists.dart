@@ -13,20 +13,16 @@
 // limitations under the License.
 
 import 'package:Tracer/appData.dart';
-import 'package:Tracer/model/template/template.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-
 import 'package:Tracer/addVisit.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'font_awesome_flutter.dart';
-
 import 'service/tracer_service.dart';
 import 'visit_detail.dart';
-
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class VisitListPage extends StatefulWidget {
@@ -212,7 +208,7 @@ class VisitListView extends StatelessWidget {
   VisitListView({Key key, this.visits}) : super(key: key);
 
   // pull to refresh
-  RefreshController _refreshController =
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   // pull down
@@ -503,6 +499,7 @@ Future<String> _participantsInputDialog(
             onPressed: () async {
               bool success = await svc.savePropertyForVisit(
                   "participants", _controller.text, visit.id);
+
               Navigator.of(context).pop();
             },
           ),

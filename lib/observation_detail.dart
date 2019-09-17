@@ -1,6 +1,6 @@
 import 'package:Tracer/appData.dart';
+import 'package:Tracer/model/observation.dart';
 import 'package:Tracer/model/template/template.dart';
-import 'package:Tracer/model/tracerVisit/observation.dart';
 import 'package:Tracer/model/user.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';

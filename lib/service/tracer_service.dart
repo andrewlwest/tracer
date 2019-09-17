@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:Tracer/model/observation.dart';
 import 'package:Tracer/model/template/template.dart';
-import 'package:Tracer/model/tracerVisit/observation.dart';
-import 'package:Tracer/model/tracerVisit/tracerVisit.dart';
+import 'package:Tracer/model/tracerVisit.dart';
 import 'package:http/http.dart' as http;
 import 'package:Tracer/constants.dart';
 import 'package:Tracer/model/visitListItem.dart';
