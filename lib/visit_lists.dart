@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:Tracer/appData.dart';
+import 'package:Tracer/model/template/template.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:Tracer/addVisit.dart';
@@ -60,6 +61,7 @@ class _VisitListPageState extends State<VisitListPage>
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(vsync: this, length: myTabs.length);
     _tabController.addListener(_handleTabSelection);
     /*_tabController.addListener(() {
@@ -68,7 +70,13 @@ class _VisitListPageState extends State<VisitListPage>
         }
       });
       */
+    _loadTemplate();
     _loadData(myTabs[_tabController.index].filter);
+  }
+
+  /// load template info into appData global singleton
+  void _loadTemplate() async {
+    appData.template = await svc.getTemplate();
   }
 
   void _handleTabSelection() {
