@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   void _init() async {
     //userList = await svc.getAllUsers();
 
-    SharedPreferences.getInstance().then((sp)  {
+    SharedPreferences.getInstance().then((sp) {
       //print("sp " + sp.getString("userLogin"));
       setState(() {
         _userLogin = sp.getString("userLogin");
@@ -115,24 +115,22 @@ class _LoginPageState extends State<LoginPage> {
 
     // if successful partners login.. lookup user and persist
     if (success) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("userLogin", login);
+      //SharedPreferences prefs = await SharedPreferences.getInstance();
+      //prefs.setString("userLogin", login);
 
       // load user
-      User user = await svc.getUser(login);
-      print("user = $user");
+      //User user = await svc.getUser(login);
+      //print("user = $user");
 
       // set the authenticqated user object in the Application singleton.
       //Application application = new Application();
-      appData.user = user;
+      //appData.user = user;
 
-      Navigator.push(context,MaterialPageRoute(builder: (context) => VisitListPage()));
-
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => VisitListPage()));
     } else {
-      final snackBar = SnackBar(
-        content: Text('login failed, try again'));
+      final snackBar = SnackBar(content: Text('login failed, try again'));
       _scaffoldKey.currentState.showSnackBar(snackBar);
     }
-
   }
 }

@@ -58,33 +58,47 @@ class _VisitListPageState extends State<VisitListPage>
   Future<List<VisitListItem>> _visitListFuture;
   final TracerService svc = new TracerService();
   final String pageTitle = 'Tracer';
+  var previousIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: myTabs.length);
-    // _tabController.addListener(_handleTabSelection);
+    _tabController.addListener(_handleTabSelection);
+    /*_tabController.addListener(() {
+        if (_tabController.indexIsChanging) {
+          this._handleTabSelection();
+        }
+      });
+      */
+    _loadData(myTabs[_tabController.index].filter);
   }
 
-/*
   void _handleTabSelection() {
-    setState(() {
-      pageCount++;
-    });
+    if (previousIndex != _tabController.index) {
+      setState(() {
+        //print('previousIndex ${previousIndex} currentIndex: ${_tabController.index}');
+        _loadData(myTabs[_tabController.index].filter);
+        previousIndex = _tabController.index;
+      });
+    }
   }
 
-  Future<List<VisitListItem>> getVisitList(String filter) {}
+  void _loadData(String filter) async {
+    _visitListFuture = svc.getAllVisits(filter: filter);
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-*/
+
   void refreshVisitList() async {
     print('in refreshVisitList');
     // reload
     setState(() {
-      _visitListFuture = svc.getAllVisits();
+      _loadData(myTabs[_tabController.index].filter);
     });
   }
 
@@ -164,7 +178,7 @@ class _VisitListPageState extends State<VisitListPage>
               ...myTabs.map((MyTab tab) {
                 final String filter = tab.filter.toLowerCase();
                 return FutureBuilder<List<VisitListItem>>(
-                  future: svc.getAllVisits(filter: filter),
+                  future: _visitListFuture,
                   builder: (context, snapshot) {
                     if (snapshot.hasError) print(snapshot.error);
 
@@ -180,8 +194,8 @@ class _VisitListPageState extends State<VisitListPage>
             child: ListView(
               children: <Widget>[
                 UserAccountsDrawerHeader(
-                  accountName: Text(appData.user.name),
-                  accountEmail: Text("missing required email"),
+                  // accountName: Text(appData.user.name),
+                  //  accountEmail: Text("missing required email"),
                   decoration: BoxDecoration(
                     color: kTracersBlue500,
                   ),
