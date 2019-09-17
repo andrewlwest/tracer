@@ -405,7 +405,7 @@ class _ScoreButtonsState extends State<ScoreButtons> {
         children: <Widget>[
           IconButton(
             icon: Icon(FontAwesomeIcons.ban),
-            color: (_score == "notApplicable") ? kTracersGray100 : kTracersGray300,
+            color: (_score == "notApplicable") ? kTracersGray500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
               bool success = await setObservationScore(observation, "notApplicable", visitId);
@@ -417,7 +417,7 @@ class _ScoreButtonsState extends State<ScoreButtons> {
           ),
           IconButton(
             icon: Icon(FontAwesomeIcons.circle),
-            color: (_score == "notAssessed") ? kTracersGray100 : kTracersGray300,
+            color: (_score == "notAssessed") ? kTracersGray500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async{
               bool success = await setObservationScore(observation, "notAssessed", visitId);
