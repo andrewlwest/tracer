@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:Tracer/createVisit.dart';
+import 'package:Tracer/addVisit.dart';
 import 'package:Tracer/login.dart';
+import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/visit_lists.dart';
 import 'package:flutter/material.dart';
-import 'addVisit.dart';
-import 'ui/colors.dart';
+
 
 class TracerApp extends StatelessWidget {
 
@@ -27,16 +27,11 @@ class TracerApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tracer',
       home: VisitListPage(),
-      //home: HomePage(),
       initialRoute: LoginPage.id,
       routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
         LoginPage.id: (context) => LoginPage(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
         AddVisit.id: (context) => AddVisit(),
-        CreateVisit.id: (context) => CreateVisit(),
 
-        //'/visitDetail': (context) => VisitDetailPage(),
       },
       onGenerateRoute: _getRoute,
       theme: _kTracersTheme, // New code
