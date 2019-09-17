@@ -1,19 +1,24 @@
 import 'package:Tracer/model/place.dart';
-import 'package:Tracer/service/tracer_service.dart';
+import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'service/tracer_service.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
-class AddVisit extends StatefulWidget {
-  static const String id = 'add_visit_screen';
+class EditVisit extends StatefulWidget {
+  static const String id = 'edit_visit_screen';
+  final VisitListItem visit;
+  EditVisit({this.visit});
   @override
-  _AddVisitState createState() => _AddVisitState();
+  _EditVisitState createState() => _EditVisitState(visit: visit);
 }
 
-class _AddVisitState extends State<AddVisit> {
+class _EditVisitState extends State<EditVisit> {
+  final VisitListItem visit;
+  _EditVisitState({this.visit});
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -41,9 +46,13 @@ class _AddVisitState extends State<AddVisit> {
   }
 
   void _init() async {
-    
     _visitTimeOfDay = new timePicker.TimeOfDay(hour: 12, minute: 0);
-    _visitDateTime = DateTime.now();
+    _visitDateTime = visit.visitDatetime;
+    _visitType = visit.type;
+    _selectedPlace = visit.place;
+    _summaryController.text = visit.summary;
+    _date = new DateFormat('EEE, MMM d').format(_visitDateTime);
+    _time = new DateFormat("h:mm a").format(_visitDateTime);
   }
 
   void _save(BuildContext context) async {
@@ -59,12 +68,12 @@ class _AddVisitState extends State<AddVisit> {
         0,
         0);
 
-    var visitListItem = await svc.createVisit(
-        dateTime, _selectedPlace, _summaryController.text, _visitType);
 
-    print('visit created with id = ' + visitListItem.id);
-
-    Navigator.pop(context, "saved");
+    //var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
+   //     dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
+    //print('visit updated with id = ' + visitListItem.id);
+    //Navigator.pop(context, visitListItem);
+    Navigator.pop(context, "updated");
   }
 
   String convertDateTime(String date, String time) {
@@ -285,7 +294,6 @@ class _AddVisitState extends State<AddVisit> {
 
                       return snapshot.hasData
                           ? AutoCompleteTextField<Place>(
-                              suggestionsAmount: 20,
                               decoration: new InputDecoration(
                                   border: OutlineInputBorder(),
                                   fillColor: kTracersWhite,

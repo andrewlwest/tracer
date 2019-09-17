@@ -19,6 +19,7 @@ import 'package:Tracer/visit_detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:Tracer/addVisit.dart';
+import 'package:Tracer/editVisit.dart';
 import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
@@ -153,24 +154,6 @@ class _VisitListPageState extends State<VisitListPage>
                   //refreshVisitList();
                 },
               ),
-              // IconButton(
-              //   icon: Icon(
-              //     Icons.search,
-              //     semanticLabel: 'search',
-              //   ),
-              //   onPressed: () {
-              //     print('Search button');
-              //   },
-              // ),
-              // IconButton(
-              //   icon: Icon(
-              //     Icons.more_vert,
-              //     semanticLabel: 'more',
-              //   ),
-              //   onPressed: () {
-              //     print('More button');
-              //   },
-              // ),
             ],
           ),
           body: TabBarView(
@@ -179,7 +162,6 @@ class _VisitListPageState extends State<VisitListPage>
               //TODAY TAB PANE CONTENT
 
               ...myTabs.map((MyTab tab) {
-                final String filter = tab.filter.toLowerCase();
                 return FutureBuilder<List<VisitListItem>>(
                   future: _visitListFuture,
                   builder: (context, snapshot) {
@@ -231,11 +213,19 @@ class _VisitListPageState extends State<VisitListPage>
   }
 }
 
-class VisitListView extends StatelessWidget {
+class VisitListView extends StatefulWidget {
+  final List<VisitListItem> visits;
+  VisitListView({Key key, this.visits}) : super(key: key);
+
+  _VisitListViewState createState() => _VisitListViewState(visits: visits);
+}
+
+class _VisitListViewState extends State<VisitListView> {
+
   final List<VisitListItem> visits;
   //final TracerService svc = new TracerService();
 
-  VisitListView({Key key, this.visits}) : super(key: key);
+  _VisitListViewState({Key key, this.visits});
 
   // pull to refresh
   final RefreshController _refreshController =
@@ -377,20 +367,6 @@ class VisitListView extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    //TODAY and UPCOMING CARDS WILL HAVE THE PROGRESS BAR SHOWN INSTEAD OF THE SCORE BAR
-                                    // new Expanded(
-                                    //   child: new SizedBox(
-                                    //     height: 4,
-                                    //     child: new LinearProgressIndicator(
-                                    //       valueColor: new AlwaysStoppedAnimation(
-                                    //           kTracersBlue500),
-                                    //       backgroundColor: kTracersBlue100,
-                                    //       value: .03,
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    //PAST CARDS WILL HAVE THE SCORE BAR SHOWN INSTEAD OF THE PROGRESS BAR
-                                    //vCardScore,
                                     new Expanded(
                                         child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -408,7 +384,10 @@ class VisitListView extends StatelessWidget {
                                                     await _todoInputDialog(
                                                         context,
                                                         visits[position]);
-                                                print("todo is $todo");
+                                                print("todo is ${todo}");
+                                                if (todo != 'CANCEL') {
+                                                  visits[position].todo = todo;
+                                                }
                                               },
                                             ),
                                           ],
@@ -429,6 +408,11 @@ class VisitListView extends StatelessWidget {
                                                         visits[position]);
                                                 print(
                                                     "participants are $participants");
+                                                if (participants != 'CANCEL') {
+                                                  visits[position]
+                                                          .participants =
+                                                      participants;
+                                                }
                                               },
                                             ),
                                           ],
@@ -446,6 +430,25 @@ class VisitListView extends StatelessWidget {
                                                   value: 1,
                                                   child: ListTile(
                                                     leading: Icon(Icons.edit),
+                                                    onTap: () async {
+                                                      final returnData =
+                                                          await Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EditVisit(
+                                                            visit: visits[
+                                                                position],
+                                                          ),
+                                                        ),
+                                                      );
+                                                      if (returnData == 'updated') {
+                                                        setState(() {//ToDo
+                                                          visits[position] = visits[
+                                                                position];
+                                                        });
+                                                      }
+                                                    },
                                                     title: Text('Edit visit'),
                                                   ),
                                                 ),
@@ -521,7 +524,7 @@ Future<String> _participantsInputDialog(
           FlatButton(
             child: Text('CANCEL'),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context, 'CANCEL');
             },
           ),
           FlatButton(
@@ -529,8 +532,7 @@ Future<String> _participantsInputDialog(
             onPressed: () async {
               bool success = await svc.savePropertyForVisit(
                   "participants", _controller.text, visit.id);
-
-              Navigator.of(context).pop();
+              Navigator.pop(context, _controller.text);
             },
           ),
         ],
@@ -543,7 +545,7 @@ Future<String> _todoInputDialog(
     BuildContext context, VisitListItem visit) async {
   final TracerService svc = new TracerService();
   final _controller = TextEditingController();
-
+  print('controllertext= ${_controller.text} visit todo ${visit.todo}');
   _controller.text = visit.todo;
 
   return showDialog<String>(
@@ -572,7 +574,7 @@ Future<String> _todoInputDialog(
           FlatButton(
             child: Text('CANCEL'),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context, 'CANCEL');
             },
           ),
           FlatButton(
@@ -580,7 +582,8 @@ Future<String> _todoInputDialog(
             onPressed: () async {
               bool success = await svc.savePropertyForVisit(
                   "todo", _controller.text, visit.id);
-              Navigator.of(context).pop();
+              //we need to update the text
+              Navigator.pop(context, _controller.text);
             },
           ),
         ],

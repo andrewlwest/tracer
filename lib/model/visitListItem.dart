@@ -45,7 +45,7 @@ enum Category {
 @JsonSerializable()
 class VisitListItem extends Object with _$VisitListItemSerializerMixin {
   VisitListItem(this.id, this.place, this.summary, this.participants,
-      this.todo, this.visitDatetime);
+      this.todo, this.visitDatetime, this.type);
 
   String id;
   Place place;
@@ -54,6 +54,7 @@ class VisitListItem extends Object with _$VisitListItemSerializerMixin {
   String todo;
   DateTime visitDatetime;
   SummaryStats summaryStats;
+  String type;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
