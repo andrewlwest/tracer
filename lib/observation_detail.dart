@@ -348,7 +348,7 @@ Widget smeListTitle(User sme) {
         children: <Widget>[
           CircleAvatar(
             backgroundColor: kTracersBlue900,
-            child: Text(initials) 
+            child: Text(sme.initials()) 
           ),
         ],
       ),

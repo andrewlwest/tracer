@@ -56,6 +56,14 @@ class _VisitListPageState extends State<VisitListPage>
     super.initState();
     _visitListFuture = svc.getAllVisits();
     _tabController = TabController(vsync: this, length: myTabs.length);
+
+    // load template into application object
+    _init();
+  }
+
+  void _init() async {
+    //Template template = await svc.getTemplate();
+    appData.template = await svc.getTemplate();
   }
 
   @override
