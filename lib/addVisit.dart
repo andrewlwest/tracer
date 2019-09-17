@@ -321,8 +321,6 @@ class _AddVisitState extends State<AddVisit> {
 
                       return snapshot.hasData
                           ? AutoCompleteTextField<Place>(
-                              style: new TextStyle(
-                                  color: Colors.black, fontSize: 16.0),
                               decoration: new InputDecoration(
                                   border: OutlineInputBorder(),
                                   fillColor: kTracersWhite,
@@ -350,14 +348,16 @@ class _AddVisitState extends State<AddVisit> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Padding(
-                                      padding: EdgeInsets.only(top: 8, left:8, right: 8),
+                                      padding: EdgeInsets.only(
+                                          top: 8, left: 8, right: 8),
                                       child: Text(
                                         item.name,
                                         style: theme.textTheme.body1,
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),
+                                      padding: EdgeInsets.only(
+                                          left: 8.0, right: 8.0, bottom: 8),
                                       child: Text(
                                         item.location,
                                         style: theme.textTheme.body2,
