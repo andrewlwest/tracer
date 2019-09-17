@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'service/tracer_service.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class AddVisit extends StatefulWidget {
   static const String id = 'add_visit_screen';
@@ -41,7 +42,6 @@ class _AddVisitState extends State<AddVisit> {
   }
 
   void _init() async {
-    
     _visitTimeOfDay = new timePicker.TimeOfDay(hour: 12, minute: 0);
     _visitDateTime = DateTime.now();
   }
@@ -88,6 +88,17 @@ class _AddVisitState extends State<AddVisit> {
     setState(() {
       _selectedPlace = place;
     });
+  }
+
+  List<Place> _searchedPlaces;
+
+  List<Place> filterData(List<Place> places, String pattern) {
+    _searchedPlaces = places.where(
+      (item) => (item.name + item.location)
+                                    .toLowerCase()
+                                    .contains(pattern.toLowerCase())
+    ).toList();
+    return _searchedPlaces;
   }
 
   @override
@@ -284,7 +295,34 @@ class _AddVisitState extends State<AddVisit> {
                       if (snapshot.hasError) print(snapshot.error);
 
                       return snapshot.hasData
-                          ? AutoCompleteTextField<Place>(
+                          ? TypeAheadField(
+                              textFieldConfiguration: TextFieldConfiguration(
+                                  autofocus: true,
+                                  style: DefaultTextStyle.of(context)
+                                      .style
+                                      .copyWith(fontStyle: FontStyle.italic),
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder())),
+                              suggestionsCallback: (pattern) async {
+                                return filterData(snapshot.data, pattern);
+                              },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: Text(suggestion.name),
+                                  subtitle: Text('${suggestion.location}'),
+                                );
+                              },
+                              onSuggestionSelected: (suggestion) {
+                                setState(() => placeSelected(suggestion));
+                                /*
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => ProductPage(product: suggestion)
+    ));
+    */
+                              },
+                            )
+                          /*
+                          AutoCompleteTextField<Place>(
                               suggestionsAmount: 20,
                               decoration: new InputDecoration(
                                   border: OutlineInputBorder(),
@@ -343,6 +381,7 @@ class _AddVisitState extends State<AddVisit> {
                                     .toLowerCase()
                                     .contains(query.toLowerCase());
                               })
+                              */
                           : Center(child: LinearProgressIndicator());
                     }),
               ),
