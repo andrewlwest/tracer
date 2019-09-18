@@ -300,8 +300,8 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                               },
                               itemBuilder: (context, suggestion) {
                                 return ListTile(
-                                  title: Text(suggestion.name),
-                                  subtitle: Text('${suggestion.location}'),
+                                  title: Text(suggestion.name, style: TextStyle(fontSize: 14.0),),
+                                  subtitle: Text(suggestion.location, style: TextStyle(fontSize: 12.0, color: kTracersGray500)),
                                 );
                               },
                               onSuggestionSelected: (suggestion) {
@@ -320,11 +320,12 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                           children: <Widget>[
                             Text(
                               _selectedPlace.name,
-                              style: theme.textTheme.body1,
+                              style: TextStyle(fontSize: 14.0)
                             ),
+                            SizedBox(height: 4.0),
                             Text(
                               _selectedPlace.location,
-                              style: theme.textTheme.body2,
+                              style: TextStyle(fontSize: 12.0, color: kTracersGray500)
                             ),
                           ],
                         )
