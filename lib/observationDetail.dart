@@ -438,10 +438,10 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "notApplicable") ? kTracersGray500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
-              bool success = await setObservationScore(observation, "notApplicable", visitId);
               setState(() {
                 _score = "notApplicable";
               });
+              bool success = await setObservationScore(observation, "notApplicable", visitId);
               print('NOT APPLICABLE'); // notApplicable
             },
           ),
@@ -450,10 +450,10 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "notAssessed") ? kTracersGray500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async{
-              bool success = await setObservationScore(observation, "notAssessed", visitId);
               setState(() {
                 _score = "notAssessed";
-              });
+              });              
+              bool success = await setObservationScore(observation, "notAssessed", visitId);
               print('DID NOT ASSESS'); // notAssessed
             },
           ),
@@ -462,6 +462,9 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "compliant") ? kTracersGreen500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
+              setState(() {
+                _score = "compliant";
+              });
               bool success = await setObservationScore(observation, "compliant", visitId);
               setState(() {
                 _score = "compliant";
@@ -474,10 +477,10 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "advisory") ? kTracersYellow500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
-              bool success = await setObservationScore(observation, "advisory", visitId);
               setState(() {
                 _score = "advisory";
-              });
+              });              
+              bool success = await setObservationScore(observation, "advisory", visitId);
               print('ADVISORY'); // advisory
             },
           ),
@@ -486,10 +489,10 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "nonCompliant") ? kTracersRed500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
-              bool success = await setObservationScore(observation, "nonCompliant", visitId);
               setState(() {
                 _score = "nonCompliant";
-              });
+              });              
+              bool success = await setObservationScore(observation, "nonCompliant", visitId);
               print('NON_COMPLIANT'); // nonCompliant
             },
           ),

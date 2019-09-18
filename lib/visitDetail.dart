@@ -298,13 +298,13 @@ Widget _observationScoreIcon(Observation observation) {
         size: 16.0,);
     } else if (observation.score == "notApplicable") {
       return Icon(
-        FontAwesomeIcons.solidTimesCircle,
-        color: kTracersRed500,
+        FontAwesomeIcons.ban,
+        color: kTracersGray500,
         size: 16.0,);
     } else if (observation.score == "notAssessed") {
       return Icon(
-        FontAwesomeIcons.solidTimesCircle,
-        color: kTracersRed500,
+        FontAwesomeIcons.circle,
+        color: kTracersGray500,
         size: 16.0,);
     } else {
       return Icon(
