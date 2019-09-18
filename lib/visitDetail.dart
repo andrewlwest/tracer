@@ -1,4 +1,3 @@
-
 import 'package:Tracer/application/appData.dart';
 import 'package:Tracer/model/observation.dart';
 import 'package:Tracer/model/template/template.dart';
