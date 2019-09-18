@@ -358,16 +358,32 @@ class _VisitListViewState extends State<VisitListView> {
                                     ],
                                   ),
                                   SizedBox(height: 10.0),
+                                  // Row(
+                                  //   children: <Widget>[
+                                  //     new Column(
+                                  //       children: <Widget>[
+                                  //         Text(
+                                  //           '${visits[position].place.name}',
+                                  //           style: theme.textTheme.title,
+                                  //           overflow: TextOverflow.ellipsis,
+                                  //           maxLines: 1,
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ],
+                                  // ),
                                   Row(
                                     children: <Widget>[
-                                      new Column(
-                                        children: <Widget>[
-                                          Text(
+                                      Flexible(
+                                        child: Container(
+                                          padding: EdgeInsets.only(right: 13.0),
+                                          child: Text(
                                             '${visits[position].place.name}',
-                                            style: theme.textTheme.headline,
+                                            style: theme.textTheme.title,
+                                            overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                           ),
-                                        ],
+                                        ),
                                       ),
                                     ],
                                   ),
