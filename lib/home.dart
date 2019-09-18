@@ -172,7 +172,7 @@ class _HomePageState extends State<HomePage>
               children: <Widget>[
                 UserAccountsDrawerHeader(
                   accountName: Text(appData.user != null ? appData.user.name : "no user loged in"),
-                  accountEmail: Text("missing required email"),
+                  accountEmail: Text(appData.user != null ? appData.user.department : "no user loged in"),
                   decoration: BoxDecoration(
                     color: kTracersBlue500,
                   ),
@@ -502,7 +502,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                                       ),
                                                     ),
                                                   );
-                                                  if (returnData == 'updated') {
+                                                  if (returnData != null) {
                                                       callback();
                                                   }
                                                 } else {
