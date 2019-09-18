@@ -1,21 +1,6 @@
-// Copyright 2018-present the Flutter authors. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-import 'package:Tracer/addVisit.dart';
-import 'package:Tracer/login.dart';
+import 'package:Tracer/application/router.dart' as router;
 import 'package:Tracer/ui/colors.dart';
-import 'package:Tracer/visit_lists.dart';
+import 'package:Tracer/home.dart';
 import 'package:flutter/material.dart';
 
 class TracerApp extends StatelessWidget {
@@ -23,6 +8,7 @@ class TracerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tracer',
+<<<<<<< HEAD:lib/app.dart
       home: VisitListPage(),
       initialRoute: LoginPage.id,
       routes: {
@@ -30,28 +16,13 @@ class TracerApp extends StatelessWidget {
         AddVisit.id: (context) => AddVisit(),
       },
       onGenerateRoute: _getRoute,
+=======
+      home: HomePage(),
+      initialRoute: "/login",
+      onGenerateRoute: router.generateRoute,
+>>>>>>> 47c7e149beb6c162d00c22603c61c929a6ba54b4:lib/application/app.dart
       theme: _kTracersTheme, // New code
     );
-  }
-
-  Route<dynamic> _getRoute(RouteSettings settings) {
-    /*
-    if (settings.name != '/login') {
-      return null;
-    }
-    */
-
-    /*
-
-    return MaterialPageRoute<void>(
-      settings: settings,
-      //builder: (BuildContext context) => LogExceptions(),
-      //builder: (BuildContext context) => AddVisit(),
-      builder: (BuildContext context) => LoginPage(),
-      fullscreenDialog: true,
-    );
-
-    */
   }
 }
 

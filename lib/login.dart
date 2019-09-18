@@ -1,13 +1,14 @@
-import 'package:Tracer/appData.dart';
+
+
+import 'package:Tracer/application/appData.dart';
 import 'package:Tracer/model/user.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'visit_lists.dart';
 
 class LoginPage extends StatefulWidget {
-  static const String id = 'login_screen';
+  static const String id = 'login_page';
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -122,12 +123,17 @@ class _LoginPageState extends State<LoginPage> {
       User user = await svc.getUser(login);
       print("user = $user");
 
-      // set the authenticqated user object in the Application singleton.
-      //Application application = new Application();
-      appData.user = user;
+      if (user == null) {
+        final snackBar = SnackBar(content: Text('login failed, try again'));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      } else {
+        // set the authenticqated user object in the Application singleton.
+        //Application application = new Application();
+        appData.user = user;
 
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => VisitListPage()));
+        //Navigator.push( context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.pop(context);
+      }
     } else {
       final snackBar = SnackBar(content: Text('login failed, try again'));
       _scaffoldKey.currentState.showSnackBar(snackBar);

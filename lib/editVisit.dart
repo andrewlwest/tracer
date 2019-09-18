@@ -1,27 +1,31 @@
 import 'package:Tracer/model/place.dart';
-import 'package:Tracer/model/visitListItem.dart';
+import 'package:Tracer/model/tracerVisit.dart';
+import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'service/tracer_service.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
-class EditVisit extends StatefulWidget {
+class EditVisitPage extends StatefulWidget {
   static const String id = 'edit_visit_screen';
-  final VisitListItem visit;
-  EditVisit({this.visit});
+  final TracerVisit visit;
+
+  EditVisitPage({this.visit});
+
   @override
-  _EditVisitState createState() => _EditVisitState(visit: visit);
+  _EditVisitPageState createState() => _EditVisitPageState(visit: visit);
 }
 
-class _EditVisitState extends State<EditVisit> {
-  final VisitListItem visit;
-  _EditVisitState({this.visit});
+class _EditVisitPageState extends State<EditVisitPage> {
+  final TracerVisit visit;
+
+  _EditVisitPageState({this.visit});
+
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final _summaryController = TextEditingController();
 
   // fields to hold form data
@@ -34,9 +38,6 @@ class _EditVisitState extends State<EditVisit> {
   timePicker.TimeOfDay _visitTimeOfDay;
 
   TracerService svc = TracerService();
-
-  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
-  AutoCompleteTextField<Place> searchTextField;
   TextEditingController controller = new TextEditingController();
 
   @override
@@ -69,34 +70,28 @@ class _EditVisitState extends State<EditVisit> {
         0);
 
 
-    //var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
-   //     dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
-    //print('visit updated with id = ' + visitListItem.id);
+    var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
+        dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
+    print('visit updated with id = ' + visitListItem.id);
     //Navigator.pop(context, visitListItem);
     Navigator.pop(context, "updated");
-  }
-
-  String convertDateTime(String date, String time) {
-    var dateArray = date.split('/');
-    String year = dateArray[2];
-    String month = dateArray[1];
-    String day = dateArray[0];
-    if (day.length == 1) day = '0' + day;
-    if (month.length == 1) month = '0' + month;
-
-    var timeArray = time.split(new RegExp(':| '));
-    String hour = timeArray[0];
-    String minute = timeArray[1];
-    String ampm = timeArray[2];
-
-    if (ampm == 'PM') hour = (int.parse(hour) + 12).toString();
-    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':00';
   }
 
   void placeSelected(Place place) {
     setState(() {
       _selectedPlace = place;
     });
+  }
+
+  List<Place> _searchedPlaces;
+
+  List<Place> filterData(List<Place> places, String pattern) {
+    _searchedPlaces = places.where(
+      (item) => (item.name + item.location)
+                                    .toLowerCase()
+                                    .contains(pattern.toLowerCase())
+    ).toList();
+    return _searchedPlaces;
   }
 
   @override
@@ -232,22 +227,7 @@ class _EditVisitState extends State<EditVisit> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showTimePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true, onConfirm: (time) {
-                            print('confirm time $time');
-                            _time = new DateFormat("h:mm a").format(time);
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                          setState(() {});
-                        },
-                        */
+                       
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -293,64 +273,28 @@ class _EditVisitState extends State<EditVisit> {
                       if (snapshot.hasError) print(snapshot.error);
 
                       return snapshot.hasData
-                          ? AutoCompleteTextField<Place>(
-                              decoration: new InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  fillColor: kTracersWhite,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      setState(() {
-                                        controller.value = null;
-                                      });
-                                    },
-                                  ),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      10.0, 30.0, 10.0, 20.0),
-                                  filled: true,
-                                  hintText: 'Search Place',
-                                  hintStyle: TextStyle(color: Colors.grey)),
-                              itemSubmitted: (item) {
-                                setState(() => placeSelected(item));
+                          ? TypeAheadField(
+                              textFieldConfiguration: TextFieldConfiguration(
+                                  autofocus: true,
+                                  style: DefaultTextStyle.of(context)
+                                      .style
+                                      .copyWith(fontStyle: FontStyle.italic),
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder())),
+                              suggestionsCallback: (pattern) async {
+                                return filterData(snapshot.data, pattern);
                               },
-                              clearOnSubmit: true,
-                              key: key,
-                              suggestions: snapshot.data,
-                              itemBuilder: (context, item) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 8, left: 8, right: 8),
-                                      child: Text(
-                                        item.name,
-                                        style: theme.textTheme.body1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 8.0, right: 8.0, bottom: 8),
-                                      child: Text(
-                                        item.location,
-                                        style: theme.textTheme.body2,
-                                      ),
-                                    ),
-                                    Divider(
-                                      height: 1,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: Text(suggestion.name),
+                                  subtitle: Text('${suggestion.location}'),
                                 );
                               },
-                              itemSorter: (a, b) {
-                                return a.name.compareTo(b.name);
+                              onSuggestionSelected: (suggestion) {
+                                setState(() => placeSelected(suggestion));
+                              
                               },
-                              itemFilter: (item, query) {
-                                return (item.name + item.location)
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase());
-                              })
+                            )
                           : Center(child: LinearProgressIndicator());
                     }),
               ),
