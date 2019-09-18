@@ -95,14 +95,14 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
         backgroundColor: kTracersBlue500,
         //TODO: Wire up this cancel button
         leading: IconButton(
-              icon: Icon(
-                Icons.close,
-                semanticLabel: 'cancel',
-              ),
-              onPressed: () {
-                print('Cancel button');
-              },
-            ),
+          icon: Icon(
+            Icons.close,
+            semanticLabel: 'cancel',
+          ),
+          onPressed: () {
+            print('Cancel button');
+          },
+        ),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
@@ -184,12 +184,12 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                                         Icon(
                                           Icons.date_range,
                                           size: 18.0,
-                                          color: kTracersBlue500,
+                                          color: kTracersGray500,
                                         ),
                                         Text(
                                           " $_date",
                                           style: TextStyle(
-                                              color: kTracersBlue500,
+                                              color: kTracersGray500,
                                               fontSize: 12.0),
                                         ),
                                       ],
@@ -257,12 +257,12 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                                         Icon(
                                           Icons.access_time,
                                           size: 16.0,
-                                          color: kTracersBlue500,
+                                          color: kTracersGray500,
                                         ),
                                         Text(
                                           " $_time",
                                           style: TextStyle(
-                                              color: kTracersBlue500,
+                                              color: kTracersGray500,
                                               fontSize: 12.0),
                                         ),
                                       ],
@@ -300,8 +300,14 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                               },
                               itemBuilder: (context, suggestion) {
                                 return ListTile(
-                                  title: Text(suggestion.name),
-                                  subtitle: Text('${suggestion.location}'),
+                                  title: Text(
+                                    suggestion.name,
+                                    style: TextStyle(fontSize: 14.0),
+                                  ),
+                                  subtitle: Text(suggestion.location,
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: kTracersGray500)),
                                 );
                               },
                               onSuggestionSelected: (suggestion) {
@@ -315,16 +321,50 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
               Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: _selectedPlace != null
-                      ? Column(
+                      ? Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              _selectedPlace.name,
-                              style: theme.textTheme.body1,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 2.0, right: 8.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.location_on,
+                                    color: kTracersGray500,
+                                    size: 24.0,
+                                    semanticLabel:
+                                        'Text to announce in accessibility modes',
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              _selectedPlace.location,
-                              style: theme.textTheme.body2,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(_selectedPlace.name,
+                                      maxLines: 2,
+                                      style: TextStyle(fontSize: 14.0)),
+                                  SizedBox(height: 4.0),
+                                  Text(_selectedPlace.location,
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: kTracersGray500)),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              children: <Widget>[
+                                IconButton(
+                                  icon: Icon(Icons.close),
+                                  color: kTracersGray500,
+                                  onPressed: () {
+                                    print("remove current place");
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         )
