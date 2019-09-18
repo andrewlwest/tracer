@@ -458,25 +458,6 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                                   value: 1,
                                                   child: ListTile(
                                                     leading: Icon(Icons.edit),
-                                                    onTap: () async {
-                                                      final returnData =
-                                                          await Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              EditVisitPage(
-                                                            visit: visits[
-                                                                position],
-                                                          ),
-                                                        ),
-                                                      );
-                                                      if (returnData == 'updated') {
-                                                        setState(() {//ToDo
-                                                          visits[position] = visits[
-                                                                position];
-                                                        });
-                                                      }
-                                                    },
                                                     title: Text('Edit visit'),
                                                   ),
                                                 ),
@@ -502,7 +483,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                                       ),
                                                     ),
                                                   );
-                                                  if (returnData == 'updated') {
+                                                  if (returnData == visits[position].id) {
                                                       callback();
                                                   }
                                                 } else {
@@ -634,8 +615,12 @@ Future<String> _todoInputDialog(
           FlatButton(
             child: Text('OK'),
             onPressed: () async {
-              bool success = await svc.savePropertyForVisit(
-                  "todo", _controller.text, visit.id);
+              String toDoText = _controller.text;
+              if (toDoText == '') {
+                toDoText = 'null';
+              }
+              await svc.savePropertyForVisit(
+                  "todo", toDoText, visit.id);
               //we need to update the text
               Navigator.pop(context, _controller.text);
             },
