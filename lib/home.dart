@@ -411,7 +411,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                                     await _todoInputDialog(
                                                         context,
                                                         visits[position]);
-                                                print("todo is ${todo}");
+                                                print("todo is $todo");
                                                 if (todo != 'CANCEL') {
                                                   visits[position].todo = todo;
                                                 }
