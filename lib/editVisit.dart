@@ -6,7 +6,6 @@ import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'service/tracer_service.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class EditVisitPage extends StatefulWidget {

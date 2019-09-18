@@ -1,4 +1,3 @@
-
 import 'package:Tracer/application/appData.dart';
 import 'package:Tracer/model/tracerVisit.dart';
 import 'package:Tracer/service/tracer_service.dart';

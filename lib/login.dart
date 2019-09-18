@@ -1,5 +1,3 @@
-
-
 import 'package:Tracer/application/appData.dart';
 import 'package:Tracer/model/user.dart';
 import 'package:Tracer/ui/colors.dart';
