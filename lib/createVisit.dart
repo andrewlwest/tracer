@@ -5,7 +5,6 @@ import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class CreateVisitPage extends StatefulWidget {
@@ -17,9 +16,8 @@ class CreateVisitPage extends StatefulWidget {
 class _CreateVisitPageState extends State<CreateVisitPage> {
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final _summaryController = TextEditingController();
-
+  final String pageTitle = 'Add Visit';
   // fields to hold form data
   String _date = "Date";
   String _time = "Time";
@@ -28,11 +26,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
 
   DateTime _visitDateTime;
   timePicker.TimeOfDay _visitTimeOfDay;
-
   TracerService svc = TracerService();
-
-  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
-  AutoCompleteTextField<Place> searchTextField;
   TextEditingController controller = new TextEditingController();
 
   @override
@@ -91,18 +85,18 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Add Visit"),
+        title: Text(pageTitle),
         backgroundColor: kTracersBlue500,
         leading: IconButton(
-              icon: Icon(
-                Icons.close,
-                semanticLabel: 'cancel',
-              ),
-              onPressed: () {
-                print('Cancel button');
-                Navigator.pop(context);
-              },
-            ),
+          icon: Icon(
+            Icons.close,
+            semanticLabel: 'cancel',
+          ),
+          onPressed: () {
+            print('Cancel button');
+            Navigator.pop(context);
+          },
+        ),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
@@ -150,26 +144,6 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showDatePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true,
-                              minTime: DateTime(2000, 1, 1),
-                              maxTime: DateTime(2022, 12, 31),
-                              onConfirm: (date) {
-                            print('confirm date: $date');
-                            _date = new DateFormat.yMd().format(date);
-
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                        },
-
-                        */
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -227,22 +201,6 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showTimePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true, onConfirm: (time) {
-                            print('confirm time $time');
-                            _time = new DateFormat("h:mm a").format(time);
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                          setState(() {});
-                        },
-                        */
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -290,6 +248,10 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                       return snapshot.hasData
                           ? TypeAheadField(
                               textFieldConfiguration: TextFieldConfiguration(
+                                  autofocus: true,
+                                  style: DefaultTextStyle.of(context)
+                                      .style
+                                      .copyWith(fontStyle: FontStyle.italic),
                                   decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.search),
                                       labelText:
