@@ -101,6 +101,16 @@ class _EditVisitPageState extends State<EditVisitPage> {
       appBar: AppBar(
         title: Text("Edit Visit"),
         backgroundColor: kTracersBlue500,
+        leading: IconButton(
+              icon: Icon(
+                Icons.close,
+                semanticLabel: 'cancel',
+              ),
+              onPressed: () {
+                print('Cancel button');
+                Navigator.pop(context);
+              },
+            ),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,

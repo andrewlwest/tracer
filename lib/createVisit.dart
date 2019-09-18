@@ -93,7 +93,6 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
       appBar: AppBar(
         title: Text("Add Visit"),
         backgroundColor: kTracersBlue500,
-        //TODO: Wire up this cancel button
         leading: IconButton(
               icon: Icon(
                 Icons.close,
@@ -101,6 +100,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
               ),
               onPressed: () {
                 print('Cancel button');
+                Navigator.pop(context);
               },
             ),
         actions: <Widget>[
