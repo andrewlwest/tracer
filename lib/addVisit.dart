@@ -191,12 +191,12 @@ class _AddVisitState extends State<AddVisit> {
                                         Icon(
                                           Icons.date_range,
                                           size: 18.0,
-                                          color: kTracersBlue500,
+                                          color: kTracersGray500,
                                         ),
                                         Text(
                                           " $_date",
                                           style: TextStyle(
-                                              color: kTracersBlue500,
+                                              //color: kTracersBlue500,
                                               fontSize: 12.0),
                                         ),
                                       ],
@@ -264,12 +264,12 @@ class _AddVisitState extends State<AddVisit> {
                                         Icon(
                                           Icons.access_time,
                                           size: 16.0,
-                                          color: kTracersBlue500,
+                                          color: kTracersGray500,
                                         ),
                                         Text(
                                           " $_time",
                                           style: TextStyle(
-                                              color: kTracersBlue500,
+                                              //color: kTracersBlue500,
                                               fontSize: 12.0),
                                         ),
                                       ],
@@ -297,11 +297,9 @@ class _AddVisitState extends State<AddVisit> {
                       return snapshot.hasData
                           ? TypeAheadField(
                               textFieldConfiguration: TextFieldConfiguration(
-                                  autofocus: true,
-                                  style: DefaultTextStyle.of(context)
-                                      .style
-                                      .copyWith(fontStyle: FontStyle.italic),
                                   decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.search),
+                                      labelText: 'Search by Name, Location or Address',
                                       border: OutlineInputBorder())),
                               suggestionsCallback: (pattern) async {
                                 return filterData(snapshot.data, pattern);
@@ -309,7 +307,7 @@ class _AddVisitState extends State<AddVisit> {
                               itemBuilder: (context, suggestion) {
                                 return ListTile(
                                   title: Text(suggestion.name),
-                                  subtitle: Text('${suggestion.location}'),
+                                  subtitle: Text(suggestion.location),
                                 );
                               },
                               onSuggestionSelected: (suggestion) {
@@ -321,67 +319,7 @@ class _AddVisitState extends State<AddVisit> {
     */
                               },
                             )
-                          /*
-                          AutoCompleteTextField<Place>(
-                              suggestionsAmount: 20,
-                              decoration: new InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  fillColor: kTracersWhite,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      setState(() {
-                                        controller.value = null;
-                                      });
-                                    },
-                                  ),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      10.0, 30.0, 10.0, 20.0),
-                                  filled: true,
-                                  hintText: 'Search Place',
-                                  hintStyle: TextStyle(color: Colors.grey)),
-                              itemSubmitted: (item) {
-                                setState(() => placeSelected(item));
-                              },
-                              clearOnSubmit: true,
-                              key: key,
-                              suggestions: snapshot.data,
-                              itemBuilder: (context, item) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 8, left: 8, right: 8),
-                                      child: Text(
-                                        item.name,
-                                        style: theme.textTheme.body1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 8.0, right: 8.0, bottom: 8),
-                                      child: Text(
-                                        item.location,
-                                        style: theme.textTheme.body2,
-                                      ),
-                                    ),
-                                    Divider(
-                                      height: 1,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                );
-                              },
-                              itemSorter: (a, b) {
-                                return a.name.compareTo(b.name);
-                              },
-                              itemFilter: (item, query) {
-                                return (item.name + item.location)
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase());
-                              })
-                              */
+                         
                           : Center(child: LinearProgressIndicator());
                     }),
               ),

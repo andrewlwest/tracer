@@ -18,12 +18,9 @@ import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/visit_lists.dart';
 import 'package:flutter/material.dart';
 
-
 class TracerApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       title: 'Tracer',
       home: VisitListPage(),
@@ -31,7 +28,6 @@ class TracerApp extends StatelessWidget {
       routes: {
         LoginPage.id: (context) => LoginPage(),
         AddVisit.id: (context) => AddVisit(),
-
       },
       onGenerateRoute: _getRoute,
       theme: _kTracersTheme, // New code
@@ -89,22 +85,31 @@ ThemeData _buildTracersTheme() {
 }
 
 TextTheme _buildTracersTextTheme(TextTheme base) {
-  return base
-      .copyWith(
-        // headline: base.headline.copyWith(
-        //   fontWeight: FontWeight.w500,
-        // ),
-        title: base.title.copyWith(fontSize: 18.0),
-        subhead: TextStyle(color: kTracersBlue500, fontSize: 12),
-
-        caption: base.caption.copyWith(
-          fontWeight: FontWeight.w400,
-          fontSize: 14.0,
-        ),
-      )
-      .apply(
-          //fontFamily: 'Rubik',
-          //displayColor: kTracersBlue900,
-          //bodyColor: kTracersBlue900,
-          );
+  return base.copyWith(
+    headline: base.headline.copyWith(
+      fontWeight: FontWeight.w500,
+      fontSize: 18.0
+    ),
+    title: base.title.copyWith(
+        fontSize: 18.0
+    ),
+    subtitle: base.subtitle.copyWith(
+        fontSize: 16.0
+    ),
+    subhead: base.subhead.copyWith(
+      fontSize: 14.0
+    ),
+    caption: base.caption.copyWith(
+      fontWeight: FontWeight.w400,
+      fontSize: 14.0,
+    ),
+    body2: base.body2.copyWith(
+      fontWeight: FontWeight.w500,
+      fontSize: 16.0,
+    ),
+  ).apply(
+    //displayColor: kTracersBlue500,
+    //bodyColor: kTracersBlue500,
+    //decorationColor: kTracersBlue900
+  );
 }
