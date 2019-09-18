@@ -8,19 +8,9 @@ class TracerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tracer',
-<<<<<<< HEAD:lib/app.dart
-      home: VisitListPage(),
-      initialRoute: LoginPage.id,
-      routes: {
-        LoginPage.id: (context) => LoginPage(),
-        AddVisit.id: (context) => AddVisit(),
-      },
-      onGenerateRoute: _getRoute,
-=======
       home: HomePage(),
       initialRoute: "/login",
       onGenerateRoute: router.generateRoute,
->>>>>>> 47c7e149beb6c162d00c22603c61c929a6ba54b4:lib/application/app.dart
       theme: _kTracersTheme, // New code
     );
   }
