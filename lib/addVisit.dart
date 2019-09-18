@@ -5,7 +5,6 @@ import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'service/tracer_service.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class AddVisit extends StatefulWidget {
@@ -31,8 +30,6 @@ class _AddVisitState extends State<AddVisit> {
 
   TracerService svc = TracerService();
 
-  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
-  AutoCompleteTextField<Place> searchTextField;
   TextEditingController controller = new TextEditingController();
 
   @override

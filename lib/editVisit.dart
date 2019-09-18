@@ -6,7 +6,7 @@ import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'service/tracer_service.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class EditVisit extends StatefulWidget {
   static const String id = 'edit_visit_screen';
@@ -34,9 +34,6 @@ class _EditVisitState extends State<EditVisit> {
   timePicker.TimeOfDay _visitTimeOfDay;
 
   TracerService svc = TracerService();
-
-  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
-  AutoCompleteTextField<Place> searchTextField;
   TextEditingController controller = new TextEditingController();
 
   @override
@@ -109,7 +106,7 @@ class _EditVisitState extends State<EditVisit> {
     ).toList();
     return _searchedPlaces;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -243,22 +240,7 @@ class _EditVisitState extends State<EditVisit> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showTimePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true, onConfirm: (time) {
-                            print('confirm time $time');
-                            _time = new DateFormat("h:mm a").format(time);
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                          setState(() {});
-                        },
-                        */
+                       
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
