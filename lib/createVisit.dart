@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
-class AddVisit extends StatefulWidget {
-  static const String id = 'add_visit_screen';
+class CreateVisitPage extends StatefulWidget {
+  static const String id = 'create_visit_page';
   @override
-  _AddVisitState createState() => _AddVisitState();
+  _CreateVisitPageState createState() => _CreateVisitPageState();
 }
 
-class _AddVisitState extends State<AddVisit> {
+class _CreateVisitPageState extends State<CreateVisitPage> {
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -59,29 +59,12 @@ class _AddVisitState extends State<AddVisit> {
         0,
         0);
 
-    var visitListItem = await svc.createVisit(
+    var newId = await svc.createVisit(
         dateTime, _selectedPlace, _summaryController.text, _visitType);
 
-    print('visit created with id = ' + visitListItem.id);
+    print('visit created with id = $newId');
 
-    Navigator.pop(context, "saved");
-  }
-
-  String convertDateTime(String date, String time) {
-    var dateArray = date.split('/');
-    String year = dateArray[2];
-    String month = dateArray[1];
-    String day = dateArray[0];
-    if (day.length == 1) day = '0' + day;
-    if (month.length == 1) month = '0' + month;
-
-    var timeArray = time.split(new RegExp(':| '));
-    String hour = timeArray[0];
-    String minute = timeArray[1];
-    String ampm = timeArray[2];
-
-    if (ampm == 'PM') hour = (int.parse(hour) + 12).toString();
-    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':00';
+    Navigator.pop(context, newId);
   }
 
   void placeSelected(Place place) {

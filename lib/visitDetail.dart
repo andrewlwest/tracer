@@ -1,16 +1,23 @@
-import 'package:Tracer/appData.dart';
+
+import 'package:Tracer/application/appData.dart';
 import 'package:Tracer/model/observation.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/tracerVisit.dart';
-import 'package:Tracer/observation_detail.dart';
+import 'package:Tracer/observationDetail.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/font_awesome_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+
+class VisitDetailPageArguments {
+  final String visitId;
+  VisitDetailPageArguments(this.visitId);
+}
+
 class VisitDetailPage extends StatefulWidget {
-  static const String id = 'visit_detail_page_id';
+  static const String id = 'visit_detail_page';
   VisitDetailPage({@required this.visitId});
 
   final String visitId;
