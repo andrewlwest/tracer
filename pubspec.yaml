@@ -1,6 +1,6 @@
 name: Tracer
 description: MGH LCS App for JC Visits
-version: 0.1.0+2019091701
+version: 0.1.0+2019091802
 
 dependencies:
   flutter:

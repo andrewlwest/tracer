@@ -1,5 +1,6 @@
 import 'package:Tracer/model/place.dart';
-import 'package:Tracer/model/visitListItem.dart';
+import 'package:Tracer/model/tracerVisit.dart';
+import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
@@ -8,20 +9,23 @@ import 'package:intl/intl.dart';
 import 'service/tracer_service.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
-class EditVisit extends StatefulWidget {
+class EditVisitPage extends StatefulWidget {
   static const String id = 'edit_visit_screen';
-  final VisitListItem visit;
-  EditVisit({this.visit});
+  final TracerVisit visit;
+
+  EditVisitPage({this.visit});
+
   @override
-  _EditVisitState createState() => _EditVisitState(visit: visit);
+  _EditVisitPageState createState() => _EditVisitPageState(visit: visit);
 }
 
-class _EditVisitState extends State<EditVisit> {
-  final VisitListItem visit;
-  _EditVisitState({this.visit});
+class _EditVisitPageState extends State<EditVisitPage> {
+  final TracerVisit visit;
+
+  _EditVisitPageState({this.visit});
+
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final _summaryController = TextEditingController();
 
   // fields to hold form data
@@ -65,29 +69,11 @@ class _EditVisitState extends State<EditVisit> {
         0,
         0);
 
-
-    var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
+    String visitId = await svc.updateVisit(visitId:visit.id, dateTime:
         dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
-    print('visit updated with id = ' + visitListItem.id);
+    print('visit updated with id = ' + visitId);
     //Navigator.pop(context, visitListItem);
-    Navigator.pop(context, "updated");
-  }
-
-  String convertDateTime(String date, String time) {
-    var dateArray = date.split('/');
-    String year = dateArray[2];
-    String month = dateArray[1];
-    String day = dateArray[0];
-    if (day.length == 1) day = '0' + day;
-    if (month.length == 1) month = '0' + month;
-
-    var timeArray = time.split(new RegExp(':| '));
-    String hour = timeArray[0];
-    String minute = timeArray[1];
-    String ampm = timeArray[2];
-
-    if (ampm == 'PM') hour = (int.parse(hour) + 12).toString();
-    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':00';
+    Navigator.pop(context, visitId);
   }
 
   void placeSelected(Place place) {

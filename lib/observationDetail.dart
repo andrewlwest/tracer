@@ -1,16 +1,22 @@
-import 'package:Tracer/appData.dart';
+
+import 'package:Tracer/application/appData.dart';
 import 'package:Tracer/model/observation.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/user.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
+import 'package:Tracer/ui/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
-import 'font_awesome_flutter.dart';
-
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
-class ObservationDetailPage extends StatefulWidget {
+class ObservationDetailPageArguments {
+  final String visitId;
+  final String observationCategoryId;
+  ObservationDetailPageArguments(this.visitId, this.observationCategoryId);
+}
 
+class ObservationDetailPage extends StatefulWidget {
+  static const String id = 'observation_detail_page';
   final String observationCategoryId;
   final String visitId;
 
@@ -24,8 +30,6 @@ class ObservationDetailPage extends StatefulWidget {
 class _ObservationDetailPageState extends State<ObservationDetailPage> {
   final String observationCategoryId;
   final String visitId;
-
-  String dropdownValue = 'MGH';
   final TracerService svc = new TracerService();
 
   _ObservationDetailPageState({this.visitId, this.observationCategoryId});
@@ -68,6 +72,9 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
   final _commentsController = TextEditingController();
   final _freeTextExceptionController = TextEditingController();
 
+  final _commentsFocusNode = new FocusNode();
+  final _freeTextFocusNode = new FocusNode();
+
   TracerService svc = TracerService();
 
   GlobalKey<AutoCompleteTextFieldState<User>> key = new GlobalKey();
@@ -79,10 +86,41 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
   @override
   void initState() {
     _commentsController.text = observation.comment;
+    _commentsFocusNode.addListener(() {
+       if (!_commentsFocusNode.hasFocus) {
+          _updateComments();
+       }
+    });
+
     _freeTextExceptionController.text = observation.freeTextException;
+    _freeTextFocusNode.addListener(() {
+       if (!_freeTextFocusNode.hasFocus) {
+          _updateFreeTextException();
+       }
+    });
+
     _assignedUser = observation != null && observation.sme != null && observation.sme.name != null ? observation.sme : null;
     super.initState();
   }
+
+  void _updateComments() async {
+    bool success = await svc.setObservationProperty("comment", _commentsController.text, visitId, observation.observationCategoryId);
+    if (success) {
+      print('saved observation comment');
+    } else {
+      print('could not save observation comment');
+    }
+  }
+
+  void _updateFreeTextException() async {
+    bool success = await svc.setObservationProperty("freeTextException", _freeTextExceptionController.text, visitId, observation.observationCategoryId);
+    if (success) {
+      print('saved free text exception');
+    } else {
+      print('could not save free text exception');
+    }
+  }
+
 
   void smeSelected(User user) async {
     bool success = await svc.setObservationProperty("SME", user.toJson(), visitId, observation.observationCategoryId);
@@ -97,31 +135,7 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    //List<ObservationException> selectedExceptions;
-
-    /*
-    void addSelectedException(ExceptionDataSelected data) {
-      if (selectedExceptions != null) {
-        int index = selectedExceptions.indexOf(data.observationException);
-        if (index == -1) {
-          if (data.selected) {
-            selectedExceptions.add(data.observationException);
-          }
-        } else {
-          if (!data.selected) {
-            selectedExceptions.removeAt(index);
-          }
-        }
-      } else {
-        if (data.selected) {
-          selectedExceptions = [data.observationException];
-        }
-      }
-      print('How many exceptions selected: ' +
-          (selectedExceptions.length).toString());
-    }
-    */
-
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kTracersBlue500,
@@ -212,7 +226,9 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
               //COMMENTS BOX
               TextFormField(
                 maxLines: 3,
+                focusNode: _commentsFocusNode,
                 controller: _commentsController,
+                textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
                   //border: OutlineInputBorder(),
                   filled: true,
@@ -246,7 +262,9 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
               //free text exception 
               TextFormField(
                 maxLines: 3,
+                focusNode: _freeTextFocusNode,
                 controller: _freeTextExceptionController,
+                textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
                   //border: OutlineInputBorder(),
                   filled: true,
@@ -288,6 +306,8 @@ class _ExceptionViewState extends State<ExceptionView> {
   
   _ExceptionViewState(this.observationException, this.isSelected, this.callback, this.visitId);
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     _checkboxValue = isSelected;
@@ -305,17 +325,19 @@ class _ExceptionViewState extends State<ExceptionView> {
             dense: true,
             title: Text(observationException.text),
             onChanged: (bool value) async {
+
+              setState(() {
+                _checkboxValue = value;
+              });
+
               bool success = await svc.updateObservationException(visitId, observationException, value);
 
-              if (success) {
+              if (!success) {
+                final snackBar = SnackBar(content: Text('login failed, try again'));
+                _scaffoldKey.currentState.showSnackBar(snackBar);
+
                 setState(() {
-                  _checkboxValue = value;
-                  /*
-                  var data = ExceptionDataSelected(
-                      observationException: widget.observationException,
-                      selected: value);
-                  widget.callback(data);
-                  */
+                  _checkboxValue = !value;
                 });
               }
             },
@@ -408,10 +430,10 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "notApplicable") ? kTracersGray500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
-              bool success = await setObservationScore(observation, "notApplicable", visitId);
               setState(() {
                 _score = "notApplicable";
               });
+              bool success = await setObservationScore(observation, "notApplicable", visitId);
               print('NOT APPLICABLE'); // notApplicable
             },
           ),
@@ -420,10 +442,10 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "notAssessed") ? kTracersGray500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async{
-              bool success = await setObservationScore(observation, "notAssessed", visitId);
               setState(() {
                 _score = "notAssessed";
-              });
+              });              
+              bool success = await setObservationScore(observation, "notAssessed", visitId);
               print('DID NOT ASSESS'); // notAssessed
             },
           ),
@@ -432,6 +454,9 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "compliant") ? kTracersGreen500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
+              setState(() {
+                _score = "compliant";
+              });
               bool success = await setObservationScore(observation, "compliant", visitId);
               setState(() {
                 _score = "compliant";
@@ -444,10 +469,10 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "advisory") ? kTracersYellow500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
-              bool success = await setObservationScore(observation, "advisory", visitId);
               setState(() {
                 _score = "advisory";
-              });
+              });              
+              bool success = await setObservationScore(observation, "advisory", visitId);
               print('ADVISORY'); // advisory
             },
           ),
@@ -456,10 +481,10 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             color: (_score == "nonCompliant") ? kTracersRed500 : kTracersGray300,
             iconSize: 24,
             onPressed: () async {
-              bool success = await setObservationScore(observation, "nonCompliant", visitId);
               setState(() {
                 _score = "nonCompliant";
-              });
+              });              
+              bool success = await setObservationScore(observation, "nonCompliant", visitId);
               print('NON_COMPLIANT'); // nonCompliant
             },
           ),

@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:Tracer/application/constants.dart';
 import 'package:Tracer/model/observation.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/tracerVisit.dart';
 import 'package:http/http.dart' as http;
-import 'package:Tracer/constants.dart';
-import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/model/place.dart';
 import 'package:Tracer/model/user.dart';
 
@@ -106,24 +104,6 @@ class TracerService {
     String success = responseJson['tracerServiceResponse']['success'];
     return ('true' == success);
   }
-
-/*
-  Future<bool> addException(String visitId, ObservationException exception) async {
-    var body = json.encode({"method": "addException","visitId":visitId,"exception":exception});
-    print(body);
-    final responseJson = await getTracerServiceResponse(body);
-    String success = responseJson['tracerServiceResponse']['success'];
-    return ('true' == success);
-  }
-
-  Future<bool> deleteException(String visitId, ObservationException exception) async {
-    var body = json.encode({"method": "deleteException","visitId":visitId,"exception":exception});
-    print(body);
-    final responseJson = await getTracerServiceResponse(body);
-    String success = responseJson['tracerServiceResponse']['success'];
-    return ('true' == success);
-  }
-*/
 
   Future<User> getUser(String login) async {
     var body = json.encode({"method": "getUser", "username": login});
@@ -245,7 +225,7 @@ class TracerService {
     }
   }
 
-  Future<List<VisitListItem>> getAllVisits({String filter = ''}) async {
+  Future<List<TracerVisit>> getAllVisits({String filter = ''}) async {
     if (filter == '') {
       filter = 'all';
     }
@@ -256,15 +236,15 @@ class TracerService {
     print('in getAllVisits, filter = $filter and  success = $success');
 
     if ('true' == success) {
-      List<VisitListItem> list = new List<VisitListItem>();
+      List<TracerVisit> list = new List<TracerVisit>();
       List visitJSONItems = responseJson['tracerServiceResponse']["result"];
 
       if (visitJSONItems != null) {
         for (var item in visitJSONItems) {
-          list.add(VisitListItem.fromJson(item));
+          list.add(TracerVisit.fromJson(item));
         }
       }
-      print("here");
+      //print("here");
       return list;
     } else {
       return null;
@@ -292,7 +272,7 @@ class TracerService {
     }
   }
 
-  Future<VisitListItem> createVisit(
+  Future<String> createVisit(
       DateTime dateTime, Place place, String summary, String visitType) async {
     var body = json.encode({
       "method": "createTracerVisit",
@@ -309,14 +289,13 @@ class TracerService {
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
-      String newId = responseJson['tracerServiceResponse']['result']['id'];
-      return VisitListItem(newId, place, summary, null, null, dateTime,visitType);
+      return responseJson['tracerServiceResponse']['result']['id'];
     } else {
       return null;
     }
   }
 
- Future<VisitListItem> updateVisit({String visitId,
+ Future<String> updateVisit({String visitId,
       DateTime dateTime, Place place, String summary, String visitType}) async {
     var body = json.encode({
       "method": "updateTracerVisit",
@@ -334,8 +313,7 @@ class TracerService {
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
-      String newId = responseJson['tracerServiceResponse']['result']['id'];
-      return VisitListItem(newId, place, summary, null, null, dateTime,visitType);
+      return responseJson['tracerServiceResponse']['result']['id'];
     } else {
       return null;
     }

@@ -1,29 +1,15 @@
-// Copyright 2018-present the Flutter authors. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-import 'package:Tracer/appData.dart';
+import 'package:Tracer/application/appData.dart';
+import 'package:Tracer/model/tracerVisit.dart';
+import 'package:Tracer/service/tracer_service.dart';
+import 'package:Tracer/ui/font_awesome_flutter.dart';
+import 'package:Tracer/visitDetail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:Tracer/addVisit.dart';
 import 'package:Tracer/editVisit.dart';
-import 'package:Tracer/model/visitListItem.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'font_awesome_flutter.dart';
-import 'service/tracer_service.dart';
-import 'visit_detail.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
@@ -42,18 +28,18 @@ const List<MyTab> myTabs = const <MyTab>[
   const MyTab(title: 'ALL', filter: 'all'),
 ];
 
-class VisitListPage extends StatefulWidget {
-  static const String id = 'visit_list_page_id';
+class HomePage extends StatefulWidget {
+  static const String id = 'home_page';
 
   @override
-  _VisitListPageState createState() => _VisitListPageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _VisitListPageState extends State<VisitListPage>
+class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
-  Future<List<VisitListItem>> _visitListFuture;
+  Future<List<TracerVisit>> _visitListFuture;
   final TracerService svc = new TracerService();
   final String pageTitle = 'Tracer';
   var previousIndex = 0;
@@ -149,7 +135,7 @@ class _VisitListPageState extends State<VisitListPage>
                   semanticLabel: 'add',
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, AddVisit.id)
+                  Navigator.pushNamed(context, "createVisit")
                       .whenComplete(refreshVisitList);
                   //Navigator.pushNamed(context, AddVisit.id).then(    (value) { refreshVisitList();}       );
                   //refreshVisitList();
@@ -163,7 +149,7 @@ class _VisitListPageState extends State<VisitListPage>
               //TODAY TAB PANE CONTENT
 
               ...myTabs.map((MyTab tab) {
-                return FutureBuilder<List<VisitListItem>>(
+                return FutureBuilder<List<TracerVisit>>(
                   future: _visitListFuture,
                   builder: (context, snapshot) {
                     if (snapshot.hasError) print(snapshot.error);
@@ -185,7 +171,7 @@ class _VisitListPageState extends State<VisitListPage>
             child: ListView(
               children: <Widget>[
                 UserAccountsDrawerHeader(
-                  accountName: Text(appData.user.name),
+                  accountName: Text(appData.user != null ? appData.user.name : "no user loged in"),
                   accountEmail: Text("missing required email"),
                   decoration: BoxDecoration(
                     color: kTracersBlue500,
@@ -193,7 +179,7 @@ class _VisitListPageState extends State<VisitListPage>
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: kTracersBlue900,
                     child: Text(
-                      "BH",
+                      appData.user != null ? appData.user.initials() : "?",
                       style: TextStyle(fontSize: 40.0),
                     ),
                   ),
@@ -220,7 +206,7 @@ class _VisitListPageState extends State<VisitListPage>
 }
 
 class VisitListView extends StatefulWidget {
-  final List<VisitListItem> visits;
+  final List<TracerVisit> visits;
   final Function callback;
   VisitListView({Key key, this.visits, this.callback}) : super(key: key);
 
@@ -230,7 +216,7 @@ class VisitListView extends StatefulWidget {
 
 class _VisitListViewState extends State<VisitListView> {
   final Function callback;
-  final List<VisitListItem> visits;
+  final List<TracerVisit> visits;
   //final TracerService svc = new TracerService();
 
   _VisitListViewState({Key key, this.visits, this.callback});
@@ -425,7 +411,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                                     await _todoInputDialog(
                                                         context,
                                                         visits[position]);
-                                                print("todo is ${todo}");
+                                                print("todo is $todo");
                                                 if (todo != 'CANCEL') {
                                                   visits[position].todo = todo;
                                                 }
@@ -458,6 +444,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                             ),
                                           ],
                                         ),
+
                                         //MORE ACTIONS ICON
                                         Column(
                                           children: <Widget>[
@@ -471,6 +458,25 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                                   value: 1,
                                                   child: ListTile(
                                                     leading: Icon(Icons.edit),
+                                                    onTap: () async {
+                                                      final returnData =
+                                                          await Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EditVisitPage(
+                                                            visit: visits[
+                                                                position],
+                                                          ),
+                                                        ),
+                                                      );
+                                                      if (returnData == 'updated') {
+                                                        setState(() {//ToDo
+                                                          visits[position] = visits[
+                                                                position];
+                                                        });
+                                                      }
+                                                    },
                                                     title: Text('Edit visit'),
                                                   ),
                                                 ),
@@ -491,7 +497,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                                     context,
                                                     MaterialPageRoute(
                                                       builder: (context) =>
-                                                          EditVisit(
+                                                          EditVisitPage(
                                                         visit: visits[position],
                                                       ),
                                                     ),
@@ -527,7 +533,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
   }
 }
 
-void _onTapItem(BuildContext context, VisitListItem visit) {
+void _onTapItem(BuildContext context, TracerVisit visit) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => VisitDetailPage(visitId: visit.id)),
@@ -540,7 +546,7 @@ void _onTapItem(BuildContext context, VisitListItem visit) {
 }
 
 Future<String> _participantsInputDialog(
-    BuildContext context, VisitListItem visit) async {
+    BuildContext context, TracerVisit visit) async {
   final TracerService svc = new TracerService();
   final _controller = TextEditingController();
 
@@ -590,7 +596,7 @@ Future<String> _participantsInputDialog(
 }
 
 Future<String> _todoInputDialog(
-    BuildContext context, VisitListItem visit) async {
+    BuildContext context, TracerVisit visit) async {
   final TracerService svc = new TracerService();
   final _controller = TextEditingController();
   print('controllertext= ${_controller.text} visit todo ${visit.todo}');
