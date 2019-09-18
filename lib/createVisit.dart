@@ -308,7 +308,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                                       style: TextStyle(
                                           fontSize: 12.0,
                                           color: kTracersGray500)),
-                                );
+                                ); 
                               },
                               onSuggestionSelected: (suggestion) {
                                 setState(() => placeSelected(suggestion));

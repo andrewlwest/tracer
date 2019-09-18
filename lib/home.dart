@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
+
 class MyTab {
   const MyTab({this.title, this.filter});
 
@@ -170,8 +171,12 @@ class _HomePageState extends State<HomePage>
             child: ListView(
               children: <Widget>[
                 UserAccountsDrawerHeader(
-                  accountName: Text(appData.user != null ? appData.user.name : "no user loged in"),
-                  accountEmail: Text(appData.user != null ? appData.user.department : "no user loged in"),
+                  accountName: Text(appData.user != null
+                      ? appData.user.name
+                      : "no user loged in"),
+                  accountEmail: Text(appData.user != null
+                      ? appData.user.department
+                      : "no user loged in"),
                   decoration: BoxDecoration(
                     color: kTracersBlue500,
                   ),
@@ -241,33 +246,33 @@ class _VisitListViewState extends State<VisitListView> {
     callback();
   }
 
-Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
-  return showDialog<ConfirmAction>(
-    context: context,
-    barrierDismissible: false, // user must tap button for close dialog!
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Are you sure you want to delete this visit?'),
-        content: const Text(
-            'This will delete the visit and all of its contents.'),
-        actions: <Widget>[
-          FlatButton(
-            child: const Text('CANCEL'),
-            onPressed: () {
-              Navigator.of(context).pop(ConfirmAction.CANCEL);
-            },
-          ),
-          FlatButton(
-            child: const Text('ACCEPT'),
-            onPressed: () {
-              Navigator.of(context).pop(ConfirmAction.ACCEPT);
-            },
-          )
-        ],
-      );
-    },
-  );
-}
+  Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
+    return showDialog<ConfirmAction>(
+      context: context,
+      barrierDismissible: false, // user must tap button for close dialog!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure you want to delete this visit?'),
+          content:
+              const Text('This will delete the visit and all of its contents.'),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+                Navigator.of(context).pop(ConfirmAction.CANCEL);
+              },
+            ),
+            FlatButton(
+              child: const Text('ACCEPT'),
+              onPressed: () {
+                Navigator.of(context).pop(ConfirmAction.ACCEPT);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -300,216 +305,251 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
             ),
             controller: _refreshController,
             onRefresh: _onRefresh,
-            child: visits.isEmpty ? Center(child: Text('No Visits')) : ListView.builder(
-                itemCount: visits.length,
-                padding: const EdgeInsets.all(15.0),
-                itemBuilder: (context, position) {
-                  return new InkWell(
-                    onTap: () => _onTapItem(
-                        context, visits[position]), // handle your onTap here
-                    child: SizedBox(
-                      height: 174,
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(16.0, 12.0, 0, 0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
+            child: visits.isEmpty
+                ? Center(child: Text('No Visits'))
+                : ListView.builder(
+                    itemCount: visits.length,
+                    padding: const EdgeInsets.all(15.0),
+                    itemBuilder: (context, position) {
+                      return new InkWell(
+                        onTap: () => _onTapItem(context,
+                            visits[position]), // handle your onTap here
+                        child: SizedBox(
+                          height: 174,
+                          child: Card(
+                            clipBehavior: Clip.antiAlias,
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(16.0, 12.0, 0, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  new Expanded(
-                                    child: new Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '${visits[position].place.location}',
-                                          maxLines: 1,
-                                          style: theme.textTheme.caption,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  new Column(
+                                  Row(
                                     children: <Widget>[
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 12, 0),
-                                        child: Text(
-                                          //'${visits[position].visitDatetime}',
-                                          new DateFormat('M/d/yy h:mm aa')
-                                              .format(visits[position]
-                                                  .visitDatetime),
-                                          maxLines: 1,
-                                          style: theme.textTheme.caption,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10.0),
-                              Row(
-                                children: <Widget>[
-                                  new Column(
-                                    children: <Widget>[
-                                      Text(
-                                        '${visits[position].place.name}',
-                                        style: theme.textTheme.headline,
-                                        maxLines: 1,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8.0),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
-                                child: Row(
-                                  children: <Widget>[
-                                    new Flexible(
-                                      child: new Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          SizedBox(
-                                            height: 45,
-                                            child: Text(
-                                              '${visits[position].summary}',
-                                              style: theme.textTheme.body2,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
+                                      new Expanded(
+                                        child: new Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '${visits[position].place.location}',
+                                              maxLines: 1,
+                                              style: theme.textTheme.caption,
                                             ),
-                                          ),
+                                          ],
+                                        ),
+                                      ),
+                                      new Column(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                0, 0, 12, 0),
+                                            child: Text(
+                                              //'${visits[position].visitDatetime}',
+                                              new DateFormat('M/d/yy h:mm aa')
+                                                  .format(visits[position]
+                                                      .visitDatetime),
+                                              maxLines: 1,
+                                              style: theme.textTheme.caption,
+                                            ),
+                                          )
                                         ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    new Expanded(
-                                        child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                    ],
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  // Row(
+                                  //   children: <Widget>[
+                                  //     new Column(
+                                  //       children: <Widget>[
+                                  //         Text(
+                                  //           '${visits[position].place.name}',
+                                  //           style: theme.textTheme.title,
+                                  //           overflow: TextOverflow.ellipsis,
+                                  //           maxLines: 1,
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ],
+                                  // ),
+                                  Row(
+                                    children: <Widget>[
+                                      Flexible(
+                                        child: Container(
+                                          padding: EdgeInsets.only(right: 13.0),
+                                          child: Text(
+                                            '${visits[position].place.name}',
+                                            style: theme.textTheme.title,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.0),
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                    child: Row(
                                       children: <Widget>[
-                                        //TO DO ICON
-                                        Column(
-                                          children: <Widget>[
-                                            IconButton(
-                                              icon: Icon(FontAwesomeIcons
-                                                  .solidClipboard),
-                                              color: Colors.black45,
-                                              iconSize: 16,
-                                              onPressed: () async {
-                                                final String todo =
-                                                    await _todoInputDialog(
-                                                        context,
-                                                        visits[position]);
-                                                print("todo is $todo");
-                                                if (todo != 'CANCEL') {
-                                                  visits[position].todo = todo;
-                                                }
-                                              },
-                                            ),
-                                          ],
-                                        ),
-
-                                        //participants  ICON
-                                        Column(
-                                          children: <Widget>[
-                                            IconButton(
-                                              icon: Icon(FontAwesomeIcons
-                                                  .solidUserCircle),
-                                              color: Colors.black45,
-                                              iconSize: 16,
-                                              onPressed: () async {
-                                                final String participants =
-                                                    await _participantsInputDialog(
-                                                        context,
-                                                        visits[position]);
-                                                print(
-                                                    "participants are $participants");
-                                                if (participants != 'CANCEL') {
-                                                  visits[position]
-                                                          .participants =
-                                                      participants;
-                                                }
-                                              },
-                                            ),
-                                          ],
-                                        ),
-
-                                        //MORE ACTIONS ICON
-                                        Column(
-                                          children: <Widget>[
-                                            PopupMenuButton<int>(
-                                              icon: Icon(
-                                                Icons.more_vert,
-                                                color: Colors.black45,
+                                        new Flexible(
+                                          child: new Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              SizedBox(
+                                                height: 45,
+                                                child: Text(
+                                                  '${visits[position].summary}',
+                                                  style: theme.textTheme.body2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                ),
                                               ),
-                                              itemBuilder: (context) => [
-                                                PopupMenuItem(
-                                                  value: 1,
-                                                  child: ListTile(
-                                                    leading: Icon(Icons.edit),
-                                                    title: Text('Edit visit'),
-                                                  ),
-                                                ),
-                                                const PopupMenuDivider(),
-                                                PopupMenuItem(
-                                                  value: 2,
-                                                  child: ListTile(
-                                                    leading: Icon(Icons.delete),
-                                                    title: Text('Delete visit'),
-                                                  ),
-                                                ),
-                                              ],
-                                              onSelected: (value) async {
-                                                print("value: $value");
-                                                if (value == 1) {
-                                                  final returnData =
-                                                      await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          EditVisitPage(
-                                                        visit: visits[position],
-                                                      ),
-                                                    ),
-                                                  );
-                                                  if (returnData == visits[position].id) {
-                                                      callback();
-                                                  }
-                                                } else {
-                                                  //Are you sure you want to delete it?
-                                                  final ConfirmAction action = await _asyncConfirmDialog(context);
-                                                  print('action = $action');
-                                                  if (action == ConfirmAction.ACCEPT) {
-                                                    //delete the visit
-                                                    _deleteVisit(visits[position].id);
-                                                  }
-                                                }
-                                              },
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ],
-                                    )),
-                                  ],
-                                ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        new Expanded(
+                                            child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: <Widget>[
+                                            //TO DO ICON
+                                            Column(
+                                              children: <Widget>[
+                                                IconButton(
+                                                  icon: Icon(FontAwesomeIcons
+                                                      .solidClipboard),
+                                                  color: Colors.black45,
+                                                  iconSize: 16,
+                                                  onPressed: () async {
+                                                    final String todo =
+                                                        await _todoInputDialog(
+                                                            context,
+                                                            visits[position]);
+                                                    print("todo is $todo");
+                                                    if (todo != 'CANCEL') {
+                                                      visits[position].todo =
+                                                          todo;
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+
+                                            //participants  ICON
+                                            Column(
+                                              children: <Widget>[
+                                                IconButton(
+                                                  icon: Icon(FontAwesomeIcons
+                                                      .solidUserCircle),
+                                                  color: Colors.black45,
+                                                  iconSize: 16,
+                                                  onPressed: () async {
+                                                    final String participants =
+                                                        await _participantsInputDialog(
+                                                            context,
+                                                            visits[position]);
+                                                    print(
+                                                        "participants are $participants");
+                                                    if (participants !=
+                                                        'CANCEL') {
+                                                      visits[position]
+                                                              .participants =
+                                                          participants;
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+
+                                            //MORE ACTIONS ICON
+                                            Column(
+                                              children: <Widget>[
+                                                PopupMenuButton<int>(
+                                                  icon: Icon(
+                                                    Icons.more_vert,
+                                                    color: Colors.black45,
+                                                  ),
+                                                  itemBuilder: (context) => [
+                                                    PopupMenuItem(
+                                                      value: 1,
+                                                      child: ListTile(
+                                                        leading:
+                                                            Icon(Icons.edit),
+                                                        title:
+                                                            Text('Edit visit'),
+                                                      ),
+                                                    ),
+                                                    const PopupMenuDivider(),
+                                                    PopupMenuItem(
+                                                      value: 2,
+                                                      child: ListTile(
+                                                        leading:
+                                                            Icon(Icons.delete),
+                                                        title: Text(
+                                                            'Delete visit'),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                  onSelected: (value) async {
+                                                    print("value: $value");
+                                                    if (value == 1) {
+                                                      final returnData =
+                                                          await Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EditVisitPage(
+                                                            visit: visits[
+                                                                position],
+                                                          ),
+                                                        ),
+                                                      );
+                                                      if (returnData ==
+                                                          visits[position].id) {
+                                                        callback();
+                                                      }
+                                                    } else {
+                                                      //Are you sure you want to delete it?
+                                                      final ConfirmAction
+                                                          action =
+                                                          await _asyncConfirmDialog(
+                                                              context);
+                                                      print('action = $action');
+                                                      if (action ==
+                                                          ConfirmAction
+                                                              .ACCEPT) {
+                                                        //delete the visit
+                                                        _deleteVisit(
+                                                            visits[position]
+                                                                .id);
+                                                      }
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        )),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                })));
+                      );
+                    })));
   }
 }
 
@@ -575,8 +615,7 @@ Future<String> _participantsInputDialog(
   );
 }
 
-Future<String> _todoInputDialog(
-    BuildContext context, TracerVisit visit) async {
+Future<String> _todoInputDialog(BuildContext context, TracerVisit visit) async {
   final TracerService svc = new TracerService();
   final _controller = TextEditingController();
   print('controllertext= ${_controller.text} visit todo ${visit.todo}');
@@ -618,8 +657,7 @@ Future<String> _todoInputDialog(
               if (toDoText == '') {
                 toDoText = 'null';
               }
-              await svc.savePropertyForVisit(
-                  "todo", toDoText, visit.id);
+              await svc.savePropertyForVisit("todo", toDoText, visit.id);
               //we need to update the text
               Navigator.pop(context, _controller.text);
             },
