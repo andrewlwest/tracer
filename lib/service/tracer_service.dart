@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:Tracer/constants.dart';
+import 'package:Tracer/application/constants.dart';
 import 'package:Tracer/model/observation.dart';
 import 'package:Tracer/model/template/template.dart';
 import 'package:Tracer/model/tracerVisit.dart';
