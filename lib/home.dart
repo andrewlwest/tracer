@@ -1,11 +1,9 @@
 
 import 'package:Tracer/application/appData.dart';
-import 'package:Tracer/createVisit.dart';
 import 'package:Tracer/model/tracerVisit.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/font_awesome_flutter.dart';
 import 'package:Tracer/visitDetail.dart';
-import 'package:Tracer/appData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:Tracer/editVisit.dart';
@@ -208,7 +206,7 @@ class _HomePageState extends State<HomePage>
 }
 
 class VisitListView extends StatefulWidget {
-  final List<VisitListItem> visits;
+  final List<TracerVisit> visits;
   final Function callback;
   VisitListView({Key key, this.visits, this.callback}) : super(key: key);
 
@@ -218,7 +216,7 @@ class VisitListView extends StatefulWidget {
 
 class _VisitListViewState extends State<VisitListView> {
   final Function callback;
-  final List<VisitListItem> visits;
+  final List<TracerVisit> visits;
   //final TracerService svc = new TracerService();
 
   _VisitListViewState({Key key, this.visits, this.callback});
@@ -446,6 +444,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                             ),
                                           ],
                                         ),
+
                                         //MORE ACTIONS ICON
                                         Column(
                                           children: <Widget>[
@@ -498,7 +497,7 @@ Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
                                                     context,
                                                     MaterialPageRoute(
                                                       builder: (context) =>
-                                                          EditVisit(
+                                                          EditVisitPage(
                                                         visit: visits[position],
                                                       ),
                                                     ),
