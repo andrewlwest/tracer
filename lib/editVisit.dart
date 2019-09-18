@@ -69,12 +69,11 @@ class _EditVisitPageState extends State<EditVisitPage> {
         0,
         0);
 
-
-    var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
+    String visitId = await svc.updateVisit(visitId:visit.id, dateTime:
         dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
-    print('visit updated with id = ' + visitListItem.id);
+    print('visit updated with id = ' + visitId);
     //Navigator.pop(context, visitListItem);
-    Navigator.pop(context, "updated");
+    Navigator.pop(context, visitId);
   }
 
   void placeSelected(Place place) {

@@ -295,7 +295,7 @@ class TracerService {
     }
   }
 
- Future<TracerVisit> updateVisit({String visitId,
+ Future<String> updateVisit({String visitId,
       DateTime dateTime, Place place, String summary, String visitType}) async {
     var body = json.encode({
       "method": "updateTracerVisit",
