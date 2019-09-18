@@ -6,7 +6,8 @@ import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'service/tracer_service.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class EditVisitPage extends StatefulWidget {
   static const String id = 'edit_visit_screen';
@@ -37,9 +38,6 @@ class _EditVisitPageState extends State<EditVisitPage> {
   timePicker.TimeOfDay _visitTimeOfDay;
 
   TracerService svc = TracerService();
-
-  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
-  AutoCompleteTextField<Place> searchTextField;
   TextEditingController controller = new TextEditingController();
 
   @override
@@ -72,9 +70,9 @@ class _EditVisitPageState extends State<EditVisitPage> {
         0);
 
 
-    //var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
-   //     dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
-    //print('visit updated with id = ' + visitListItem.id);
+    var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
+        dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
+    print('visit updated with id = ' + visitListItem.id);
     //Navigator.pop(context, visitListItem);
     Navigator.pop(context, "updated");
   }
@@ -83,6 +81,17 @@ class _EditVisitPageState extends State<EditVisitPage> {
     setState(() {
       _selectedPlace = place;
     });
+  }
+
+  List<Place> _searchedPlaces;
+
+  List<Place> filterData(List<Place> places, String pattern) {
+    _searchedPlaces = places.where(
+      (item) => (item.name + item.location)
+                                    .toLowerCase()
+                                    .contains(pattern.toLowerCase())
+    ).toList();
+    return _searchedPlaces;
   }
 
   @override
@@ -218,22 +227,7 @@ class _EditVisitPageState extends State<EditVisitPage> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showTimePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true, onConfirm: (time) {
-                            print('confirm time $time');
-                            _time = new DateFormat("h:mm a").format(time);
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                          setState(() {});
-                        },
-                        */
+                       
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -279,64 +273,28 @@ class _EditVisitPageState extends State<EditVisitPage> {
                       if (snapshot.hasError) print(snapshot.error);
 
                       return snapshot.hasData
-                          ? AutoCompleteTextField<Place>(
-                              decoration: new InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  fillColor: kTracersWhite,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      setState(() {
-                                        controller.value = null;
-                                      });
-                                    },
-                                  ),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      10.0, 30.0, 10.0, 20.0),
-                                  filled: true,
-                                  hintText: 'Search Place',
-                                  hintStyle: TextStyle(color: Colors.grey)),
-                              itemSubmitted: (item) {
-                                setState(() => placeSelected(item));
+                          ? TypeAheadField(
+                              textFieldConfiguration: TextFieldConfiguration(
+                                  autofocus: true,
+                                  style: DefaultTextStyle.of(context)
+                                      .style
+                                      .copyWith(fontStyle: FontStyle.italic),
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder())),
+                              suggestionsCallback: (pattern) async {
+                                return filterData(snapshot.data, pattern);
                               },
-                              clearOnSubmit: true,
-                              key: key,
-                              suggestions: snapshot.data,
-                              itemBuilder: (context, item) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 8, left: 8, right: 8),
-                                      child: Text(
-                                        item.name,
-                                        style: theme.textTheme.body1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 8.0, right: 8.0, bottom: 8),
-                                      child: Text(
-                                        item.location,
-                                        style: theme.textTheme.body2,
-                                      ),
-                                    ),
-                                    Divider(
-                                      height: 1,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: Text(suggestion.name),
+                                  subtitle: Text('${suggestion.location}'),
                                 );
                               },
-                              itemSorter: (a, b) {
-                                return a.name.compareTo(b.name);
+                              onSuggestionSelected: (suggestion) {
+                                setState(() => placeSelected(suggestion));
+                              
                               },
-                              itemFilter: (item, query) {
-                                return (item.name + item.location)
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase());
-                              })
+                            )
                           : Center(child: LinearProgressIndicator());
                     }),
               ),

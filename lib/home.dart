@@ -1,11 +1,11 @@
 
-
 import 'package:Tracer/application/appData.dart';
 import 'package:Tracer/createVisit.dart';
 import 'package:Tracer/model/tracerVisit.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/font_awesome_flutter.dart';
 import 'package:Tracer/visitDetail.dart';
+import 'package:Tracer/appData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:Tracer/editVisit.dart';
@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-
+enum ConfirmAction { CANCEL, ACCEPT }
 class MyTab {
   const MyTab({this.title, this.filter});
 
@@ -157,7 +157,12 @@ class _HomePageState extends State<HomePage>
                     if (snapshot.hasError) print(snapshot.error);
 
                     return snapshot.hasData
-                        ? VisitListView(visits: snapshot.data)
+                        ? VisitListView(
+                            visits: snapshot.data,
+                            callback: () {
+                              refreshVisitList();
+                            },
+                          )
                         : Center(child: CircularProgressIndicator());
                   },
                 );
@@ -203,18 +208,20 @@ class _HomePageState extends State<HomePage>
 }
 
 class VisitListView extends StatefulWidget {
-  final List<TracerVisit> visits;
-  VisitListView({Key key, this.visits}) : super(key: key);
+  final List<VisitListItem> visits;
+  final Function callback;
+  VisitListView({Key key, this.visits, this.callback}) : super(key: key);
 
-  _VisitListViewState createState() => _VisitListViewState(visits: visits);
+  _VisitListViewState createState() =>
+      _VisitListViewState(visits: visits, callback: callback);
 }
 
 class _VisitListViewState extends State<VisitListView> {
-
-  final List<TracerVisit> visits;
+  final Function callback;
+  final List<VisitListItem> visits;
   //final TracerService svc = new TracerService();
 
-  _VisitListViewState({Key key, this.visits});
+  _VisitListViewState({Key key, this.visits, this.callback});
 
   // pull to refresh
   final RefreshController _refreshController =
@@ -231,6 +238,39 @@ class _VisitListViewState extends State<VisitListView> {
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
+
+  void _deleteVisit(String visitId) async {
+    await (new TracerService()).deleteVisit(visitId: visitId);
+    callback();
+  }
+
+Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
+  return showDialog<ConfirmAction>(
+    context: context,
+    barrierDismissible: false, // user must tap button for close dialog!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Are you sure you want to delete this visit?'),
+        content: const Text(
+            'This will delete the visit and all of its contents.'),
+        actions: <Widget>[
+          FlatButton(
+            child: const Text('CANCEL'),
+            onPressed: () {
+              Navigator.of(context).pop(ConfirmAction.CANCEL);
+            },
+          ),
+          FlatButton(
+            child: const Text('ACCEPT'),
+            onPressed: () {
+              Navigator.of(context).pop(ConfirmAction.ACCEPT);
+            },
+          )
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -263,7 +303,7 @@ class _VisitListViewState extends State<VisitListView> {
             ),
             controller: _refreshController,
             onRefresh: _onRefresh,
-            child: ListView.builder(
+            child: visits.isEmpty ? Center(child: Text('No Visits')) : ListView.builder(
                 itemCount: visits.length,
                 padding: const EdgeInsets.all(15.0),
                 itemBuilder: (context, position) {
@@ -450,6 +490,32 @@ class _VisitListViewState extends State<VisitListView> {
                                                   ),
                                                 ),
                                               ],
+                                              onSelected: (value) async {
+                                                print("value: $value");
+                                                if (value == 1) {
+                                                  final returnData =
+                                                      await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EditVisit(
+                                                        visit: visits[position],
+                                                      ),
+                                                    ),
+                                                  );
+                                                  if (returnData == 'updated') {
+                                                      callback();
+                                                  }
+                                                } else {
+                                                  //Are you sure you want to delete it?
+                                                  final ConfirmAction action = await _asyncConfirmDialog(context);
+                                                  print('action = $action');
+                                                  if (action == ConfirmAction.ACCEPT) {
+                                                    //delete the visit
+                                                    _deleteVisit(visits[position].id);
+                                                  }
+                                                }
+                                              },
                                             ),
                                           ],
                                         ),
