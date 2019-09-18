@@ -106,24 +106,16 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
   void _updateComments() async {
     bool success = await svc.setObservationProperty("comment", _commentsController.text, visitId, observation.observationCategoryId);
     if (success) {
-      // do I need this?
-      /*
-      setState(() {
-      });
-      */
+      print('saved observation comment');
     } else {
-      print('could not save observation commet');
+      print('could not save observation comment');
     }
   }
 
   void _updateFreeTextException() async {
-    bool success = await svc.setObservationProperty("comment", _commentsController.text, visitId, observation.observationCategoryId);
+    bool success = await svc.setObservationProperty("freeTextException", _freeTextExceptionController.text, visitId, observation.observationCategoryId);
     if (success) {
-      // do I need this?
-      /*
-      setState(() {
-      });
-      */
+      print('saved free text exception');
     } else {
       print('could not save free text exception');
     }
