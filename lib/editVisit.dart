@@ -114,7 +114,7 @@ class _EditVisitState extends State<EditVisit> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Add Visit"),
+        title: Text("Edit Visit"),
         backgroundColor: kTracersBlue500,
         actions: <Widget>[
           FlatButton(
@@ -163,26 +163,7 @@ class _EditVisitState extends State<EditVisit> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showDatePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true,
-                              minTime: DateTime(2000, 1, 1),
-                              maxTime: DateTime(2022, 12, 31),
-                              onConfirm: (date) {
-                            print('confirm date: $date');
-                            _date = new DateFormat.yMd().format(date);
-
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                        },
-
-                        */
+                        
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
