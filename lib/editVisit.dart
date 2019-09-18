@@ -69,9 +69,9 @@ class _EditVisitState extends State<EditVisit> {
         0);
 
 
-    //var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
-   //     dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
-    //print('visit updated with id = ' + visitListItem.id);
+    var visitListItem = await svc.updateVisit(visitId:visit.id, dateTime:
+        dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
+    print('visit updated with id = ' + visitListItem.id);
     //Navigator.pop(context, visitListItem);
     Navigator.pop(context, "updated");
   }
@@ -99,6 +99,17 @@ class _EditVisitState extends State<EditVisit> {
     });
   }
 
+  List<Place> _searchedPlaces;
+
+  List<Place> filterData(List<Place> places, String pattern) {
+    _searchedPlaces = places.where(
+      (item) => (item.name + item.location)
+                                    .toLowerCase()
+                                    .contains(pattern.toLowerCase())
+    ).toList();
+    return _searchedPlaces;
+  }
+  
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -293,64 +304,28 @@ class _EditVisitState extends State<EditVisit> {
                       if (snapshot.hasError) print(snapshot.error);
 
                       return snapshot.hasData
-                          ? AutoCompleteTextField<Place>(
-                              decoration: new InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  fillColor: kTracersWhite,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      setState(() {
-                                        controller.value = null;
-                                      });
-                                    },
-                                  ),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      10.0, 30.0, 10.0, 20.0),
-                                  filled: true,
-                                  hintText: 'Search Place',
-                                  hintStyle: TextStyle(color: Colors.grey)),
-                              itemSubmitted: (item) {
-                                setState(() => placeSelected(item));
+                          ? TypeAheadField(
+                              textFieldConfiguration: TextFieldConfiguration(
+                                  autofocus: true,
+                                  style: DefaultTextStyle.of(context)
+                                      .style
+                                      .copyWith(fontStyle: FontStyle.italic),
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder())),
+                              suggestionsCallback: (pattern) async {
+                                return filterData(snapshot.data, pattern);
                               },
-                              clearOnSubmit: true,
-                              key: key,
-                              suggestions: snapshot.data,
-                              itemBuilder: (context, item) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 8, left: 8, right: 8),
-                                      child: Text(
-                                        item.name,
-                                        style: theme.textTheme.body1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 8.0, right: 8.0, bottom: 8),
-                                      child: Text(
-                                        item.location,
-                                        style: theme.textTheme.body2,
-                                      ),
-                                    ),
-                                    Divider(
-                                      height: 1,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: Text(suggestion.name),
+                                  subtitle: Text('${suggestion.location}'),
                                 );
                               },
-                              itemSorter: (a, b) {
-                                return a.name.compareTo(b.name);
+                              onSuggestionSelected: (suggestion) {
+                                setState(() => placeSelected(suggestion));
+                              
                               },
-                              itemFilter: (item, query) {
-                                return (item.name + item.location)
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase());
-                              })
+                            )
                           : Center(child: LinearProgressIndicator());
                     }),
               ),

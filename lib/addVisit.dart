@@ -157,26 +157,7 @@ class _AddVisitState extends State<AddVisit> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showDatePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true,
-                              minTime: DateTime(2000, 1, 1),
-                              maxTime: DateTime(2022, 12, 31),
-                              onConfirm: (date) {
-                            print('confirm date: $date');
-                            _date = new DateFormat.yMd().format(date);
-
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                        },
-
-                        */
+                        
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -314,74 +295,10 @@ class _AddVisitState extends State<AddVisit> {
                               },
                               onSuggestionSelected: (suggestion) {
                                 setState(() => placeSelected(suggestion));
-                                /*
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => ProductPage(product: suggestion)
-    ));
-    */
+                              
                               },
                             )
-                          /*
-                          AutoCompleteTextField<Place>(
-                              suggestionsAmount: 20,
-                              decoration: new InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  fillColor: kTracersWhite,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      setState(() {
-                                        controller.value = null;
-                                      });
-                                    },
-                                  ),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      10.0, 30.0, 10.0, 20.0),
-                                  filled: true,
-                                  hintText: 'Search Place',
-                                  hintStyle: TextStyle(color: Colors.grey)),
-                              itemSubmitted: (item) {
-                                setState(() => placeSelected(item));
-                              },
-                              clearOnSubmit: true,
-                              key: key,
-                              suggestions: snapshot.data,
-                              itemBuilder: (context, item) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 8, left: 8, right: 8),
-                                      child: Text(
-                                        item.name,
-                                        style: theme.textTheme.body1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 8.0, right: 8.0, bottom: 8),
-                                      child: Text(
-                                        item.location,
-                                        style: theme.textTheme.body2,
-                                      ),
-                                    ),
-                                    Divider(
-                                      height: 1,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                );
-                              },
-                              itemSorter: (a, b) {
-                                return a.name.compareTo(b.name);
-                              },
-                              itemFilter: (item, query) {
-                                return (item.name + item.location)
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase());
-                              })
-                              */
+                        
                           : Center(child: LinearProgressIndicator());
                     }),
               ),

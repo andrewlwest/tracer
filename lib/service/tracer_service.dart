@@ -319,7 +319,7 @@ class TracerService {
  Future<VisitListItem> updateVisit({String visitId,
       DateTime dateTime, Place place, String summary, String visitType}) async {
     var body = json.encode({
-      "method": "createTracerVisit",
+      "method": "updateTracerVisit",
       "tracerVisit": {
         "id": visitId,
         "visitDatetime": dateTime.toIso8601String(),
@@ -339,6 +339,20 @@ class TracerService {
     } else {
       return null;
     }
+  }
+
+Future<String> deleteVisit({String visitId}) async {
+    var body = json.encode({
+      "method": "deleteTracerVisit",
+      "tracerVisit": {
+        "id": visitId
+      }
+    });
+    print(body);
+
+    final responseJson = await getTracerServiceResponse(body);
+    String success = responseJson['tracerServiceResponse']['success'];
+    return success;
   }
 
   Map<String, dynamic> _buildParams({Map<String, dynamic> otherParams}) {

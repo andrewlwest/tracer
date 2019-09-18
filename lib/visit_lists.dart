@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'package:Tracer/appData.dart';
-import 'package:Tracer/model/template/template.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:Tracer/addVisit.dart';
@@ -27,6 +26,7 @@ import 'service/tracer_service.dart';
 import 'visit_detail.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+enum ConfirmAction { CANCEL, ACCEPT }
 class MyTab {
   const MyTab({this.title, this.filter});
 
@@ -251,6 +251,39 @@ class _VisitListViewState extends State<VisitListView> {
     _refreshController.refreshCompleted();
   }
 
+  void _deleteVisit(String visitId) async {
+    await (new TracerService()).deleteVisit(visitId: visitId);
+    callback();
+  }
+
+Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
+  return showDialog<ConfirmAction>(
+    context: context,
+    barrierDismissible: false, // user must tap button for close dialog!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Are you sure you want to delete this visit?'),
+        content: const Text(
+            'This will delete the visit and all of its contents.'),
+        actions: <Widget>[
+          FlatButton(
+            child: const Text('CANCEL'),
+            onPressed: () {
+              Navigator.of(context).pop(ConfirmAction.CANCEL);
+            },
+          ),
+          FlatButton(
+            child: const Text('ACCEPT'),
+            onPressed: () {
+              Navigator.of(context).pop(ConfirmAction.ACCEPT);
+            },
+          )
+        ],
+      );
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -464,14 +497,16 @@ class _VisitListViewState extends State<VisitListView> {
                                                     ),
                                                   );
                                                   if (returnData == 'updated') {
-                                                    setState(() {
-                                                      //ToDo
                                                       callback();
-                                                    });
                                                   }
                                                 } else {
                                                   //Are you sure you want to delete it?
-                                                  
+                                                  final ConfirmAction action = await _asyncConfirmDialog(context);
+                                                  print('action = $action');
+                                                  if (action == ConfirmAction.ACCEPT) {
+                                                    //delete the visit
+                                                    _deleteVisit(visits[position].id);
+                                                  }
                                                 }
                                               },
                                             ),
