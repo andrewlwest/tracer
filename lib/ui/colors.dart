@@ -14,10 +14,11 @@ const kTracersPurple500 = const Color(0xFF673FB4);
 
 const kTracersWhite = Colors.white;
 
-const kTracersGray500 = const Color(0xFF686868);
+const kTracersGray900 = const Color(0xFF000000);
+const kTracersGray500 = const Color(0xFF363636);
 const kTracersGray300 = const Color(0xFF989898);
 const kTracersGray100 = const Color(0x44989898);
-const kTracersGray50 = const Color(0xFF8D8D8D);
+const kTracersGray50 = const Color(0xFF7B7B7B);
 
 const kTracersSurfaceWhite = const Color(0xFFFFFBFA);
 const kTracersBackgroundWhite = Colors.white;

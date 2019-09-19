@@ -122,9 +122,9 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                     children: <Widget>[
                       OutlineButton(
                         borderSide: BorderSide(
-                          color: kTracersGray50, //Color of the border
+                          color: kTracersGray900, //Color of the border
                           style: BorderStyle.solid, //Style of the border
-                          width: .7, //width of the border
+                          width: .5, //width of the border
                         ),
                         onPressed: () async {
                           DateTime dateTime = await datePicker.showDatePicker(
@@ -154,12 +154,12 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                               Text(
                                 " $_date",
                                 style: TextStyle(
-                                    color: kTracersGray500, fontSize: 12.0),
+                                    color: kTracersGray500, fontSize: 13.0),
                               ),
                               Icon(
                                 Icons.date_range,
                                 size: 18.0,
-                                color: kTracersGray500,
+                                color: kTracersGray50,
                               ),
                             ],
                           ),
@@ -174,7 +174,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                     children: <Widget>[
                       OutlineButton(
                         borderSide: BorderSide(
-                          color: kTracersGray50, //Color of the border
+                          color: kTracersGray900, //Color of the border
                           style: BorderStyle.solid, //Style of the border
                           width: .5, //width of the border
                         ),
@@ -200,7 +200,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                               Text(
                                 " $_time",
                                 style: TextStyle(
-                                    color: kTracersGray500, fontSize: 12.0),
+                                    color: kTracersGray500, fontSize: 13.0),
                               ),
                               Icon(
                                 Icons.access_time,
