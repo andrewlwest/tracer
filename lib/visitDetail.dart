@@ -203,7 +203,7 @@ class VisitDetailItemView extends StatelessWidget {
           Text(
             observationGroup.groupTitle,
             maxLines: 1,
-            style: Theme.of(context).textTheme.subhead,
+            style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.left,
           ),

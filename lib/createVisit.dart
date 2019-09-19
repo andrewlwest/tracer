@@ -249,9 +249,6 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                           ? TypeAheadField(
                               textFieldConfiguration: TextFieldConfiguration(
                                   autofocus: true,
-                                  style: DefaultTextStyle.of(context)
-                                      .style
-                                      .copyWith(fontStyle: FontStyle.italic),
                                   decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.search),
                                       labelText:
@@ -270,7 +267,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                                       style: TextStyle(
                                           fontSize: 12.0,
                                           color: kTracersGray500)),
-                                ); 
+                                );
                               },
                               onSuggestionSelected: (suggestion) {
                                 setState(() => placeSelected(suggestion));
