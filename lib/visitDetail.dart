@@ -199,11 +199,10 @@ class VisitDetailItemView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 18.0),
           Text(
             observationGroup.groupTitle,
             maxLines: 1,
-            style: Theme.of(context).textTheme.subhead,
+            style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.left,
           ),
@@ -215,6 +214,7 @@ class VisitDetailItemView extends StatelessWidget {
               visitId: visit.id
             );
           }).toList(),
+          SizedBox(height: 22.0),
         ],
       ),
     );
@@ -235,7 +235,7 @@ Widget _observationAssignmentStatus(Observation observation) {
     return CircleAvatar(
       child: Icon(
         FontAwesomeIcons.solidUserCircle,
-        size: 35,
+        size: 40,
         color: kTracersGray300,
       ),
       backgroundColor: kTracersWhite,

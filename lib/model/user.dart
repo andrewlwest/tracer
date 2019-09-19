@@ -30,6 +30,14 @@ class User extends Object with _$UserSerializerMixin {
     return nameParts[1].trim().substring(0,1).toUpperCase() + nameParts[0].trim().substring(0,1).toUpperCase();
   }
 
+  bool isAdmin() {
+    return roles.contains('admin');
+  }
+
+  bool isSME() {
+    return roles.contains('SME');
+  }
+
   @override
   String toString() => "$name ($username) $department ['$roles]";
 }

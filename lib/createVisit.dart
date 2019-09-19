@@ -5,7 +5,6 @@ import 'package:Tracer/ui/date_picker.dart' as datePicker;
 import 'package:Tracer/ui/time_picker.dart' as timePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class CreateVisitPage extends StatefulWidget {
@@ -17,9 +16,8 @@ class CreateVisitPage extends StatefulWidget {
 class _CreateVisitPageState extends State<CreateVisitPage> {
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final _summaryController = TextEditingController();
-
+  final String pageTitle = 'Add Visit';
   // fields to hold form data
   String _date = "Date";
   String _time = "Time";
@@ -28,11 +26,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
 
   DateTime _visitDateTime;
   timePicker.TimeOfDay _visitTimeOfDay;
-
   TracerService svc = TracerService();
-
-  GlobalKey<AutoCompleteTextFieldState<Place>> key = new GlobalKey();
-  AutoCompleteTextField<Place> searchTextField;
   TextEditingController controller = new TextEditingController();
 
   @override
@@ -80,7 +74,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
         .where((item) => (item.name + item.location)
             .toLowerCase()
             .contains(pattern.toLowerCase()))
-        .toList();
+        .toList()..sort((a,b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     return _searchedPlaces;
   }
 
@@ -91,16 +85,17 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Add Visit"),
+        title: Text(pageTitle),
         backgroundColor: kTracersBlue500,
-        //TODO: Wire up this cancel button
         leading: IconButton(
+          tooltip: 'Cancel',
           icon: Icon(
             Icons.close,
             semanticLabel: 'cancel',
           ),
           onPressed: () {
             print('Cancel button');
+            Navigator.pop(context);
           },
         ),
         actions: <Widget>[
@@ -127,7 +122,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                     children: <Widget>[
                       OutlineButton(
                         borderSide: BorderSide(
-                          color: Colors.black, //Color of the border
+                          color: kTracersGray900, //Color of the border
                           style: BorderStyle.solid, //Style of the border
                           width: .5, //width of the border
                         ),
@@ -150,52 +145,21 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showDatePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true,
-                              minTime: DateTime(2000, 1, 1),
-                              maxTime: DateTime(2022, 12, 31),
-                              onConfirm: (date) {
-                            print('confirm date: $date');
-                            _date = new DateFormat.yMd().format(date);
-
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                        },
-
-                        */
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.date_range,
-                                          size: 18.0,
-                                          color: kTracersGray500,
-                                        ),
-                                        Text(
-                                          " $_date",
-                                          style: TextStyle(
-                                              color: kTracersGray500,
-                                              fontSize: 12.0),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
+                              Text(
+                                " $_date",
+                                style: TextStyle(
+                                    color: kTracersGray500, fontSize: 13.0),
+                              ),
+                              Icon(
+                                Icons.date_range,
+                                size: 18.0,
+                                color: kTracersGray50,
                               ),
                             ],
                           ),
@@ -210,7 +174,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                     children: <Widget>[
                       OutlineButton(
                         borderSide: BorderSide(
-                          color: Colors.black, //Color of the border
+                          color: kTracersGray900, //Color of the border
                           style: BorderStyle.solid, //Style of the border
                           width: .5, //width of the border
                         ),
@@ -227,48 +191,21 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                             setState(() {});
                           }
                         },
-                        /*
-                        onPressed: () {
-                          DatePicker.showTimePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true, onConfirm: (time) {
-                            print('confirm time $time');
-                            _time = new DateFormat("h:mm a").format(time);
-                            setState(() {});
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
-                          setState(() {});
-                        },
-                        */
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.access_time,
-                                          size: 16.0,
-                                          color: kTracersGray500,
-                                        ),
-                                        Text(
-                                          " $_time",
-                                          style: TextStyle(
-                                              color: kTracersGray500,
-                                              fontSize: 12.0),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
+                              Text(
+                                " $_time",
+                                style: TextStyle(
+                                    color: kTracersGray500, fontSize: 13.0),
+                              ),
+                              Icon(
+                                Icons.access_time,
+                                size: 16.0,
+                                color: kTracersGray50,
                               ),
                             ],
                           ),
@@ -291,7 +228,8 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                           ? TypeAheadField(
                               textFieldConfiguration: TextFieldConfiguration(
                                   decoration: InputDecoration(
-                                      prefixIcon: Icon(Icons.search),
+                                      suffixIcon: Icon(Icons.search),
+                                      //prefixIcon: Icon(Icons.search),
                                       labelText:
                                           'Search by Name, Location or Address',
                                       border: OutlineInputBorder())),

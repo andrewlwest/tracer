@@ -10,6 +10,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class EditVisitPage extends StatefulWidget {
   static const String id = 'edit_visit_screen';
+
   final TracerVisit visit;
 
   EditVisitPage({this.visit});
@@ -22,7 +23,7 @@ class _EditVisitPageState extends State<EditVisitPage> {
   final TracerVisit visit;
 
   _EditVisitPageState({this.visit});
-
+  final String pageTitle = 'Edit Visit';
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _summaryController = TextEditingController();
@@ -68,8 +69,12 @@ class _EditVisitPageState extends State<EditVisitPage> {
         0,
         0);
 
-    String visitId = await svc.updateVisit(visitId:visit.id, dateTime:
-        dateTime, place: _selectedPlace, summary:_summaryController.text, visitType:_visitType);
+    String visitId = await svc.updateVisit(
+        visitId: visit.id,
+        dateTime: dateTime,
+        place: _selectedPlace,
+        summary: _summaryController.text,
+        visitType: _visitType);
     print('visit updated with id = ' + visitId);
     //Navigator.pop(context, visitListItem);
     Navigator.pop(context, visitId);
@@ -84,11 +89,11 @@ class _EditVisitPageState extends State<EditVisitPage> {
   List<Place> _searchedPlaces;
 
   List<Place> filterData(List<Place> places, String pattern) {
-    _searchedPlaces = places.where(
-      (item) => (item.name + item.location)
-                                    .toLowerCase()
-                                    .contains(pattern.toLowerCase())
-    ).toList();
+    _searchedPlaces = places
+        .where((item) => (item.name + item.location)
+            .toLowerCase()
+            .contains(pattern.toLowerCase()))
+        .toList()..sort((a,b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     return _searchedPlaces;
   }
 
@@ -99,8 +104,18 @@ class _EditVisitPageState extends State<EditVisitPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Edit Visit"),
+        title: Text(pageTitle),
         backgroundColor: kTracersBlue500,
+        leading: IconButton(
+          icon: Icon(
+            Icons.close,
+            semanticLabel: 'cancel',
+          ),
+          onPressed: () {
+            print('Cancel button');
+            Navigator.pop(context);
+          },
+        ),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
@@ -148,7 +163,6 @@ class _EditVisitPageState extends State<EditVisitPage> {
                             setState(() {});
                           }
                         },
-                        
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -206,7 +220,6 @@ class _EditVisitPageState extends State<EditVisitPage> {
                             setState(() {});
                           }
                         },
-                       
                         child: Container(
                           alignment: Alignment.center,
                           height: 50.0,
@@ -259,6 +272,9 @@ class _EditVisitPageState extends State<EditVisitPage> {
                                       .style
                                       .copyWith(fontStyle: FontStyle.italic),
                                   decoration: InputDecoration(
+                                      prefixIcon: Icon(Icons.search),
+                                      labelText:
+                                          'Search by Name, Location or Address',
                                       border: OutlineInputBorder())),
                               suggestionsCallback: (pattern) async {
                                 return filterData(snapshot.data, pattern);
@@ -271,7 +287,6 @@ class _EditVisitPageState extends State<EditVisitPage> {
                               },
                               onSuggestionSelected: (suggestion) {
                                 setState(() => placeSelected(suggestion));
-                              
                               },
                             )
                           : Center(child: LinearProgressIndicator());
@@ -298,6 +313,7 @@ class _EditVisitPageState extends State<EditVisitPage> {
               SizedBox(height: 12.0),
               TextFormField(
                 maxLines: 3,
+                textInputAction: TextInputAction.done,
                 controller: _summaryController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),

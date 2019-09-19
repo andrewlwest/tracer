@@ -74,11 +74,14 @@ class _LoginPageState extends State<LoginPage> {
             // [Name]
             TextField(
               controller: _usernameController,
+              autofocus: true,
+              autocorrect: false,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: kTracersWhite,
-                labelText: 'Username',
+                hintText: 'Username',
+                prefixIcon: Icon(Icons.account_circle),
               ),
             ),
             // spacer
@@ -86,11 +89,13 @@ class _LoginPageState extends State<LoginPage> {
             // [Password]
             TextField(
               controller: _passwordController,
+              autocorrect: false,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: kTracersWhite,
-                labelText: 'Password',
+                hintText: 'Password',
+                prefixIcon: Icon(Icons.lock),
               ),
               obscureText: true,
             ),
