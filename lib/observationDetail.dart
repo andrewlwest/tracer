@@ -288,8 +288,7 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
                     textInputAction: TextInputAction.done,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: kTracersRed50,
+                      filled: false,
                       labelText:
                           'Other Exceptions',
                     ),
