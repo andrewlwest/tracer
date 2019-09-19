@@ -121,9 +121,9 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                     children: <Widget>[
                       OutlineButton(
                         borderSide: BorderSide(
-                          color: Colors.black, //Color of the border
+                          color: kTracersGray50, //Color of the border
                           style: BorderStyle.solid, //Style of the border
-                          width: .5, //width of the border
+                          width: .7, //width of the border
                         ),
                         onPressed: () async {
                           DateTime dateTime = await datePicker.showDatePicker(
@@ -150,26 +150,15 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.date_range,
-                                          size: 18.0,
-                                          color: kTracersGray500,
-                                        ),
-                                        Text(
-                                          " $_date",
-                                          style: TextStyle(
-                                              color: kTracersGray500,
-                                              fontSize: 12.0),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
+                              Text(
+                                " $_date",
+                                style: TextStyle(
+                                    color: kTracersGray500, fontSize: 12.0),
+                              ),
+                              Icon(
+                                Icons.date_range,
+                                size: 18.0,
+                                color: kTracersGray500,
                               ),
                             ],
                           ),
@@ -184,7 +173,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                     children: <Widget>[
                       OutlineButton(
                         borderSide: BorderSide(
-                          color: Colors.black, //Color of the border
+                          color: kTracersGray50, //Color of the border
                           style: BorderStyle.solid, //Style of the border
                           width: .5, //width of the border
                         ),
@@ -207,26 +196,15 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.access_time,
-                                          size: 16.0,
-                                          color: kTracersGray500,
-                                        ),
-                                        Text(
-                                          " $_time",
-                                          style: TextStyle(
-                                              color: kTracersGray500,
-                                              fontSize: 12.0),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
+                              Text(
+                                " $_time",
+                                style: TextStyle(
+                                    color: kTracersGray500, fontSize: 12.0),
+                              ),
+                              Icon(
+                                Icons.access_time,
+                                size: 16.0,
+                                color: kTracersGray50,
                               ),
                             ],
                           ),
@@ -248,9 +226,9 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                       return snapshot.hasData
                           ? TypeAheadField(
                               textFieldConfiguration: TextFieldConfiguration(
-                                  autofocus: true,
                                   decoration: InputDecoration(
-                                      prefixIcon: Icon(Icons.search),
+                                      suffixIcon: Icon(Icons.search),
+                                      //prefixIcon: Icon(Icons.search),
                                       labelText:
                                           'Search by Name, Location or Address',
                                       border: OutlineInputBorder())),
