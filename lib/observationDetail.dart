@@ -444,6 +444,7 @@ class _ScoreButtonsState extends State<ScoreButtons> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
+            tooltip: 'Not Applicable',
             icon: Icon(FontAwesomeIcons.ban),
             color:
                 (_score == "notApplicable") ? kTracersBlue900 : kTracersGray300,
@@ -458,6 +459,7 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             },
           ),
           IconButton(
+            tooltip: 'Not Assessed',
             icon: Icon(FontAwesomeIcons.circle),
             color:
                 (_score == "notAssessed") ? kTracersBlue900 : kTracersGray300,
@@ -472,6 +474,7 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             },
           ),
           IconButton(
+            tooltip: 'Compliant',
             icon: Icon(FontAwesomeIcons.solidCheckCircle),
             color: (_score == "compliant") ? kTracersGreen500 : kTracersGray300,
             iconSize: 24,
@@ -488,6 +491,7 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             },
           ),
           IconButton(
+            tooltip: 'Advisory',
             icon: Icon(FontAwesomeIcons.exclamationCircle),
             color: (_score == "advisory") ? kTracersYellow500 : kTracersGray300,
             iconSize: 24,
@@ -501,6 +505,7 @@ class _ScoreButtonsState extends State<ScoreButtons> {
             },
           ),
           IconButton(
+            tooltip: 'Non Compliant',
             icon: Icon(FontAwesomeIcons.solidTimesCircle),
             color:
                 (_score == "nonCompliant") ? kTracersRed500 : kTracersGray300,
