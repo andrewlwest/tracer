@@ -151,7 +151,7 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
               ScoreButtons(visitId: visitId, observation: observation),
               //_scoreButtons(observation, visitId),
 
-              SizedBox(height: 16.0),
+              SizedBox(height: 1.0),
 
               Text(
                 "Subject Matter Expert",
@@ -232,6 +232,7 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
 
               //COMMENTS BOX
               TextFormField(
+                minLines: 1,
                 maxLines: 3,
                 focusNode: _commentsFocusNode,
                 controller: _commentsController,
@@ -272,25 +273,29 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
                   */
                 );
               }).toList(),
-              SizedBox(height: 8.0),
               //free text exception
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                child: TextFormField(
-                  minLines: 1,
-                  maxLines: 5,
-                  focusNode: _freeTextFocusNode,
-                  controller: _freeTextExceptionController,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: kTracersWhite,
-                    labelText:
-                        'Other Exceptions',
-                  ),
-                  style: new TextStyle(
-                    fontSize: 14.0,
+              Container(
+                decoration: new BoxDecoration(
+        color: kTracersRed100
+      ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 10, bottom: 10),
+                  child: TextFormField(
+                    minLines: 1,
+                    maxLines: 5,
+                    focusNode: _freeTextFocusNode,
+                    controller: _freeTextExceptionController,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: kTracersRed50,
+                      labelText:
+                          'Other Exceptions',
+                    ),
+                    style: new TextStyle(
+                      fontSize: 14.0,
+                    ),
                   ),
                 ),
               ),
@@ -340,10 +345,15 @@ class _ExceptionViewState extends State<ExceptionView> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: new BoxDecoration(
+        color: kTracersRed100
+      ),
       child: Column(
         children: <Widget>[
           // STYLE LIST USING CheckboxListTile
           CheckboxListTile(
+
+            activeColor: kTracersRed500,
             value: _checkboxValue,
             dense: true,
             title: Text(observationException.text),
