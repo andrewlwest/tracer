@@ -199,7 +199,6 @@ class VisitDetailItemView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 18.0),
           Text(
             observationGroup.groupTitle,
             maxLines: 1,
@@ -215,6 +214,7 @@ class VisitDetailItemView extends StatelessWidget {
               visitId: visit.id
             );
           }).toList(),
+          SizedBox(height: 22.0),
         ],
       ),
     );

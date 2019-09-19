@@ -88,6 +88,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
         title: Text(pageTitle),
         backgroundColor: kTracersBlue500,
         leading: IconButton(
+          tooltip: 'Cancel',
           icon: Icon(
             Icons.close,
             semanticLabel: 'cancel',
