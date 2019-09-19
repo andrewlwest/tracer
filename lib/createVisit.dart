@@ -74,7 +74,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
         .where((item) => (item.name + item.location)
             .toLowerCase()
             .contains(pattern.toLowerCase()))
-        .toList();
+        .toList()..sort((a,b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     return _searchedPlaces;
   }
 
