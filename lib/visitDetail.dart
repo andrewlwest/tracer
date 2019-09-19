@@ -235,7 +235,7 @@ Widget _observationAssignmentStatus(Observation observation) {
     return CircleAvatar(
       child: Icon(
         FontAwesomeIcons.solidUserCircle,
-        size: 35,
+        size: 40,
         color: kTracersGray300,
       ),
       backgroundColor: kTracersWhite,

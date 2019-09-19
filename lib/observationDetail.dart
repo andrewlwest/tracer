@@ -274,20 +274,24 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
               }).toList(),
               SizedBox(height: 8.0),
               //free text exception
-              TextFormField(
-                maxLines: 3,
-                focusNode: _freeTextFocusNode,
-                controller: _freeTextExceptionController,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: kTracersWhite,
-                  labelText:
-                      'Free Text Exceptions (Optional), enter description here',
-                ),
-                style: new TextStyle(
-                  fontSize: 14.0,
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                child: TextFormField(
+                  minLines: 1,
+                  maxLines: 5,
+                  focusNode: _freeTextFocusNode,
+                  controller: _freeTextExceptionController,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: kTracersWhite,
+                    labelText:
+                        'Other Exceptions',
+                  ),
+                  style: new TextStyle(
+                    fontSize: 14.0,
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
