@@ -24,7 +24,7 @@ const List<MyTab> myTabs = const <MyTab>[
   const MyTab(title: 'TODAY', filter: 'today'),
   const MyTab(title: 'UPCOMING', filter: 'future'),
   const MyTab(title: 'PAST', filter: 'past'),
-  const MyTab(title: 'TODO', filter: 'hastodo'),
+  const MyTab(title: 'TO DO', filter: 'hastodo'),
 ];
 
 class HomePage extends StatefulWidget {
