@@ -130,6 +130,7 @@ class _HomePageState extends State<HomePage>
             actions: <Widget>[
               (appData.user != null && appData.user.isAdmin())
                   ? IconButton(
+                      tooltip: 'Add New Visit',
                       icon: Icon(
                         Icons.add,
                         semanticLabel: 'add',
@@ -185,18 +186,18 @@ class _HomePageState extends State<HomePage>
                     backgroundColor: kTracersBlue900,
                     child: Text(
                       appData.user != null ? appData.user.initials() : "?",
-                      style: TextStyle(fontSize: 40.0),
+                      style: TextStyle(fontSize: 30.0),
                     ),
                   ),
                 ),
-                ListTile(
-                  title: Text("Today"),
-                  trailing: Icon(Icons.arrow_forward),
-                ),
-                ListTile(
-                  title: Text("Profile"),
-                  trailing: Icon(Icons.arrow_forward),
-                ),
+                // ListTile(
+                //   title: Text("Today"),
+                //   trailing: Icon(Icons.arrow_forward),
+                // ),
+                // ListTile(
+                //   title: Text("Profile"),
+                //   trailing: Icon(Icons.arrow_forward),
+                // ),
                 ListTile(
                   title: Text("Sign Out"),
                   trailing: Icon(Icons.exit_to_app),
@@ -258,13 +259,13 @@ class _VisitListViewState extends State<VisitListView> {
               const Text('This will delete the visit and all of its contents.'),
           actions: <Widget>[
             FlatButton(
-              child: const Text('CANCEL'),
+              child: const Text('CANCEL', style: TextStyle(color: kTracersGray500)),
               onPressed: () {
                 Navigator.of(context).pop(ConfirmAction.CANCEL);
               },
             ),
             FlatButton(
-              child: const Text('ACCEPT'),
+              child: const Text('DELETE VISIT', style: TextStyle(color: kTracersRed500)),
               onPressed: () {
                 Navigator.of(context).pop(ConfirmAction.ACCEPT);
               },
@@ -427,6 +428,7 @@ class _VisitListViewState extends State<VisitListView> {
                                             Column(
                                               children: <Widget>[
                                                 IconButton(
+                                                  tooltip: 'To Do List',
                                                   icon: Icon(FontAwesomeIcons
                                                       .solidClipboard),
                                                   color: Colors.black45,
@@ -450,6 +452,7 @@ class _VisitListViewState extends State<VisitListView> {
                                             Column(
                                               children: <Widget>[
                                                 IconButton(
+                                                  tooltip: 'Participants List',
                                                   icon: Icon(FontAwesomeIcons
                                                       .solidUserCircle),
                                                   color: Colors.black45,
@@ -491,18 +494,20 @@ class _VisitListViewState extends State<VisitListView> {
                                                       ),
                                                     ),
                                                     const PopupMenuDivider(),
-
                                                     if (appData.user != null &&
                                                         appData.user.isAdmin())
-                                                        PopupMenuItem(
-                                                          value: 2,
-                                                          child: ListTile(
-                                                            leading: Icon(
-                                                                Icons.delete),
-                                                            title: Text(
-                                                                'Delete visit'),
+                                                      PopupMenuItem(
+                                                        value: 2,
+                                                        child: ListTile(
+                                                          leading: Icon(
+                                                            Icons.delete,
+                                                            color:
+                                                                kTracersRed500,
                                                           ),
-                                                        ),   
+                                                          title: Text(
+                                                              'Delete visit', style: TextStyle(color: kTracersRed500),),
+                                                        ),
+                                                      ),
                                                   ],
                                                   onSelected: (value) async {
                                                     print("value: $value");
