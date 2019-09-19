@@ -10,6 +10,7 @@ import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
 class MyTab {
@@ -59,7 +60,7 @@ class _HomePageState extends State<HomePage>
     _loadData(myTabs[_tabController.index].filter);
   }
 
-  /// load template info into appData global singleton
+  /// load template info into appData glal singleton
   void _loadTemplate() async {
     appData.template = await svc.getTemplate();
   }
@@ -96,112 +97,121 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
-    return MaterialApp(
-      home: DefaultTabController(
-        length: myTabs.length,
-        child: Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            backgroundColor: kTracersBlue500,
-            leading: IconButton(
-              icon: Icon(
-                Icons.menu,
-                semanticLabel: 'menu',
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: kTracersBlue500,
+        leading: IconButton(
+          icon: Icon(
+            Icons.menu,
+            semanticLabel: 'menu',
+          ),
+          onPressed: () {
+            print('Menu button');
+            _scaffoldKey.currentState.openDrawer();
+          },
+        ),
+        bottom: TabBar(
+          isScrollable: true,
+          controller: _tabController,
+          tabs: [
+            ...myTabs.map((MyTab tab) {
+              final String label = tab.title.toUpperCase();
+              return Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: Text(label));
+            }).toList()
+          ],
+        ),
+        title: Text(pageTitle),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              semanticLabel: 'add',
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, "createVisit")
+                  .whenComplete(refreshVisitList);
+              //Navigator.pushNamed(context, AddVisit.id).then(    (value) { refreshVisitList();}       );
+              //refreshVisitList();
+            },
+          ),
+        ],
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          //TODAY TAB PANE CONTENT
+
+          ...myTabs.map((MyTab tab) {
+            return FutureBuilder<List<TracerVisit>>(
+              future: _visitListFuture,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) print(snapshot.error);
+
+                return snapshot.hasData
+                    ? VisitListView(
+                        visits: snapshot.data,
+                        callback: () {
+                          refreshVisitList();
+                        },
+                      )
+                    : Center(child: CircularProgressIndicator());
+              },
+            );
+          }).toList(),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text(appData.user != null ? appData.user.name : "no user loged in"),
+              accountEmail: Text(appData.user != null ? appData.user.department : "no user loged in"),
+              decoration: BoxDecoration(
+                color: kTracersBlue500,
               ),
-              onPressed: () {
-                print('Menu button');
-                _scaffoldKey.currentState.openDrawer();
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: kTracersBlue900,
+                child: Text(
+                  appData.user != null ? appData.user.initials() : "?",
+                  style: TextStyle(fontSize: 40.0),
+                ),
+              ),
+            ),
+
+            /*
+            ListTile(
+              title: Text("Today"),
+              trailing: Icon(Icons.arrow_forward),
+            ),
+            ListTile(
+              title: Text("Profile"),
+              trailing: Icon(Icons.arrow_forward),
+            ),
+            */
+            ListTile(
+              title: Text("Sign Out"),
+              trailing: Icon(Icons.exit_to_app),
+              onTap: () {
+                logout(context);
               },
             ),
-            bottom: TabBar(
-              isScrollable: true,
-              controller: _tabController,
-              tabs: [
-                ...myTabs.map((MyTab tab) {
-                  final String label = tab.title.toUpperCase();
-                  return Container(
-                      height: 50,
-                      alignment: Alignment.center,
-                      child: Text(label));
-                }).toList()
-              ],
-            ),
-            title: Text(pageTitle),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.add,
-                  semanticLabel: 'add',
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, "createVisit")
-                      .whenComplete(refreshVisitList);
-                  //Navigator.pushNamed(context, AddVisit.id).then(    (value) { refreshVisitList();}       );
-                  //refreshVisitList();
-                },
-              ),
-            ],
-          ),
-          body: TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              //TODAY TAB PANE CONTENT
-
-              ...myTabs.map((MyTab tab) {
-                return FutureBuilder<List<TracerVisit>>(
-                  future: _visitListFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) print(snapshot.error);
-
-                    return snapshot.hasData
-                        ? VisitListView(
-                            visits: snapshot.data,
-                            callback: () {
-                              refreshVisitList();
-                            },
-                          )
-                        : Center(child: CircularProgressIndicator());
-                  },
-                );
-              }).toList(),
-            ],
-          ),
-          drawer: Drawer(
-            child: ListView(
-              children: <Widget>[
-                UserAccountsDrawerHeader(
-                  accountName: Text(appData.user != null ? appData.user.name : "no user loged in"),
-                  accountEmail: Text(appData.user != null ? appData.user.department : "no user loged in"),
-                  decoration: BoxDecoration(
-                    color: kTracersBlue500,
-                  ),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor: kTracersBlue900,
-                    child: Text(
-                      appData.user != null ? appData.user.initials() : "?",
-                      style: TextStyle(fontSize: 40.0),
-                    ),
-                  ),
-                ),
-                ListTile(
-                  title: Text("Today"),
-                  trailing: Icon(Icons.arrow_forward),
-                ),
-                ListTile(
-                  title: Text("Profile"),
-                  trailing: Icon(Icons.arrow_forward),
-                ),
-                ListTile(
-                  title: Text("Sign Out"),
-                  trailing: Icon(Icons.exit_to_app),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );
   }
+
+  void logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("authenticatedUserLogin");
+    appData.user = null;
+    Navigator.popAndPushNamed(context, '/login');
+  }
+
 }
 
 class VisitListView extends StatefulWidget {

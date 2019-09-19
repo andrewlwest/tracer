@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final TracerService svc = TracerService();
 
   String _userLogin;
+  bool _authorized = false;
 
   @override
   void initState() {
@@ -28,13 +29,28 @@ class _LoginPageState extends State<LoginPage> {
   void _init() async {
     //userList = await svc.getAllUsers();
 
-    SharedPreferences.getInstance().then((sp) {
+    SharedPreferences.getInstance().then((sp) async {
       //print("sp " + sp.getString("userLogin"));
+      var authUsername = sp.getString("authenticatedUserLogin");
+      var auth = (authUsername != null && authUsername.isNotEmpty);
+
       setState(() {
-        _userLogin = sp.getString("userLogin");
-        _usernameController.text = _userLogin;
+        _usernameController.text = authUsername;
+        _authorized = auth;
       });
+
+      if (authUsername != null) {
+        // load user
+        try {
+          var user = await svc.getUser(authUsername);
+          appData.user = user;
+          Navigator.pop(context);
+        } catch (err) {
+          print("error logging in using stored login '$authUsername': $err");
+        }
+      } 
     });
+
     //print("login is " + _userLogin);
   }
 
@@ -43,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: kTracersBlue900,
-      body: SafeArea(
+      body: _authorized ? Center(child: CircularProgressIndicator()) : SafeArea(
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
           children: <Widget>[
@@ -92,8 +108,6 @@ class _LoginPageState extends State<LoginPage> {
                   textColor: kTracersWhite,
                   onPressed: () {
                     login(context);
-
-                    //Navigator.pop(context);
                   },
                 ),
               ],
@@ -104,23 +118,51 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<Null> login(BuildContext context) async {
+  void login(BuildContext context) async {
     String login = _usernameController.value.text;
     String pass = _passwordController.value.text;
+    String errorMessage;
 
-    //bool success = await svc.login(login, pass);
-    //print("success = " + (success ? "true" : "false"));
-    bool success = true;
+    if (login != null && login.isNotEmpty && pass != null && pass.isNotEmpty) {
+      bool success = await svc.login(login, pass);
+      print("success = " + (success ? "true" : "false"));
+      //bool success = true;
 
-    // if successful partners login.. lookup user and persist
-    if (success) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("userLogin", login);
+      // if successful partners login.. lookup user and persist
+      if (success) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("authenticatedUserLogin", login);
 
-      // load user
-      User user = await svc.getUser(login);
-      print("user = $user");
+        // load user
+        try {
+          var user = await svc.getUser(login);
+          appData.user = user;
+        } catch (err) {
+          errorMessage = "login failed: $err";
+        }
+      } else {
+        errorMessage = "Partners Login Failed";
+      }
 
+      if (errorMessage != null) {
+        final snackBar = SnackBar(content: Text(errorMessage));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      } else {
+        Navigator.pop(context);
+      }
+    } else {
+      final snackBar = SnackBar(content: Text("Username and Password are required"));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+    }
+  }
+}
+
+      /*
+      User user = await svc.getUser(login).catchError((e) {
+        print('there was an error $e');
+      });
+
+    
       if (user == null) {
         final snackBar = SnackBar(content: Text('login failed, try again'));
         _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -128,13 +170,10 @@ class _LoginPageState extends State<LoginPage> {
         // set the authenticqated user object in the Application singleton.
         //Application application = new Application();
         appData.user = user;
-
-        //Navigator.push( context, MaterialPageRoute(builder: (context) => HomePage()));
         Navigator.pop(context);
       }
     } else {
       final snackBar = SnackBar(content: Text('login failed, try again'));
       _scaffoldKey.currentState.showSnackBar(snackBar);
     }
-  }
-}
+    */

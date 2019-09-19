@@ -33,13 +33,18 @@ class TracerService {
     if ('true' == success) {
       return responseJson;
     } else {
-      throw ("post to server falied!");
+      String errorMessasge = responseJson['tracerServiceResponse']['errorMessage'];
+      if (errorMessasge != null) {
+        throw (errorMessasge);
+      } else {
+        throw ("call to Tracer Service failed!");
+      }
     }
   }
 
   Future<bool> login(String login, String pass) async {
     // remove this statement for performing auth
-    //return true;
+    return true;
 
     Map<String, String> headers = {
       'OncallWeb-Mojo-Key': _buildParams()['oncallWebServiceKey'],
@@ -50,8 +55,10 @@ class TracerService {
       'PartnersPassword': pass,
     };
 
+    //print(body);
     final response = await http.post(_buildParams()['oncallwebAuthEndPoint'],
         body: body, headers: headers);
+    //print(response.body);
     if (response.body.contains("AuthenticationSuccess")) {
       return true;
     } else {
@@ -108,6 +115,9 @@ class TracerService {
   Future<User> getUser(String login) async {
     var body = json.encode({"method": "getUser", "username": login});
     final responseJson = await getTracerServiceResponse(body);
+
+    print(responseJson.toString());
+
     String success = responseJson['tracerServiceResponse']['success'];
 
     if ('true' == success) {
