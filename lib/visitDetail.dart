@@ -140,26 +140,29 @@ class _VisitObservationsListState extends State<VisitObservationsList> {
       itemBuilder: (context, index) {
         final item = appData.template.observationGroups[index];
         return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                item.groupTitle,
-                maxLines: 1,
-                style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.left,
-              ),
-              SizedBox(height: 8.0),
-              ...item.observationCategories.map((observationCategory) {
-                return ObsCatListTileView(
-                    observationCategory: observationCategory,
-                    observation: visit.observations[
-                        observationCategory.observationCategoryId],
-                    visitId: visit.id);
-              }).toList(),
-              SizedBox(height: 22.0),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  item.groupTitle,
+                  maxLines: 1,
+                  style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 8.0),
+                ...item.observationCategories.map((observationCategory) {
+                  return ObsCatListTileView(
+                      observationCategory: observationCategory,
+                      observation: visit.observations[
+                          observationCategory.observationCategoryId],
+                      visitId: visit.id);
+                }).toList(),
+                SizedBox(height:20.0),
+              ],
+            ),
           ),
         );
       },
