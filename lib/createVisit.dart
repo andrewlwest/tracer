@@ -253,52 +253,66 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                     )
                   : Padding(
                       padding: const EdgeInsets.all(0.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 2.0, right: 8.0),
-                            child: Column(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          border: Border(
+                            top: BorderSide(width: 1.0, color: kTracersGray400),
+                            left: BorderSide(width: 1.0, color: kTracersGray400),
+                            right: BorderSide(width: 1.0, color: kTracersGray400),
+                            bottom: BorderSide(width: 1.0, color: kTracersGray400),
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 4.0, right: 8.0, top: 10.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.location_on,
+                                    color: kTracersGray500,
+                                    size: 24.0,
+                                    semanticLabel:
+                                        'Text to announce in accessibility modes',
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(_selectedPlace.name,
+                                        maxLines: 2,
+                                        style: TextStyle(fontSize: 14.0)),
+                                    SizedBox(height: 4.0),
+                                    Text(_selectedPlace.location,
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                            fontSize: 12.0,
+                                            color: kTracersGray500)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Column(
                               children: <Widget>[
-                                Icon(
-                                  Icons.location_on,
+                                IconButton(
+                                  icon: Icon(Icons.close),
                                   color: kTracersGray500,
-                                  size: 24.0,
-                                  semanticLabel:
-                                      'Text to announce in accessibility modes',
+                                  onPressed: () {
+                                    setState(() { _selectedPlace = null; });
+                                  },
                                 ),
                               ],
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(_selectedPlace.name,
-                                    maxLines: 2,
-                                    style: TextStyle(fontSize: 14.0)),
-                                SizedBox(height: 4.0),
-                                Text(_selectedPlace.location,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: kTracersGray500)),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(Icons.close),
-                                color: kTracersGray500,
-                                onPressed: () {
-                                  setState(() { _selectedPlace = null; });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       )),
               SizedBox(height: 12.0),
               TextFormField(
