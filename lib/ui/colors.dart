@@ -22,3 +22,5 @@ const kTracersGray50 = const Color(0xFF7B7B7B);
 
 const kTracersSurfaceWhite = const Color(0xFFFFFBFA);
 const kTracersBackgroundWhite = Colors.white;
+
+const kTracerRoyalFuchsia = const Color(0xFFCA2C92);

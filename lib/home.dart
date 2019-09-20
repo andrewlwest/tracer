@@ -118,9 +118,7 @@ class _HomePageState extends State<HomePage>
             ...myTabs.map((MyTab tab) {
               final String label = tab.title.toUpperCase();
               return Container(
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: Text(label));
+                  height: 50, alignment: Alignment.center, child: Text(label));
             }).toList()
           ],
         ),
@@ -134,8 +132,6 @@ class _HomePageState extends State<HomePage>
             onPressed: () {
               Navigator.pushNamed(context, "createVisit")
                   .whenComplete(refreshVisitList);
-              //Navigator.pushNamed(context, AddVisit.id).then(    (value) { refreshVisitList();}       );
-              //refreshVisitList();
             },
           ),
         ],
@@ -168,8 +164,12 @@ class _HomePageState extends State<HomePage>
         child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text(appData.user != null ? appData.user.name : "no user loged in"),
-              accountEmail: Text(appData.user != null ? appData.user.department : "no user loged in"),
+              accountName: Text(appData.user != null
+                  ? appData.user.name
+                  : "no user loged in"),
+              accountEmail: Text(appData.user != null
+                  ? appData.user.department
+                  : "no user loged in"),
               decoration: BoxDecoration(
                 color: kTracersBlue500,
               ),
@@ -211,7 +211,6 @@ class _HomePageState extends State<HomePage>
     appData.user = null;
     Navigator.popAndPushNamed(context, '/login');
   }
-
 }
 
 class VisitListView extends StatefulWidget {
@@ -236,13 +235,7 @@ class _VisitListViewState extends State<VisitListView> {
 
   // pull down
   void _onRefresh() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-
-    // need to switch to stateful, or find some way to refresh the future builder
-    //visits = await svc.getAllVisits();
-
-    // if failed,use refreshFailed()
+    await callback();
     _refreshController.refreshCompleted();
   }
 
@@ -262,13 +255,15 @@ class _VisitListViewState extends State<VisitListView> {
               const Text('This will delete the visit and all of its contents.'),
           actions: <Widget>[
             FlatButton(
-              child: const Text('CANCEL', style: TextStyle(color: kTracersGray500)),
+              child: const Text('CANCEL',
+                  style: TextStyle(color: kTracersGray500)),
               onPressed: () {
                 Navigator.of(context).pop(ConfirmAction.CANCEL);
               },
             ),
             FlatButton(
-              child: const Text('DELETE VISIT', style: TextStyle(color: kTracersRed500)),
+              child: const Text('DELETE VISIT',
+                  style: TextStyle(color: kTracersRed500)),
               onPressed: () {
                 Navigator.of(context).pop(ConfirmAction.ACCEPT);
               },
@@ -317,8 +312,11 @@ class _VisitListViewState extends State<VisitListView> {
                     padding: const EdgeInsets.all(15.0),
                     itemBuilder: (context, position) {
                       return new InkWell(
-                        onTap: () => _onTapItem(context,
-                            visits[position]), // handle your onTap here
+                        onTap: () {
+                          Navigator.pushNamed(context, "/visitDetail",
+                              arguments: VisitDetailPageArguments(
+                                  visits[position].id));
+                        },
                         child: SizedBox(
                           height: 174,
                           child: Card(
@@ -434,7 +432,14 @@ class _VisitListViewState extends State<VisitListView> {
                                                   tooltip: 'To Do List',
                                                   icon: Icon(FontAwesomeIcons
                                                       .solidClipboard),
-                                                  color: Colors.black45,
+                                                  color:
+                                                      visits[position].todo !=
+                                                                  null &&
+                                                              visits[position]
+                                                                  .todo
+                                                                  .isNotEmpty
+                                                          ? kTracerRoyalFuchsia
+                                                          : Colors.black45,
                                                   iconSize: 16,
                                                   onPressed: () async {
                                                     final String todo =
@@ -443,8 +448,7 @@ class _VisitListViewState extends State<VisitListView> {
                                                             visits[position]);
                                                     print("todo is $todo");
                                                     if (todo != 'CANCEL') {
-                                                      visits[position].todo =
-                                                          todo;
+                                                      callback();
                                                     }
                                                   },
                                                 ),
@@ -458,7 +462,14 @@ class _VisitListViewState extends State<VisitListView> {
                                                   tooltip: 'Participants List',
                                                   icon: Icon(FontAwesomeIcons
                                                       .solidUserCircle),
-                                                  color: Colors.black45,
+                                                  color: visits[position]
+                                                                  .participants !=
+                                                              null &&
+                                                          visits[position]
+                                                              .participants
+                                                              .isNotEmpty
+                                                      ? kTracerRoyalFuchsia
+                                                      : Colors.black45,
                                                   iconSize: 16,
                                                   onPressed: () async {
                                                     final String participants =
@@ -469,9 +480,7 @@ class _VisitListViewState extends State<VisitListView> {
                                                         "participants are $participants");
                                                     if (participants !=
                                                         'CANCEL') {
-                                                      visits[position]
-                                                              .participants =
-                                                          participants;
+                                                      callback();
                                                     }
                                                   },
                                                 ),
@@ -508,7 +517,11 @@ class _VisitListViewState extends State<VisitListView> {
                                                                 kTracersRed500,
                                                           ),
                                                           title: Text(
-                                                              'Delete visit', style: TextStyle(color: kTracersRed500),),
+                                                            'Delete visit',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    kTracersRed500),
+                                                          ),
                                                         ),
                                                       ),
                                                   ],
@@ -565,18 +578,6 @@ class _VisitListViewState extends State<VisitListView> {
   }
 }
 
-void _onTapItem(BuildContext context, TracerVisit visit) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => VisitDetailPage(visitId: visit.id)),
-  );
-
-/*
-  Scaffold.of(context).showSnackBar(new SnackBar(
-      content: new Text(visit.id.toString() + ' - ' + visit.location)));
-*/
-}
-
 Future<String> _participantsInputDialog(
     BuildContext context, TracerVisit visit) async {
   final TracerService svc = new TracerService();
@@ -616,7 +617,7 @@ Future<String> _participantsInputDialog(
           FlatButton(
             child: Text('OK'),
             onPressed: () async {
-              bool success = await svc.savePropertyForVisit(
+              bool success = await svc.setVisitProperty(
                   "participants", _controller.text, visit.id);
               Navigator.pop(context, _controller.text);
             },
@@ -666,11 +667,13 @@ Future<String> _todoInputDialog(BuildContext context, TracerVisit visit) async {
             child: Text('OK'),
             onPressed: () async {
               String toDoText = _controller.text;
+              /*
               if (toDoText == '') {
                 toDoText = 'null';
               }
-              await svc.savePropertyForVisit("todo", toDoText, visit.id);
-              //we need to update the text
+              */
+              await svc.setVisitProperty("todo", toDoText, visit.id);
+
               Navigator.pop(context, _controller.text);
             },
           ),

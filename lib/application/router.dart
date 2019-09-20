@@ -12,7 +12,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => HomePage());
     case '/login':
       return FadeRoute(page: LoginPage());
-    case 'visitDetail':
+    case '/visitDetail':
       final VisitDetailPageArguments args = settings.arguments;
       return MaterialPageRoute(
           builder: (context) => VisitDetailPage(visitId: args.visitId));

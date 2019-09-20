@@ -66,14 +66,15 @@ class TracerService {
     }
   }
 
-  Future<bool> savePropertyForVisit(
+  Future<bool> setVisitProperty(
       String propertyName, String propertyValue, String visitId) async {
     var body = json.encode({
       "method": "setVisitProperty",
       "visitId": visitId,
       "propertyName": propertyName,
-      "propertyValue": propertyValue
+      "propertyValue": (propertyValue == null || propertyValue.isEmpty) ? null : propertyValue
     });
+    print(body);
     final responseJson = await getTracerServiceResponse(body);
     String success = responseJson['tracerServiceResponse']['success'];
     return ('true' == success);
