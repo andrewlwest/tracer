@@ -5,7 +5,7 @@ import 'package:Tracer/ui/font_awesome_flutter.dart';
 import 'package:Tracer/visitDetail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:Tracer/editVisit.dart';
+import 'package:Tracer/createVisit.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -124,16 +124,17 @@ class _HomePageState extends State<HomePage>
         ),
         title: Text(pageTitle),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              semanticLabel: 'add',
+          if (appData.user != null && appData.user.isAdmin())
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                semanticLabel: 'add',
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, "createVisit")
+                    .whenComplete(refreshVisitList);
+              },
             ),
-            onPressed: () {
-              Navigator.pushNamed(context, "createVisit")
-                  .whenComplete(refreshVisitList);
-            },
-          ),
         ],
       ),
       body: TabBarView(
@@ -315,7 +316,8 @@ class _VisitListViewState extends State<VisitListView> {
                         onTap: () {
                           Navigator.pushNamed(context, "/visitDetail",
                               arguments: VisitDetailPageArguments(
-                                  visits[position].id, visits[position].place.name));
+                                  visits[position].id,
+                                  visits[position].place.name));
                         },
                         child: SizedBox(
                           height: 174,
@@ -533,7 +535,7 @@ class _VisitListViewState extends State<VisitListView> {
                                                         context,
                                                         MaterialPageRoute(
                                                           builder: (context) =>
-                                                              EditVisitPage(
+                                                              CreateVisitPage(
                                                             visit: visits[
                                                                 position],
                                                           ),
