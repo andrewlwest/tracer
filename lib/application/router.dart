@@ -15,7 +15,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/visitDetail':
       final VisitDetailPageArguments args = settings.arguments;
       return MaterialPageRoute(
-          builder: (context) => VisitDetailPage(visitId: args.visitId));
+          builder: (context) => VisitDetailPage(visitId: args.visitId, visitPlaceName: args.visitPlaceName,));
     case 'observationDetail':
       final ObservationDetailPageArguments args = settings.arguments;
       return MaterialPageRoute(

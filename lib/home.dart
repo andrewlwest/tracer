@@ -315,7 +315,7 @@ class _VisitListViewState extends State<VisitListView> {
                         onTap: () {
                           Navigator.pushNamed(context, "/visitDetail",
                               arguments: VisitDetailPageArguments(
-                                  visits[position].id));
+                                  visits[position].id, visits[position].place.name));
                         },
                         child: SizedBox(
                           height: 174,
