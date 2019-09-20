@@ -302,7 +302,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                                     print("remove current place");
                                   },
                                 ),
-                              ],
+                          ],
                             ),
                           ],
                         )

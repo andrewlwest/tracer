@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage>
                 backgroundColor: kTracersBlue900,
                 child: Text(
                   appData.user != null ? appData.user.initials() : "?",
-                  style: TextStyle(fontSize: 40.0),
+                  style: TextStyle(fontSize: 30.0),
                 ),
               ),
             ),
@@ -438,7 +438,7 @@ class _VisitListViewState extends State<VisitListView> {
                                                               visits[position]
                                                                   .todo
                                                                   .isNotEmpty
-                                                          ? kTracerRoyalFuchsia
+                                                          ? kTracersPurple500
                                                           : Colors.black45,
                                                   iconSize: 16,
                                                   onPressed: () async {
@@ -468,7 +468,7 @@ class _VisitListViewState extends State<VisitListView> {
                                                           visits[position]
                                                               .participants
                                                               .isNotEmpty
-                                                      ? kTracerRoyalFuchsia
+                                                      ? kTracersBlue900
                                                       : Colors.black45,
                                                   iconSize: 16,
                                                   onPressed: () async {
