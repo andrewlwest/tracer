@@ -82,30 +82,28 @@ class _VisitDetailPageState extends State<VisitDetailPage> {
         title: Text(visitPlaceName),
       ),
       body: SafeArea(
-        child: FutureBuilder<TracerVisit>(
-            future: _listFuture,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) print(snapshot.error);
-              return snapshot.hasData
-                  ? VisitObservationsList(
-                      snapshot.data,
-                      () {
-                        refreshList();
-                      },
-                    )
-                  : Center(child: CircularProgressIndicator());
-            },
-          )
-      ),
+          child: FutureBuilder<TracerVisit>(
+        future: _listFuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) print(snapshot.error);
+          return snapshot.hasData
+              ? VisitObservationsList(
+                  snapshot.data,
+                  () {
+                    refreshList();
+                  },
+                )
+              : Center(child: CircularProgressIndicator());
+        },
+      )),
     );
   }
 }
 
-
 class VisitObservationsList extends StatefulWidget {
   final Function callback;
   final TracerVisit visit;
-  
+
   VisitObservationsList(this.visit, this.callback);
 
   _VisitObservationsListState createState() =>
@@ -116,8 +114,6 @@ class _VisitObservationsListState extends State<VisitObservationsList> {
   final Function callback;
   final TracerVisit visit;
   //final TracerService svc = new TracerService();
-
-  
 
   _VisitObservationsListState({this.visit, this.callback});
 
@@ -136,40 +132,37 @@ class _VisitObservationsListState extends State<VisitObservationsList> {
     super.initState();
     print('here');
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.fromLTRB(12, 16, 12, 16),
-      //padding: EdgeInsets.symmetric(horizontal: 24.0),
-      children: <Widget>[
-        ...appData.template.observationGroups.map((observationGroup) {
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  observationGroup.groupTitle,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.left,
-                ),
-                SizedBox(height: 8.0),
-                ...observationGroup.observationCategories
-                    .map((observationCategory) {
-                  return ObsCatListTileView(
-                      observationCategory: observationCategory,
-                      observation: visit.observations[
-                          observationCategory.observationCategoryId],
-                      visitId: visit.id);
-                }).toList(),
-                SizedBox(height: 22.0),
-              ],
-            ),
-          );
-        }).toList(),
-      ],
+    return ListView.builder(
+      itemCount: appData.template.observationGroups.length,
+      itemBuilder: (context, index) {
+        final item = appData.template.observationGroups[index];
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                item.groupTitle,
+                maxLines: 1,
+                style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.left,
+              ),
+              SizedBox(height: 8.0),
+              ...item.observationCategories.map((observationCategory) {
+                return ObsCatListTileView(
+                    observationCategory: observationCategory,
+                    observation: visit.observations[
+                        observationCategory.observationCategoryId],
+                    visitId: visit.id);
+              }).toList(),
+              SizedBox(height: 22.0),
+            ],
+          ),
+        );
+      },
     );
   }
 }

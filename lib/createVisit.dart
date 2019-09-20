@@ -42,6 +42,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
 
   void _save(BuildContext context) async {
     print("save pressed");
+
     DateTime dateTime = new DateTime(
         _visitDateTime.year,
         _visitDateTime.month,
@@ -51,9 +52,12 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
         0,
         0,
         0);
+
     var newId = await svc.createVisit(
         dateTime, _selectedPlace, _summaryController.text, _visitType);
+
     print('visit created with id = $newId');
+
     Navigator.pop(context, newId);
   }
 
@@ -70,9 +74,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
         .where((item) => (item.name + item.location)
             .toLowerCase()
             .contains(pattern.toLowerCase()))
-        .toList()
-          ..sort(
-              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+        .toList()..sort((a,b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     return _searchedPlaces;
   }
 
@@ -133,7 +135,10 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                             initialDatePickerMode:
                                 datePicker.DatePickerMode.day,
                           );
+
                           if (dateTime != null) {
+                            //_date = new DateFormat.yMd().format(dateTime);
+
                             _date =
                                 new DateFormat('EEE, MMM d').format(dateTime);
                             _visitDateTime = dateTime;
@@ -212,94 +217,96 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                 ],
               ),
               SizedBox(height: 12.0),
-              _selectedPlace == null
-                  ? Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: FutureBuilder<List<Place>>(
-                          future: (new TracerService().getPlaces()),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) print(snapshot.error);
-                            return snapshot.hasData
-                                ? TypeAheadField(
-                                    textFieldConfiguration:
-                                        TextFieldConfiguration(
-                                            decoration: InputDecoration(
-                                                suffixIcon: Icon(Icons.search),
-                                                //prefixIcon: Icon(Icons.search),
-                                                labelText:
-                                                    'Search by Name, Location or Address',
-                                                border: OutlineInputBorder())),
-                                    suggestionsCallback: (pattern) async {
-                                      return filterData(snapshot.data, pattern);
-                                    },
-                                    itemBuilder: (context, suggestion) {
-                                      return ListTile(
-                                        title: Text(
-                                          suggestion.name,
-                                          style: TextStyle(fontSize: 14.0),
-                                        ),
-                                        subtitle: Text(suggestion.location,
-                                            style: TextStyle(
-                                                fontSize: 12.0,
-                                                color: kTracersGray500)),
-                                      );
-                                    },
-                                    onSuggestionSelected: (suggestion) {
-                                      setState(() => placeSelected(suggestion));
-                                    },
-                                  )
-                                : Center(child: LinearProgressIndicator());
-                          }),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 2.0, right: 8.0),
-                            child: Column(
+              Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: FutureBuilder<List<Place>>(
+                    future: (new TracerService().getPlaces()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) print(snapshot.error);
+
+                      return snapshot.hasData
+                          ? TypeAheadField(
+                              textFieldConfiguration: TextFieldConfiguration(
+                                  decoration: InputDecoration(
+                                      suffixIcon: Icon(Icons.search),
+                                      //prefixIcon: Icon(Icons.search),
+                                      labelText:
+                                          'Search by Name, Location or Address',
+                                      border: OutlineInputBorder())),
+                              suggestionsCallback: (pattern) async {
+                                return filterData(snapshot.data, pattern);
+                              },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: Text(
+                                    suggestion.name,
+                                    style: TextStyle(fontSize: 14.0),
+                                  ),
+                                  subtitle: Text(suggestion.location,
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: kTracersGray500)),
+                                );
+                              },
+                              onSuggestionSelected: (suggestion) {
+                                setState(() => placeSelected(suggestion));
+                              },
+                            )
+                          : Center(child: LinearProgressIndicator());
+                    }),
+              ),
+              SizedBox(height: 12.0),
+              Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: _selectedPlace != null
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 2.0, right: 8.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.location_on,
+                                    color: kTracersGray500,
+                                    size: 24.0,
+                                    semanticLabel:
+                                        'Text to announce in accessibility modes',
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(_selectedPlace.name,
+                                      maxLines: 2,
+                                      style: TextStyle(fontSize: 14.0)),
+                                  SizedBox(height: 4.0),
+                                  Text(_selectedPlace.location,
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: kTracersGray500)),
+                                ],
+                              ),
+                            ),
+                            Column(
                               children: <Widget>[
-                                Icon(
-                                  Icons.location_on,
+                                IconButton(
+                                  icon: Icon(Icons.close),
                                   color: kTracersGray500,
-                                  size: 24.0,
-                                  semanticLabel:
-                                      'Text to announce in accessibility modes',
+                                  onPressed: () {
+                                    print("remove current place");
+                                  },
                                 ),
                               ],
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(_selectedPlace.name,
-                                    maxLines: 2,
-                                    style: TextStyle(fontSize: 14.0)),
-                                SizedBox(height: 4.0),
-                                Text(_selectedPlace.location,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: kTracersGray500)),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(Icons.close),
-                                color: kTracersGray500,
-                                onPressed: () {
-                                  setState(() { _selectedPlace = null; });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      )),
+                          ],
+                        )
+                      : Text('')),
               SizedBox(height: 12.0),
               TextFormField(
                 maxLines: 3,
