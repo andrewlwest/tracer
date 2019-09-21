@@ -1,5 +1,4 @@
 import 'package:Tracer/createVisit.dart';
-import 'package:Tracer/editVisit.dart';
 import 'package:Tracer/home.dart';
 import 'package:Tracer/login.dart';
 import 'package:Tracer/observationDetail.dart';
@@ -24,8 +23,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
               observationCategoryId: args.observationCategoryId));
     case 'createVisit':
       return ScaleRoute(page: CreateVisitPage());
-    case 'editVisit':
-      return MaterialPageRoute(builder: (context) => EditVisitPage());
     default:
       return MaterialPageRoute(builder: (context) => HomePage());
   }

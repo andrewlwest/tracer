@@ -1,4 +1,6 @@
+import 'package:Tracer/application/router.dart';
 import 'package:Tracer/model/place.dart';
+import 'package:Tracer/model/tracerVisit.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/date_picker.dart' as datePicker;
@@ -8,16 +10,22 @@ import 'package:intl/intl.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class CreateVisitPage extends StatefulWidget {
-  static const String id = 'create_visit_page';
+  static const String id = 'create_edit_visit_page';
+  final TracerVisit visit;
+  CreateVisitPage({this.visit});
+
   @override
-  _CreateVisitPageState createState() => _CreateVisitPageState();
+  _CreateVisitPageState createState() => _CreateVisitPageState(visit: visit);
 }
 
 class _CreateVisitPageState extends State<CreateVisitPage> {
+  final TracerVisit visit;
+
+  _CreateVisitPageState({this.visit});
   // used for traversing the context
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _summaryController = TextEditingController();
-  final String pageTitle = 'Add Visit';
+  String _pageTitle = 'Add Visit';
   // fields to hold form data
   String _date = "Date";
   String _time = "Time";
@@ -35,9 +43,22 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
     _init();
   }
 
+
   void _init() async {
-    _visitTimeOfDay = new timePicker.TimeOfDay(hour: 12, minute: 0);
-    _visitDateTime = DateTime.now();
+    if (visit != null) {
+      _pageTitle = 'Edit Visit';
+      _visitTimeOfDay = new timePicker.TimeOfDay(hour: 12, minute: 0);
+      _visitDateTime = visit.visitDatetime;
+      _visitType = visit.type;
+      _selectedPlace = visit.place;
+      _summaryController.text = visit.summary;
+      _date = new DateFormat('EEE, MMM d').format(_visitDateTime);
+      _time = new DateFormat("h:mm a").format(_visitDateTime);
+    } else {
+      _pageTitle = 'Add Visit';
+      _visitTimeOfDay = new timePicker.TimeOfDay(hour: 12, minute: 0);
+      _visitDateTime = DateTime.now();
+    }
   }
 
   void _save(BuildContext context) async {
@@ -53,12 +74,22 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
         0,
         0);
 
-    var newId = await svc.createVisit(
-        dateTime, _selectedPlace, _summaryController.text, _visitType);
-
-    print('visit created with id = $newId');
-
-    Navigator.pop(context, newId);
+    if (visit != null) {
+      String visitId = await svc.updateVisit(
+          visitId: visit.id,
+          dateTime: dateTime,
+          place: _selectedPlace,
+          summary: _summaryController.text,
+          visitType: _visitType);
+      print('visit updated with id = ' + visitId);
+      Navigator.pop(context, visitId);
+    } else {
+      var newId = await svc.createVisit(
+          dateTime, _selectedPlace, _summaryController.text, _visitType);
+      //Navigator.pop(context, visitListItem);
+      print('Created a new visit with id = ' + newId);
+      Navigator.pop(context, newId);
+    }
   }
 
   void placeSelected(Place place) {
@@ -74,7 +105,9 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
         .where((item) => (item.name + item.location)
             .toLowerCase()
             .contains(pattern.toLowerCase()))
-        .toList()..sort((a,b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+        .toList()
+          ..sort(
+              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     return _searchedPlaces;
   }
 
@@ -85,7 +118,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(pageTitle),
+        title: Text(_pageTitle),
         backgroundColor: kTracersBlue500,
         leading: IconButton(
           tooltip: 'Cancel',
@@ -217,54 +250,66 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                 ],
               ),
               SizedBox(height: 12.0),
-              Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: FutureBuilder<List<Place>>(
-                    future: (new TracerService().getPlaces()),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) print(snapshot.error);
-
-                      return snapshot.hasData
-                          ? TypeAheadField(
-                              textFieldConfiguration: TextFieldConfiguration(
-                                  decoration: InputDecoration(
-                                      suffixIcon: Icon(Icons.search),
-                                      //prefixIcon: Icon(Icons.search),
-                                      labelText:
-                                          'Search by Name, Location or Address',
-                                      border: OutlineInputBorder())),
-                              suggestionsCallback: (pattern) async {
-                                return filterData(snapshot.data, pattern);
-                              },
-                              itemBuilder: (context, suggestion) {
-                                return ListTile(
-                                  title: Text(
-                                    suggestion.name,
-                                    style: TextStyle(fontSize: 14.0),
-                                  ),
-                                  subtitle: Text(suggestion.location,
-                                      style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: kTracersGray500)),
-                                );
-                              },
-                              onSuggestionSelected: (suggestion) {
-                                setState(() => placeSelected(suggestion));
-                              },
-                            )
-                          : Center(child: LinearProgressIndicator());
-                    }),
-              ),
-              SizedBox(height: 12.0),
-              Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: _selectedPlace != null
-                      ? Row(
+              _selectedPlace == null
+                  ? Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: FutureBuilder<List<Place>>(
+                          future: (new TracerService().getPlaces()),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) print(snapshot.error);
+                            return snapshot.hasData
+                                ? TypeAheadField(
+                                    textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                            decoration: InputDecoration(
+                                                suffixIcon: Icon(Icons.search),
+                                                //prefixIcon: Icon(Icons.search),
+                                                labelText:
+                                                    'Search by Name, Location or Address',
+                                                border: OutlineInputBorder())),
+                                    suggestionsCallback: (pattern) async {
+                                      return filterData(snapshot.data, pattern);
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: Text(
+                                          suggestion.name,
+                                          style: TextStyle(fontSize: 14.0),
+                                        ),
+                                        subtitle: Text(suggestion.location,
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: kTracersGray500)),
+                                      );
+                                    },
+                                    onSuggestionSelected: (suggestion) {
+                                      setState(() => placeSelected(suggestion));
+                                    },
+                                  )
+                                : Center(child: LinearProgressIndicator());
+                          }),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          border: Border(
+                            top: BorderSide(width: 1.0, color: kTracersGray400),
+                            left:
+                                BorderSide(width: 1.0, color: kTracersGray400),
+                            right:
+                                BorderSide(width: 1.0, color: kTracersGray400),
+                            bottom:
+                                BorderSide(width: 1.0, color: kTracersGray400),
+                          ),
+                        ),
+                        child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 2.0, right: 8.0),
+                              padding: const EdgeInsets.only(
+                                  left: 4.0, right: 8.0, top: 10.0),
                               child: Column(
                                 children: <Widget>[
                                   Icon(
@@ -278,19 +323,22 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                               ),
                             ),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(_selectedPlace.name,
-                                      maxLines: 2,
-                                      style: TextStyle(fontSize: 14.0)),
-                                  SizedBox(height: 4.0),
-                                  Text(_selectedPlace.location,
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: kTracersGray500)),
-                                ],
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(_selectedPlace.name,
+                                        maxLines: 2,
+                                        style: TextStyle(fontSize: 14.0)),
+                                    SizedBox(height: 4.0),
+                                    Text(_selectedPlace.location,
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                            fontSize: 12.0,
+                                            color: kTracersGray500)),
+                                  ],
+                                ),
                               ),
                             ),
                             Column(
@@ -299,15 +347,18 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                                   icon: Icon(Icons.close),
                                   color: kTracersGray500,
                                   onPressed: () {
-                                    print("remove current place");
+                                    setState(() {
+                                      _selectedPlace = null;
+                                    });
                                   },
                                 ),
-                          ],
+                              ],
                             ),
                           ],
-                        )
-                      : Text('')),
+                        ),
+                      )),
               SizedBox(height: 12.0),
+
               TextFormField(
                 maxLines: 3,
                 textInputAction: TextInputAction.done,
