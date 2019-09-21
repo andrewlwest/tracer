@@ -156,7 +156,8 @@ class _VisitObservationsListState extends State<VisitObservationsList> {
                     observationCategory: observationCategory,
                     observation: visit.observations[
                         observationCategory.observationCategoryId],
-                    visitId: visit.id);
+                    visitId: visit.id,
+                    callback: callback);
               }).toList(),
               SizedBox(height: 22.0),
             ],
@@ -310,9 +311,10 @@ class ObsCatListTileView extends StatelessWidget {
   final ObservationCategory observationCategory;
   final Observation observation;
   final String visitId;
+  final Function callback;
 
   const ObsCatListTileView(
-      {this.observationCategory, this.observation, this.visitId});
+      {this.observationCategory, this.observation, this.visitId, this.callback});
 
   @override
   Widget build(BuildContext context) {
@@ -321,8 +323,9 @@ class ObsCatListTileView extends StatelessWidget {
         children: <Widget>[
           ListTile(
             contentPadding: EdgeInsets.all(0),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => ObservationDetailPage(
@@ -331,6 +334,13 @@ class ObsCatListTileView extends StatelessWidget {
                               observationCategory.observationCategoryId,
                         )),
               );
+
+              print('result is $result');
+
+              // why doesn't this work?
+              //callback();
+
+
             },
             leading: SizedBox(
               width: 40,

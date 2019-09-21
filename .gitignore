@@ -7,3 +7,4 @@ build/
 .flutter-plugins
 constants.dart
 flutter_02.log
+ios/Flutter/flutter_export_environment.sh
