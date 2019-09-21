@@ -357,6 +357,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                           ],
                         ),
                       )),
+                      
               SizedBox(height: 12.0),
 
               TextFormField(

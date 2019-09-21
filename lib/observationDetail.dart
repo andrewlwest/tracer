@@ -7,6 +7,7 @@ import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class ObservationDetailPageArguments {
   final String visitId;
@@ -137,10 +138,27 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
     }
   }
 
+  List<User> _searchedUsers;
+
+  List<User> filterData(List<User> users, String pattern) {
+    _searchedUsers = users
+        .where((item) => (item.name)
+            .toLowerCase()
+            .contains(pattern.toLowerCase()))
+        .toList()
+          ..sort(
+              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return _searchedUsers;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: new IconButton(
+          icon: new Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         backgroundColor: kTracersBlue500,
         title: Text(widget.observation.displayName),
       ),
@@ -159,73 +177,79 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
                 style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
               ),
 
+              SizedBox(height: 8.0),
+              
               //SUBJECT MATTER EXPERT
               _assignedUser != null
-                  ? smeListTitle(_assignedUser)
+                  ? //smeListTitle(_assignedUser)
+                  ListTile(
+    dense: true,
+    contentPadding: EdgeInsets.all(0),
+    leading: SizedBox(
+      width: 40,
+      height: 42,
+      child: Stack(
+        children: <Widget>[
+          CircleAvatar(
+              backgroundColor: kTracersBlue900, child: Text(_assignedUser.initials())),
+        ],
+      ),
+    ),
+    title: Text(
+      _assignedUser.name,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+    ),
+    subtitle: Text(_assignedUser.department),
+    trailing: IconButton(
+      icon: Icon(Icons.close),
+      color: kTracersGray500,
+      onPressed: () {
+        setState(() {
+          _assignedUser = null;
+        });
+      },
+    ),
+  )
                   : Padding(
                       padding: const EdgeInsets.all(0.0),
-                      child: FutureBuilder<List<User>>(
-                          future: svc.getAllUsers(),
+                      child: 
+                      FutureBuilder<List<User>>(
+                          future: (new TracerService().getAllUsers()),
                           builder: (context, snapshot) {
                             if (snapshot.hasError) print(snapshot.error);
-
                             return snapshot.hasData
-                                ? AutoCompleteTextField<User>(
-                                    style: new TextStyle(
-                                        color: Colors.black, fontSize: 16.0),
-                                    decoration: new InputDecoration(
-                                        suffixIcon: IconButton(
-                                          icon: Icon(Icons.search),
-                                          onPressed: () {
-                                            setState(() {
-                                              controller.value = null;
-                                            });
-                                          },
-                                        ),
-                                        contentPadding: EdgeInsets.fromLTRB(
-                                            10.0, 30.0, 10.0, 20.0),
-                                        filled: true,
-                                        hintText: 'Search For User',
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey)),
-                                    itemSubmitted: (item) {
-                                      setState(() => smeSelected(item));
+                                ? TypeAheadField(
+                                    textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                            decoration: InputDecoration(
+                                                suffixIcon: Icon(Icons.search),
+                                                //prefixIcon: Icon(Icons.search),
+                                                labelText:
+                                                    'Search by User Name',
+                                                border: OutlineInputBorder())),
+                                    suggestionsCallback: (pattern) async {
+                                      return filterData(snapshot.data, pattern);
                                     },
-                                    clearOnSubmit: true,
-                                    key: key,
-                                    suggestions: snapshot.data,
-                                    itemBuilder: (context, item) {
-                                      return Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Text(
-                                              item.name,
-                                              style: TextStyle(fontSize: 16.0),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(15.0),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              item.department,
-                                            ),
-                                          )
-                                        ],
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: Text(
+                                          suggestion.name,
+                                          style: TextStyle(fontSize: 14.0),
+                                        ),
+                                        subtitle: Text(suggestion.department,
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: kTracersGray500)),
                                       );
                                     },
-                                    itemSorter: (a, b) {
-                                      return a.name.compareTo(b.name);
+                                    onSuggestionSelected: (suggestion) {
+                                      setState(() => smeSelected(suggestion));
                                     },
-                                    itemFilter: (item, query) {
-                                      return item.name
-                                          .toLowerCase()
-                                          .contains(query.toLowerCase());
-                                    })
+                                  )
                                 : Center(child: LinearProgressIndicator());
-                          }),
+                          })
+                      ,
                     ),
 
               SizedBox(height: 12.0),
@@ -256,6 +280,14 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
               ),
               SizedBox(height: 8.0),
 
+              // extra exxception for the no exceptions found functionality
+              ExceptionView(
+                observationException: ObservationException("no_exceptions_found", "No Exceptions Found"),
+                isSelected: observation.noExceptionsFound,
+                visitId: visitId,
+                observationCategoryId: observation.observationCategoryId,
+              ),
+
               ...appData
                   .template
                   .observationCategories[observation.observationCategoryId]
@@ -266,6 +298,7 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
                       appData.template.exceptions[exceptionId],
                   isSelected: observation.exceptions[exceptionId] != null,
                   visitId: visitId,
+                  observationCategoryId: observation.observationCategoryId,
                   /*
                   callback: (exception, isSelected) {
                     updateException(exception, isSelected);
@@ -309,29 +342,32 @@ class ExceptionView extends StatefulWidget {
   final ObservationException observationException;
   final bool isSelected;
   final Function callback;
+  final String observationCategoryId;
   final String visitId;
 
   ExceptionView(
       {this.observationException,
       this.isSelected,
       this.callback,
+      this.observationCategoryId,
       this.visitId});
 
   _ExceptionViewState createState() =>
-      _ExceptionViewState(observationException, isSelected, callback, visitId);
+      _ExceptionViewState(observationException, isSelected, callback, observationCategoryId, visitId);
 }
 
 class _ExceptionViewState extends State<ExceptionView> {
   final ObservationException observationException;
   final bool isSelected;
   final Function callback;
+  final String observationCategoryId;
   final String visitId;
 
   TracerService svc = TracerService();
   bool _checkboxValue = false;
 
   _ExceptionViewState(
-      this.observationException, this.isSelected, this.callback, this.visitId);
+      this.observationException, this.isSelected, this.callback, this.observationCategoryId, this.visitId);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -361,17 +397,33 @@ class _ExceptionViewState extends State<ExceptionView> {
                 _checkboxValue = value;
               });
 
-              bool success = await svc.updateObservationException(
+              // handle no exceptions found item
+              if (observationException.exceptionId == "no_exceptions_found") {
+                bool success = await svc.setObservationProperty("noExceptionsFound", value, visitId, observationCategoryId);
+                
+                if (!success) {
+                  final snackBar =
+                      SnackBar(content: Text('Could not save no exceptions found'));
+                  _scaffoldKey.currentState.showSnackBar(snackBar);
+
+                  setState(() {
+                    _checkboxValue = !value;
+                  });
+                }
+
+              } else {
+                bool success = await svc.updateObservationException(
                   visitId, observationException, value);
 
-              if (!success) {
-                final snackBar =
-                    SnackBar(content: Text('login failed, try again'));
-                _scaffoldKey.currentState.showSnackBar(snackBar);
+                if (!success) {
+                  final snackBar =
+                      SnackBar(content: Text('could not save exception'));
+                  _scaffoldKey.currentState.showSnackBar(snackBar);
 
-                setState(() {
-                  _checkboxValue = !value;
-                });
+                  setState(() {
+                    _checkboxValue = !value;
+                  });
+                }
               }
             },
           ),
@@ -390,34 +442,6 @@ class ExceptionDataSelected {
   ExceptionDataSelected({this.observationException, this.selected});
 }
 
-//SUBJECT MATTER EXPERT WIDGET
-Widget smeListTitle(User sme) {
-  return ListTile(
-    dense: true,
-    contentPadding: EdgeInsets.all(0),
-    leading: SizedBox(
-      width: 40,
-      height: 42,
-      child: Stack(
-        children: <Widget>[
-          CircleAvatar(
-              backgroundColor: kTracersBlue900, child: Text(sme.initials())),
-        ],
-      ),
-    ),
-    title: Text(
-      sme.name,
-      overflow: TextOverflow.ellipsis,
-      maxLines: 1,
-    ),
-    subtitle: Text(sme.department),
-    trailing: Icon(
-      //ICON IS GREEN CHECK IF COMPLIANT
-      FontAwesomeIcons.ellipsisV,
-      size: 16.0,
-    ),
-  );
-}
 
 Future<bool> setObservationScore(
     Observation observation, String score, String visitId) async {

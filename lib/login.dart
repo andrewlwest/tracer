@@ -142,6 +142,7 @@ class _LoginPageState extends State<LoginPage> {
         try {
           var user = await svc.getUser(login);
           appData.user = user;
+
         } catch (err) {
           errorMessage = "login failed: $err";
         }

@@ -6,6 +6,7 @@ import 'package:Tracer/observationDetail.dart';
 import 'package:Tracer/service/tracer_service.dart';
 import 'package:Tracer/ui/colors.dart';
 import 'package:Tracer/ui/font_awesome_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -41,12 +42,11 @@ class _VisitDetailPageState extends State<VisitDetailPage> {
   @override
   void initState() {
     super.initState();
-    _init();
+    //_init();
+    _loadData();
   }
 
-  void _init() async {
-    print('in _init');
-    // load stuff here
+  void _loadData() async {
     _listFuture = svc.getTracerVisit(visitId);
   }
 
@@ -55,18 +55,17 @@ class _VisitDetailPageState extends State<VisitDetailPage> {
     // reload
     setState(() {
       _listFuture = svc.getTracerVisit(visitId);
+      //_loadData();
     });
-  }
-
-  Future<TracerVisit> fetchVisitData(String visitId) async {
-    // you need to return a Future to the FutureBuilder
-    var visit = await svc.getTracerVisit(visitId);
-    return visit;
   }
 
   @override
   Widget build(BuildContext context) {
+
+    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: kTracersBlue500,
         leading: IconButton(
@@ -135,38 +134,69 @@ class _VisitObservationsListState extends State<VisitObservationsList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: appData.template.observationGroups.length,
-      itemBuilder: (context, index) {
-        final item = appData.template.observationGroups[index];
-        return Container(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  item.groupTitle,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.left,
-                ),
-                SizedBox(height: 8.0),
-                ...item.observationCategories.map((observationCategory) {
-                  return ObsCatListTileView(
-                      observationCategory: observationCategory,
-                      observation: visit.observations[
-                          observationCategory.observationCategoryId],
-                      visitId: visit.id);
-                }).toList(),
-                SizedBox(height:20.0),
-              ],
+
+      return Container(
+        child: SmartRefresher(
+            enablePullDown: true,
+            enablePullUp: false,
+            header: WaterDropHeader(),
+            footer: CustomFooter(
+              builder: (BuildContext context, LoadStatus mode) {
+                Widget body;
+                if (mode == LoadStatus.idle) {
+                  body = Text("pull up load");
+                } else if (mode == LoadStatus.loading) {
+                  body = CupertinoActivityIndicator();
+                } else if (mode == LoadStatus.failed) {
+                  body = Text("Load Failed!Click retry!");
+                } else if (mode == LoadStatus.canLoading) {
+                  body = Text("release to load more");
+                } else {
+                  body = Text("No more Data");
+                }
+                return Container(
+                  height: 55.0,
+                  child: Center(child: body),
+                );
+              },
+            ),
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            child: ListView.builder(
+              itemCount: appData.template.observationGroups.length,
+              itemBuilder: (context, index) {
+                final item = appData.template.observationGroups[index];
+                return Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          item.groupTitle,
+                          maxLines: 1,
+                          style: TextStyle(fontSize: 12.0, color: kTracersBlue500),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.left,
+                        ),
+                        SizedBox(height: 8.0),
+                        ...item.observationCategories.map((observationCategory) {
+                          return ObsCatListTileView(
+                              observationCategory: observationCategory,
+                              observation: visit.observations[
+                                  observationCategory.observationCategoryId],
+                              visitId: visit.id,
+                              callback: callback);
+                        }).toList(),
+                        SizedBox(height:20.0),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-        );
-      },
-    );
+      );
   }
 }
 
@@ -340,7 +370,7 @@ class ObsCatListTileView extends StatelessWidget {
               print('result is $result');
 
               // why doesn't this work?
-              //callback();
+              callback();
             },
 
             
