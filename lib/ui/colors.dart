@@ -9,6 +9,7 @@ const kTracersRed50 = const Color(0x05E51C23);
 const kTracersRed100 = const Color(0x12E51C23);
 const kTracersYellow500 = const Color(0xFFFFBA00);
 const kTracersGreen500 = const Color(0xFF259B24);
+const kTracersGreen100 = const Color(0x12259B24);
 
 const kTracersPurple500 = const Color(0xFF673FB4);
 
