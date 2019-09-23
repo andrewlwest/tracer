@@ -156,7 +156,7 @@ class _ObservationDetailViewState extends State<ObservationDetailView> {
     return Scaffold(
       appBar: AppBar(
         leading: new IconButton(
-          icon: new Icon(Icons.arrow_back, color: Colors.black),
+          icon: new Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
         backgroundColor: kTracersBlue500,
@@ -381,14 +381,14 @@ class _ExceptionViewState extends State<ExceptionView> {
   Widget build(BuildContext context) {
     return Container(
       decoration: new BoxDecoration(
-        color: kTracersRed100
+        color: observationException.exceptionId == "no_exceptions_found" ? kTracersGreen100 : kTracersRed100
       ),
       child: Column(
         children: <Widget>[
           // STYLE LIST USING CheckboxListTile
           CheckboxListTile(
 
-            activeColor: kTracersRed500,
+            activeColor: observationException.exceptionId == "no_exceptions_found" ? kTracersGreen500 : kTracersRed500,
             value: _checkboxValue,
             dense: true,
             title: Text(observationException.text),
