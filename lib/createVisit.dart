@@ -56,39 +56,60 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
       _time = new DateFormat("h:mm a").format(_visitDateTime);
     } else {
       _pageTitle = 'Add Visit';
-      _visitTimeOfDay = new timePicker.TimeOfDay(hour: 12, minute: 0);
-      _visitDateTime = DateTime.now();
+      _visitTimeOfDay = null; //new timePicker.TimeOfDay(hour: 12, minute: 0);
+      _visitDateTime = null; //DateTime.now();
     }
   }
 
   void _save(BuildContext context) async {
     print("save pressed");
+    var errorMessage = "";
 
-    DateTime dateTime = new DateTime(
-        _visitDateTime.year,
-        _visitDateTime.month,
-        _visitDateTime.day,
-        _visitTimeOfDay.hour,
-        _visitTimeOfDay.minute,
-        0,
-        0,
-        0);
+    // validate form and present snack bar with errors
+    if (_visitTimeOfDay == null) {
+      errorMessage = "Visit Time is required";
+    } 
+    if (_visitDateTime == null) {
+      errorMessage += errorMessage == null ? "" : "\n" + "Visit Date is required";
+    } 
+    if (_selectedPlace == null) {
+      errorMessage +=  errorMessage == null ? "" : "\n" + "Place is required";
+    }
+    if (_visitType == null) {
+      errorMessage +=  errorMessage == null ? "" : "\n" + "Visit type is required";
+    }
 
-    if (visit != null) {
-      String visitId = await svc.updateVisit(
-          visitId: visit.id,
-          dateTime: dateTime,
-          place: _selectedPlace,
-          summary: _summaryController.text,
-          visitType: _visitType);
-      print('visit updated with id = ' + visitId);
-      Navigator.pop(context, visitId);
+    if (errorMessage != null && errorMessage.isNotEmpty) {
+      final snackBar = SnackBar(content: Text(errorMessage));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
     } else {
-      var newId = await svc.createVisit(
-          dateTime, _selectedPlace, _summaryController.text, _visitType);
-      //Navigator.pop(context, visitListItem);
-      print('Created a new visit with id = ' + newId);
-      Navigator.pop(context, newId);
+
+      DateTime dateTime = new DateTime(
+      _visitDateTime.year,
+      _visitDateTime.month,
+      _visitDateTime.day,
+      _visitTimeOfDay.hour,
+      _visitTimeOfDay.minute,
+      0,
+      0,
+      0);
+
+      if (visit != null) {
+        String visitId = await svc.updateVisit(
+            visitId: visit.id,
+            dateTime: dateTime,
+            place: _selectedPlace,
+            summary: _summaryController.text,
+            visitType: _visitType);
+        print('visit updated with id = ' + visitId);
+        Navigator.pop(context, visitId);
+      } else {
+        var newId = await svc.createVisit(
+            dateTime, _selectedPlace, _summaryController.text, _visitType);
+        //Navigator.pop(context, visitListItem);
+        print('Created a new visit with id = ' + newId);
+        Navigator.pop(context, newId);
+      }
     }
   }
 
@@ -162,9 +183,9 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                         onPressed: () async {
                           DateTime dateTime = await datePicker.showDatePicker(
                             context: context,
-                            firstDate: DateTime(2018, 01, 01),
-                            initialDate: _visitDateTime,
-                            lastDate: DateTime(2022, 01, 01),
+                            firstDate: DateTime.now().subtract(Duration(days: 365)),//DateTime(2018, 01, 01),
+                            initialDate: _visitDateTime == null ? DateTime.now() : _visitDateTime,
+                            lastDate: DateTime.now().add(Duration(days: 365)),//DateTime(2022, 01, 01),
                             initialDatePickerMode:
                                 datePicker.DatePickerMode.day,
                           );
@@ -215,7 +236,7 @@ class _CreateVisitPageState extends State<CreateVisitPage> {
                           timePicker.TimeOfDay timeOfDay =
                               await timePicker.showTimePicker(
                             context: context,
-                            initialTime: _visitTimeOfDay,
+                            initialTime: _visitTimeOfDay == null ? new timePicker.TimeOfDay(hour: 12, minute: 0) : _visitTimeOfDay,
                           );
 
                           if (timeOfDay != null) {

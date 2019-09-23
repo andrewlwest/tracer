@@ -403,13 +403,13 @@ class _VisitListViewState extends State<VisitListView> {
                                             children: <Widget>[
                                               SizedBox(
                                                 height: 45,
-                                                child: Text(
+                                                child: visits[position].summary != null && visits[position].summary.isNotEmpty ? Text(
                                                   '${visits[position].summary}',
                                                   style: theme.textTheme.body2,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 2,
-                                                ),
+                                                ) : SizedBox(height: 8.0),
                                               ),
                                             ],
                                           ),

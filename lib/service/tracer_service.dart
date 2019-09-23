@@ -298,7 +298,7 @@ class TracerService {
       "tracerVisit": {
         "visitDatetime": dateTime.toIso8601String(),
         "place": place,
-        "summary": summary,
+        "summary": (summary == null || summary.isEmpty) ? null : summary,
         "type": visitType
       }
     });
@@ -316,13 +316,14 @@ class TracerService {
 
  Future<String> updateVisit({String visitId,
       DateTime dateTime, Place place, String summary, String visitType}) async {
+
     var body = json.encode({
       "method": "updateTracerVisit",
       "tracerVisit": {
         "id": visitId,
         "visitDatetime": dateTime.toIso8601String(),
         "place": place,
-        "summary": summary,
+        "summary": (summary == null || summary.isEmpty) ? null : summary,
         "type": visitType
       }
     });
